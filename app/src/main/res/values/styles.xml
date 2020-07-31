@@ -28,7 +28,7 @@
     <!--自定义radionbutton属性-->
     <style name="RadionButton">
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_width">62dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
         <item name="android:paddingTop">3dip</item>

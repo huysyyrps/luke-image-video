@@ -22,7 +22,9 @@ import com.example.luke_imagevideo_send.test.AutoFitTextureView;
 import com.example.luke_imagevideo_send.test.CameraController;
 import com.example.luke_imagevideo_send.test.CameraUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -44,27 +46,24 @@ public class MainActivity extends BaseActivity {
     RadioButton rbAlbum;
     @BindView(R.id.rbSetting)
     RadioButton rbSetting;
-    @BindView(R.id.textureview)
-    AutoFitTextureView textureview;
+    @BindView(R.id.surfaceView)
+    SurfaceView surfaceView;
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
 
     private static final String TAG = "PlayActivity";
-    private SurfaceView surfaceView;
     private CameraUtils cameraUtils;
     private String path, name;
     int x = 0;
-    private CameraController mCameraController;
-    private boolean mIsRecordingVideo; //开始停止录像
-    public static String BASE_PATH = Environment.getExternalStorageDirectory() + "/AAA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        textureview.setVisibility(View.GONE);
+        surfaceView.setVisibility(View.GONE);
         radioGroup.setVisibility(View.GONE);
+        path = Environment.getExternalStorageDirectory().getAbsolutePath();
         List<PermissionItem> mList = new ArrayList<PermissionItem>();
         mList.add(new PermissionItem(Manifest.permission.RECORD_AUDIO, "录音", R.drawable.permission_ic_phone));
         mList.add(new PermissionItem(Manifest.permission.CAMERA, "照相机", R.drawable.permission_ic_camera));
@@ -88,15 +87,12 @@ public class MainActivity extends BaseActivity {
                     public void onFinish() {
                         //"所有权限申请完成"
                         Toast.makeText(MainActivity.this, "所有权限申请完毕", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this,TestActivity.class);
-                        startActivity(intent);
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
-                        textureview.setVisibility(View.VISIBLE);
+                        cameraUtils = new CameraUtils();
+                        cameraUtils.create(surfaceView, MainActivity.this);
+                        surfaceView.setVisibility(View.VISIBLE);
                         radioGroup.setVisibility(View.VISIBLE);
                         header.setVisibility(View.GONE);
-                        mCameraController = CameraController.getmInstance(MainActivity.this);
-                        mCameraController.setFolderPath(BASE_PATH);
-                        mCameraController.InitCamera(textureview);
                     }
 
                     @Override
@@ -112,9 +108,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //获取相机管理类的实例
-        mCameraController = CameraController.getmInstance(this);
-        mCameraController.setFolderPath(BASE_PATH);
     }
 
     @Override
@@ -132,18 +125,51 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+        cameraUtils.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+        cameraUtils.destroy();
+    }
+
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSetting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rbCamera:
-                mCameraController.takePicture();
+                cameraUtils.takePicture(path, getNowDate()+".png");
                 break;
             case R.id.rbVideo:
+                if (x == 0) {
+                    // cameraUtils.changeCamera();
+                    cameraUtils.startRecord(path, getNowDate());
+//                    btn.setImageResource(R.drawable.video);
+                    x = 1;
+                } else if (x == 1) {
+                    cameraUtils.stopRecord();
+//                    btn.setImageResource(R.drawable.video1);
+                    x=0;
+                }
                 break;
             case R.id.rbAlbum:
                 break;
             case R.id.rbSetting:
+                cameraUtils.changeCamera();
                 break;
         }
+    }
+
+    /**
+     * 获取当前时间,用来给文件夹命名
+     */
+    private String getNowDate() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(new Date());
     }
 }

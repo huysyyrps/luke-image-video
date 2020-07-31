@@ -12,17 +12,18 @@
         app:header_title="@string/app_name"
         app:header_is_left_iv_visiable="false">
     </com.example.luke_imagevideo_send.http.views.Header>
-    
-    <com.example.luke_imagevideo_send.test.AutoFitTextureView
-        android:id="@+id/textureview"
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="50dp"
+        android:layout_width="62dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginRight="10dp"
         android:layout_gravity="right">
 
         <RadioButton
@@ -43,7 +44,7 @@
         <RadioButton
             android:id="@+id/rbSetting"
             style="@style/RadionButton"
-            android:drawableLeft="@drawable/rbsetting"/>
+            android:drawableLeft="@drawable/rbrevolve"/>
     </RadioGroup>
 
 </FrameLayout>

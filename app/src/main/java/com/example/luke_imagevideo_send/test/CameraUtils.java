@@ -2,11 +2,14 @@ package com.example.luke_imagevideo_send.test;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
+import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 
 import java.io.File;
@@ -72,7 +75,7 @@ public class CameraUtils {
     private void doChange(SurfaceHolder holder) {
         try {
             camera.setPreviewDisplay(holder);
-            camera.setDisplayOrientation(90);
+            camera.setDisplayOrientation(0);
             camera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,7 +98,7 @@ public class CameraUtils {
                 camera = Camera.open(i);
                 try {
                     camera.setPreviewDisplay(surfaceView.getHolder());
-                    camera.setDisplayOrientation(90);
+                    camera.setDisplayOrientation(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -109,7 +112,7 @@ public class CameraUtils {
                 camera = Camera.open(i);
                 try {
                     camera.setPreviewDisplay(surfaceView.getHolder());
-                    camera.setDisplayOrientation(90);
+                    camera.setDisplayOrientation(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -153,17 +156,27 @@ public class CameraUtils {
      * @param name 录像视频名称(不包含后缀)
      */
     public void startRecord(String path, String name) {
+        CamcorderProfile mProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         camera.unlock();
         mediaRecorder.setCamera(camera);
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        //mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mediaRecorder.setVideoEncodingBitRate(700 * 1024);
-        mediaRecorder.setVideoSize(width, height);
-        mediaRecorder.setVideoFrameRate(24);
+////        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_LOW));
+//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+//        mediaRecorder.setVideoEncodingBitRate(2048 * 2048);
+////        mediaRecorder.setVideoSize(width, height);
+////        mediaRecorder.setVideoFrameRate(60);
+        mediaRecorder.setOutputFormat(mProfile.fileFormat);
+        mediaRecorder.setAudioEncoder(mProfile.audioCodec);
+        mediaRecorder.setVideoEncoder(mProfile.videoCodec);
+        mediaRecorder.setVideoSize(mProfile.videoFrameWidth, mProfile.videoFrameHeight);
+        mediaRecorder.setVideoFrameRate(mProfile.videoFrameRate);
+        mediaRecorder.setVideoEncodingBitRate(mProfile.videoBitRate);
+        mediaRecorder.setAudioEncodingBitRate(mProfile.audioBitRate);
+        mediaRecorder.setAudioChannels(mProfile.audioChannels);
+        mediaRecorder.setAudioSamplingRate(mProfile.audioSampleRate);
         //getVideoSize();
         File file = new File(path);
         if (!file.exists()) {
@@ -195,8 +208,8 @@ public class CameraUtils {
         for (int i = 0; i < videoSize.size(); i++) {
             int width1 = videoSize.get(i).width;
             int height1 = videoSize.get(i).height;
-            if (width1 >= 300 && width1 <= 600) {
-                if (height1 >= 200 && height1 <= 600) {
+            if (width1 >= 300 && width1 <= 1000) {
+                if (height1 >= 300 && height1 <= 1000) {
                     width = width1;
                     height = height1;
                 }
@@ -254,23 +267,85 @@ public class CameraUtils {
             if (!file1.exists()) {
                 file1.mkdirs();
             }
-            File file = new File(path, name);
-            alertDialogUtil.showImageDialog(file);
-            if (file.exists()) {
-                file.delete();
-            }
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(file);
-                try {
-                    fos.write(bytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
+
+                @Override
+                public void confirm(String name1) {
+                    if (!name1.equals("")){
+                        name = name1+".png";
+                    }
+                    File file = new File(path, name);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        try {
+                            fos.write(bytes);
+                            Toast.makeText(context, "本地存储成功", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    camera.startPreview();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-//            camera.startPreview();
+
+                @Override
+                public void cancel() {
+
+                }
+
+                @Override
+                public void save(String name1) {
+                    if (!name1.equals("")){
+                        name = name1+".png";
+                    }
+                    File file = new File(path, name);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        try {
+                            fos.write(bytes);
+                            Toast.makeText(context, "本地存储成功", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    camera.startPreview();
+                }
+
+                @Override
+                public void checkName(String name1) {
+                    if (!name1.equals("")){
+                        name = name1+".png";
+                    }
+                    File file = new File(path, name);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        try {
+                            fos.write(bytes);
+                            Toast.makeText(context, "本地存储成功", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    camera.startPreview();
+                }
+            });
         }
     }
 }

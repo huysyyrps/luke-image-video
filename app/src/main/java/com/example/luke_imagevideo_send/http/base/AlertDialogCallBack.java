@@ -5,6 +5,8 @@ package com.example.luke_imagevideo_send.http.base;
  */
 
 public interface AlertDialogCallBack {
-    void confirm();
+    void confirm(String name);
     void cancel();
+    void save(String name);
+    void checkName(String name);
 }

@@ -53,11 +53,11 @@ public class TestActivity extends AppCompatActivity {
                 if (x == 0) {
                     // cameraUtils.changeCamera();
                     cameraUtils.startRecord(path, name);
-                    btn.setImageResource(R.drawable.video);
+//                    btn.setImageResource(R.drawable.video);
                     x = 1;
                 } else if (x == 1) {
                     cameraUtils.stopRecord();
-                    btn.setImageResource(R.drawable.video1);
+//                    btn.setImageResource(R.drawable.video1);
                     x=0;
                 }
 

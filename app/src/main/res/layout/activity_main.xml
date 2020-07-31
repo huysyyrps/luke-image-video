@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        app:header_title="@string/app_name"
+        app:header_is_left_iv_visiable="false">
+    </com.example.luke_imagevideo_send.http.views.Header>
+    
+    <com.example.luke_imagevideo_send.test.AutoFitTextureView
+        android:id="@+id/textureview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="right">
+
+        <RadioButton
+            android:id="@+id/rbCamera"
+            style="@style/RadionButton"
+            android:drawableLeft="@drawable/rbcamera" />
+
+        <RadioButton
+            android:id="@+id/rbVideo"
+            style="@style/RadionButton"
+            android:drawableLeft="@drawable/rbvideo"/>
+
+        <RadioButton
+            android:id="@+id/rbAlbum"
+            style="@style/RadionButton"
+            android:drawableLeft="@drawable/rbalbum"/>
+
+        <RadioButton
+            android:id="@+id/rbSetting"
+            style="@style/RadionButton"
+            android:drawableLeft="@drawable/rbsetting"/>
+    </RadioGroup>
+
+</FrameLayout>

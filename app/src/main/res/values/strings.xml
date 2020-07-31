@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">鲁科器材检测有限公司</string>
+    <string name="title_tips">提示</string>
+    <string name="title_tips_confim">确定</string>
+    <string name="title_tips_cancel">取消</string>
+    <string name="title_tips_checkname">命名</string>
+    <string name="again_out">再点一次退出程序</string>
+</resources>

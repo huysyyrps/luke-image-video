@@ -1,4 +1,4 @@
-package com.example.luke_imagevideo_send.test;
+package com.example.luke_imagevideo_send.camera;
 
 import android.content.Context;
 import android.hardware.Camera;

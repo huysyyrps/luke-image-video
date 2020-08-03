@@ -2,22 +2,15 @@ package com.example.luke_imagevideo_send;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.example.luke_imagevideo_send.test.AutoFitTextureView;
-import com.example.luke_imagevideo_send.test.CameraController;
-import com.example.luke_imagevideo_send.test.CameraUtils;
+import com.example.luke_imagevideo_send.camera.CameraUtils;
 
 public class TestActivity extends AppCompatActivity {
     private static final String TAG = "PlayActivity";

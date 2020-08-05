@@ -20,6 +20,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -56,5 +60,11 @@ dependencies {
 
     implementation 'com.sakuramomoko.searchinganimview:library:1.4'
     implementation 'me.weyye.hipermission:library:1.0.7'
+
+    //基础的 OkSocket 功能集成包.您的Socket开发无论是客户端还是Java,都需要此包 (必须集成)
+    implementation 'com.tonystark.android:socket:4.1.0'
+    //如果您需要使用 OkSocketServer 功能在客户端或者Java程序,您还需要依赖下面的Server插件包和上面的一起依赖.
+    implementation 'com.tonystark.android:socket-server:4.1.0'
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
 
 }

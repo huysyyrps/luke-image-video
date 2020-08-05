@@ -11,7 +11,7 @@ public class ApiAddress {
     public final static String scoreUrl = "http://www.188bifen.com/";
 
     //生成环境
-    public final static String api = "http://www.tv188.com/";
+    public final static String api = "http://192.168.1.251:8080/";
 
 
     /***********************首页*******************************/

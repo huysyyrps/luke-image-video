@@ -13,10 +13,17 @@
         app:header_is_left_iv_visiable="false">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@drawable/linelayout_radion">
+    </WebView>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"/>
 
     <RadioGroup
         android:id="@+id/radioGroup"

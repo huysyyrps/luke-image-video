@@ -19,7 +19,6 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.CameraUtils;
-import com.example.luke_imagevideo_send.camera.PhotoActivity;
 import com.example.luke_imagevideo_send.camera.bean.HandShakeBean;
 import com.example.luke_imagevideo_send.camera.bean.PulseBean;
 import com.example.luke_imagevideo_send.camera.bean.RedirectException;
@@ -312,8 +311,8 @@ public class TestMainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbAlbum:
-                Intent intent = new Intent(this, PhotoActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(this, PhotoActivity.class);
+//                startActivity(intent);
                 break;
             case R.id.rbSetting:
                 cameraUtils.changeCamera();
@@ -328,5 +327,4 @@ public class TestMainActivity extends BaseActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(new Date());
     }
-
 }

@@ -1,9 +1,12 @@
 package com.example.luke_imagevideo_send.main.activity;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -120,7 +123,7 @@ public class MainActivity extends BaseActivity {
 //                        //全屏设置
                         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
                         //访问网页
-                        webView.loadUrl(api+"?action=stream");
+                        webView.loadUrl(api + "?action=stream");
                         //系统默认会通过手机浏览器打开网页，为了能够直接通过WebView显示网页，则必须设置
                         webView.setWebViewClient(new WebViewClient() {
                             @Override
@@ -172,7 +175,7 @@ public class MainActivity extends BaseActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        getBitmapFromURL(api+"?action=snapshot");
+                        getBitmapFromURL(api + "?action=snapshot");
                     }
                 }).start();
                 break;
@@ -187,21 +190,21 @@ public class MainActivity extends BaseActivity {
 
     public void getBitmapFromURL(String src) {
         try {
-            Log.e("src",src);
+            Log.e("src", src);
             URL url = new URL(src);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
             mBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap","returned");
+            Log.e("Bitmap", "returned");
             Message message = new Message();
             message.what = Constant.TAG_ONE;
             handler.sendMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("Exception",e.getMessage());
-            Toast.makeText(this, "拍摄失败"+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("Exception", e.getMessage());
+            Toast.makeText(this, "拍摄失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -210,71 +213,89 @@ public class MainActivity extends BaseActivity {
      */
     private String getNowDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDateFormat.format(new Date())+".jpg";
+        return simpleDateFormat.format(new Date()) + ".jpg";
     }
 
-    /** 保存方法 */
-    public void saveBitmap(String path,String name,Bitmap mBitmap) {
-        File file = new File(path, name);
-        if (file.exists()) {
-            file.delete();
-        }
+    /**
+     * 保存方法
+     */
+    public boolean saveImg(Bitmap bitmap, String name, Context context) {
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            //图片压缩
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
+            String sdcardPath = System.getenv("EXTERNAL_STORAGE");      //获得sd卡路径
+            String dir = sdcardPath + "/LUKEImage/";                    //图片保存的文件夹名
+            File file = new File(dir);                                 //已File来构建
+            if (!file.exists()) {                                     //如果不存在  就mkdirs()创建此文件夹
+                file.mkdirs();
+            }
+            Log.i("SaveImg", "file uri==>" + dir);
+            File mFile = new File(dir + name);                        //将要保存的图片文件
+            if (mFile.exists()) {
+                Toast.makeText(context, "该图片已存在!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
+            Uri uri = Uri.fromFile(mFile);                                  //获得图片的uri
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
+            outputStream.flush();
+            outputStream.close();
             //隐藏image显示webview
+            Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
             imageView.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
+            return true;
+
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return false;
     }
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case Constant.TAG_ONE:
                     webView.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
                     imageView.setImageBitmap(mBitmap);
 
-                    if (mBitmap!=null){
+                    if (mBitmap != null) {
                         alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
 
                             @Override
                             public void confirm(String name1) {
-                                if (!name1.equals("")){
-                                    name = name1+".jpg";
+                                if (!name1.equals("")) {
+                                    name = name1 + ".jpg";
                                 }
-                                saveBitmap(path,name,mBitmap);
+//                                saveBitmap(path,name,mBitmap);
+                                saveImg(mBitmap,name,MainActivity.this);
                             }
+
                             @Override
                             public void cancel() {
                             }
 
                             @Override
                             public void save(String name1) {
-                                if (!name1.equals("")){
-                                    name = name1+".jpg";
+                                if (!name1.equals("")) {
+                                    name = name1 + ".jpg";
                                 }
-                                saveBitmap(path,name,mBitmap);
+//                                saveBitmap(path, name, mBitmap);
+                                saveImg(mBitmap,name,MainActivity.this);
                             }
 
                             @Override
                             public void checkName(String name1) {
-                                if (!name1.equals("")){
-                                    name = name1+".jpg";
+                                if (!name1.equals("")) {
+                                    name = name1 + ".jpg";
                                 }
-                                saveBitmap(path,name,mBitmap);
+//                                saveBitmap(path, name, mBitmap);
+                                saveImg(mBitmap,name,MainActivity.this);
                             }
                         });
                     }

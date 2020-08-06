@@ -22,7 +22,6 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".camera.PhotoActivity"></activity>
         <activity android:name=".main.test.TestActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>

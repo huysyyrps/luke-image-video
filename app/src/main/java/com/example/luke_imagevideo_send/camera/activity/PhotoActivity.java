@@ -19,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.util.GlideEngine;
 import com.example.luke_imagevideo_send.camera.util.PictureConfig;
+import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
  * @描述: Demo
  */
 
-public class PhotoActivity extends AppCompatActivity {
+public class PhotoActivity extends BaseActivity {
     @BindView(R.id.header)
     Header header;
     @BindView(R.id.recycler)
@@ -138,10 +139,24 @@ public class PhotoActivity extends AppCompatActivity {
                 .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
 //                        .forResult(new MyResultCallback(mAdapter));
 
-        setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         recycler.setLayoutManager(manager);
+    }
+
+    @Override
+    protected int provideContentViewId() {
+        return R.layout.activity_photo;
+    }
+
+    @Override
+    protected boolean isHasHeader() {
+        return true;
+    }
+
+    @Override
+    protected void rightClient() {
+
     }
 
     @Override

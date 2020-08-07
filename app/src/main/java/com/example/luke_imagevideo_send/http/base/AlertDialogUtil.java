@@ -106,6 +106,7 @@ public class AlertDialogUtil {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+                    alertDialogCallBack.cancel();
                 }
             });
 

@@ -1,45 +1,49 @@
 package com.example.luke_imagevideo_send.main.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,10 +76,20 @@ public class MainActivity extends BaseActivity {
     WebView webView;
     @BindView(R.id.imageView)
     ImageView imageView;
+    @BindView(R.id.tvTime)
+    TextView tvTime;
+    @BindView(R.id.tvGPS)
+    TextView tvGPS;
+    @BindView(R.id.linearLayout)
+    LinearLayout linearLayout;
     Bitmap mBitmap;
     String name = "";
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+    Handler handler;
+    boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
+
+    // 位置管理
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +148,26 @@ public class MainActivity extends BaseActivity {
                                 //返回true
                                 return true;
                             }
+
+                            @Override
+                            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
+                                super.onReceivedError(view, errorCode, description, failingUrl);
+                                webView.setVisibility(View.GONE);
+                                imageView.setVisibility(View.GONE);
+                                linearLayout.setVerticalGravity(View.GONE);
+                                loadError = true;
+                            }
+
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                super.onPageFinished(view, url);
+                                if (loadError != true) {
+                                    webView.setVisibility(View.VISIBLE);
+                                    imageView.setVisibility(View.GONE);
+                                    linearLayout.setVerticalGravity(View.VISIBLE);
+                                }
+                            }
                         });
                     }
 
@@ -145,6 +179,9 @@ public class MainActivity extends BaseActivity {
                     public void onGuarantee(String permission, int position) {
                     }
                 });
+
+        initTime();
+        initGPS();
     }
 
     @Override
@@ -167,18 +204,159 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    // 初始化时间方法
+    public void initTime() {
+        // 时间变化
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                tvTime.setText((String) msg.obj);
+            }
+        };
+        Threads thread = new Threads();
+        thread.start();
+    }
+
+    class Threads extends Thread {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String str = sdf.format(new Date());
+                    handler.sendMessage(handler.obtainMessage(100, str));
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 初始化GPS方法
+    private void initGPS() {
+        //获取定位管理器
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //设置定位信息
+        //坐标位置改变，回调此监听方法
+        LocationListener listener = new LocationListener() {
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // TODO Auto-generated method stub
+
+            }
+
+            //位置改变的时候调用，这个方法用于返回一些位置信息
+            @Override
+            public void onLocationChanged(Location location) {
+                //获取位置变化结果
+                float accuracy = location.getAccuracy();//精确度，以密为单位
+                double altitude = location.getAltitude();//获取海拔高度
+                double longitude = location.getLongitude();//经度
+                double latitude = location.getLatitude();//纬度
+                float speed = location.getSpeed();//速度
+
+                BigDecimal bigDecimal = new BigDecimal(longitude);
+                longitude = bigDecimal.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
+                BigDecimal bigDecimal1 = new BigDecimal(latitude);
+                latitude = bigDecimal1.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+                //显示位置信息
+                tvGPS.setText(longitude + "," + latitude);
+//                tv_show_location.append("latitude:"+latitude+"\n");
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates("gps", 10000, 0, listener);//Register for location updates
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 关闭监听
+//        locationManager.removeUpdates(locationListeners);
+//        locationListeners = null;
+    }
+
+
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSetting})
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view1) {
+        switch (view1.getId()) {
             case R.id.rbCamera:
+                if (webView.getVisibility()==View.GONE){
+                    Toast.makeText(this, "app未连接到设备,暂不能拍照", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 name = getNowDate();
-                //访问网页
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getBitmapFromURL(api + "?action=snapshot");
-                    }
-                }).start();
+                View view = view1.getRootView();
+                view.setDrawingCacheEnabled(true);
+                view.buildDrawingCache();
+                mBitmap = view.getDrawingCache();
+                if (mBitmap != null) {
+                    webView.setVisibility(View.GONE);
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setImageBitmap(mBitmap);
+
+                    alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
+
+                        @Override
+                        public void confirm(String name1) {
+                            if (!name1.equals("")) {
+                                name = name1 + ".jpg";
+                            }
+//                                saveBitmap(path,name,mBitmap);
+                            saveImg(mBitmap, name, MainActivity.this);
+                        }
+
+                        @Override
+                        public void cancel() {
+                            webView.setVisibility(View.VISIBLE);
+                            imageView.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void save(String name1) {
+                            if (!name1.equals("")) {
+                                name = name1 + ".jpg";
+                            }
+//                                saveBitmap(path, name, mBitmap);
+                            saveImg(mBitmap, name, MainActivity.this);
+                        }
+
+                        @Override
+                        public void checkName(String name1) {
+                            if (!name1.equals("")) {
+                                name = name1 + ".jpg";
+                            }
+//                                saveBitmap(path, name, mBitmap);
+                            saveImg(mBitmap, name, MainActivity.this);
+                        }
+                    });
+                } else {
+                    System.out.println("bitmap is NULL!");
+                }
                 break;
             case R.id.rbVideo:
                 break;
@@ -188,26 +366,6 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.rbSetting:
                 break;
-        }
-    }
-
-    public void getBitmapFromURL(String src) {
-        try {
-            Log.e("src", src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            mBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap", "returned");
-            Message message = new Message();
-            message.what = Constant.TAG_ONE;
-            handler.sendMessage(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception", e.getMessage());
-            Toast.makeText(this, "拍摄失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -234,6 +392,7 @@ public class MainActivity extends BaseActivity {
             File mFile = new File(dir + name);                        //将要保存的图片文件
             if (mFile.exists()) {
                 Toast.makeText(context, "该图片已存在!", Toast.LENGTH_SHORT).show();
+                mFile.delete();
                 return false;
             }
 
@@ -257,52 +416,4 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case Constant.TAG_ONE:
-                    webView.setVisibility(View.GONE);
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(mBitmap);
-
-                    if (mBitmap != null) {
-                        alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
-
-                            @Override
-                            public void confirm(String name1) {
-                                if (!name1.equals("")) {
-                                    name = name1 + ".jpg";
-                                }
-//                                saveBitmap(path,name,mBitmap);
-                                saveImg(mBitmap,name,MainActivity.this);
-                            }
-
-                            @Override
-                            public void cancel() {
-                            }
-
-                            @Override
-                            public void save(String name1) {
-                                if (!name1.equals("")) {
-                                    name = name1 + ".jpg";
-                                }
-//                                saveBitmap(path, name, mBitmap);
-                                saveImg(mBitmap,name,MainActivity.this);
-                            }
-
-                            @Override
-                            public void checkName(String name1) {
-                                if (!name1.equals("")) {
-                                    name = name1 + ".jpg";
-                                }
-//                                saveBitmap(path, name, mBitmap);
-                                saveImg(mBitmap,name,MainActivity.this);
-                            }
-                        });
-                    }
-            }
-        }
-    };
 }

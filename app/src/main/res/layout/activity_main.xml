@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/black">
 
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
@@ -19,11 +20,13 @@
         android:layout_height="match_parent"
         android:background="@drawable/linelayout_radion">
     </WebView>
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"/>
+
 
     <RadioGroup
         android:id="@+id/radioGroup"
@@ -53,5 +56,43 @@
             style="@style/RadionButton"
             android:drawableLeft="@drawable/rbrevolve"/>
     </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="时间:"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="时间"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="GPS:"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tvGPS"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="获取位置中"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
 </FrameLayout>

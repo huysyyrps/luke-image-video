@@ -29,6 +29,8 @@
     <color name="color_me_title">#868686</color>
     <color name="color_set_right">#cdcdcd</color>
     <color name="milkwhite">#FDFDFE</color>
+    <color name="app_color_white">#FFFFFF</color>
+    <color name="app_color_f6">#f6f6f6</color>
     <color name="divider">#5000796B</color>
     <color name="main_bottom">#f7f7fc</color>
     <color name="main_bottom_line">#e8e8ed</color>

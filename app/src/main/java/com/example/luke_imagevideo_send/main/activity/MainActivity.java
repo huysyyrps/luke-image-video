@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -182,6 +183,8 @@ public class MainActivity extends BaseActivity {
             case R.id.rbVideo:
                 break;
             case R.id.rbAlbum:
+                Intent intent = new Intent(this, PhotoActivity.class);
+                startActivity(intent);
                 break;
             case R.id.rbSetting:
                 break;

@@ -34,6 +34,8 @@
             android:name=".main.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".camera.activity.PhotoActivity" />
     </application>
 
 </manifest>

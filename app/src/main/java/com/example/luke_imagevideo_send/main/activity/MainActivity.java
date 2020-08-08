@@ -17,10 +17,10 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
@@ -82,6 +81,8 @@ public class MainActivity extends BaseActivity {
     TextView tvGPS;
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
+    @BindView(R.id.frameLayout)
+    FrameLayout frameLayout;
     Bitmap mBitmap;
     String name = "";
     Handler handler;
@@ -97,6 +98,8 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         radioGroup.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.GONE);
+
         alertDialogUtil = new AlertDialogUtil(this);
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();
@@ -122,6 +125,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onFinish() {
                         //"所有权限申请完成"
+                        frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
                         Toast.makeText(MainActivity.this, "所有权限申请完毕", Toast.LENGTH_SHORT).show();
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
                         radioGroup.setVisibility(View.VISIBLE);
@@ -305,10 +309,11 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
-                if (webView.getVisibility()==View.GONE){
+                if (webView.getVisibility() == View.GONE) {
                     Toast.makeText(this, "app未连接到设备,暂不能拍照", Toast.LENGTH_SHORT).show();
                     break;
                 }
+                radioGroup.setVisibility(View.GONE);
                 name = getNowDate();
                 View view = view1.getRootView();
                 view.setDrawingCacheEnabled(true);
@@ -406,6 +411,7 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
             imageView.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
+            radioGroup.setVisibility(View.VISIBLE);
             return true;
 
         } catch (FileNotFoundException e) {

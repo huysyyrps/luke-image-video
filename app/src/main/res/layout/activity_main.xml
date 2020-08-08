@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/black">
+    android:id="@+id/frameLayout">
 
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
@@ -16,6 +16,7 @@
 
     <WebView
         android:id="@+id/webView"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/linelayout_radion">
@@ -52,6 +53,7 @@
             android:drawableLeft="@drawable/rbalbum"/>
 
         <RadioButton
+            android:visibility="gone"
             android:id="@+id/rbSetting"
             style="@style/RadionButton"
             android:drawableLeft="@drawable/rbrevolve"/>

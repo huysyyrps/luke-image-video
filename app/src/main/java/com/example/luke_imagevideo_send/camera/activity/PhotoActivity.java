@@ -168,40 +168,44 @@ public class PhotoActivity extends BaseActivity {
                     // 图片选择结果回调
                     List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
                     Toast.makeText(this, selectList.size() + "", Toast.LENGTH_SHORT).show();
-                    baseRecyclerAdapter = new BaseRecyclerAdapter<LocalMedia>(this, R.layout.recycler_image_item, selectList) {
-                        @Override
-                        public void convert(BaseViewHolder holder, final LocalMedia bean) {
-                            //少于8张，显示继续添加的图标
-                            holder.setVisitionImageView(R.id.ivDel);
-                            LocalMedia media = bean;
-                            if (media == null || TextUtils.isEmpty(media.getPath())) {
-                                return;
-                            }
-                            int chooseModel = media.getChooseModel();
-                            String path;
-                            if (media.isCut() && !media.isCompressed()) {
-                                // 裁剪过
-                                path = media.getCutPath();
-                            } else if (media.isCompressed() || (media.isCut() && media.isCompressed())) {
-                                // 压缩过,或者裁剪同时压缩过,以最终压缩过图片为准
-                                path = media.getCompressPath();
-                            } else {
-                                // 原图
-                                path = media.getPath();
-                            }
+                    if (selectList.size()==0){
+                        finish();
+                    }else {
+                        baseRecyclerAdapter = new BaseRecyclerAdapter<LocalMedia>(this, R.layout.recycler_image_item, selectList) {
+                            @Override
+                            public void convert(BaseViewHolder holder, final LocalMedia bean) {
+                                //少于8张，显示继续添加的图标
+                                holder.setVisitionImageView(R.id.ivDel);
+                                LocalMedia media = bean;
+                                if (media == null || TextUtils.isEmpty(media.getPath())) {
+                                    return;
+                                }
+                                int chooseModel = media.getChooseModel();
+                                String path;
+                                if (media.isCut() && !media.isCompressed()) {
+                                    // 裁剪过
+                                    path = media.getCutPath();
+                                } else if (media.isCompressed() || (media.isCut() && media.isCompressed())) {
+                                    // 压缩过,或者裁剪同时压缩过,以最终压缩过图片为准
+                                    path = media.getCompressPath();
+                                } else {
+                                    // 原图
+                                    path = media.getPath();
+                                }
 
-                            long duration = media.getDuration();
-                            if (PictureMimeType.isHasVideo(media.getMimeType())) {
-                                holder.setVisitionTextView(R.id.tvLong);
-                                holder.setText(R.id.tvLong, DateUtils.formatDurationTime(duration));
-                            } else {
-                                holder.setGoneTextView(R.id.tvLong);
+                                long duration = media.getDuration();
+                                if (PictureMimeType.isHasVideo(media.getMimeType())) {
+                                    holder.setVisitionTextView(R.id.tvLong);
+                                    holder.setText(R.id.tvLong, DateUtils.formatDurationTime(duration));
+                                } else {
+                                    holder.setGoneTextView(R.id.tvLong);
+                                }
+                                holder.setGile(PhotoActivity.this, R.id.imageView, path, media);
                             }
-                            holder.setGile(PhotoActivity.this, R.id.imageView, path, media);
-                        }
-                    };
-                    recycler.setAdapter(baseRecyclerAdapter);
-                    baseRecyclerAdapter.notifyDataSetChanged();
+                        };
+                        recycler.setAdapter(baseRecyclerAdapter);
+                        baseRecyclerAdapter.notifyDataSetChanged();
+                    }
                     break;
             }
         }

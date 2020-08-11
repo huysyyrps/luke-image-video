@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.views.CircleTextProgressbar;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
+import com.example.luke_imagevideo_send.magnetic.activity.MainActivity;
+import com.example.luke_imagevideo_send.magnetic.activity.SendSelectActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 //你需要跳转的地方的代码
-                Intent intent=new Intent(WelcomeActivity.this,MainActivity.class);
+                Intent intent=new Intent(WelcomeActivity.this, SendSelectActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -48,7 +50,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.tvProgress)
     public void onViewClicked() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, SendSelectActivity.class);
         startActivity(intent);
         mHandler.removeCallbacksAndMessages(null);
         finish();

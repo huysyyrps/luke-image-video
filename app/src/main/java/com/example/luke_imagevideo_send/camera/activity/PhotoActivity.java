@@ -2,20 +2,13 @@ package com.example.luke_imagevideo_send.camera.activity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.util.GlideEngine;
 import com.example.luke_imagevideo_send.camera.util.PictureConfig;
@@ -23,15 +16,12 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.views.Header;
-import com.example.luke_imagevideo_send.main.activity.MainActivity;
 import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.compress.Luban;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.SdkVersionUtils;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -162,7 +152,7 @@ public class PhotoActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+//        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
                     // 图片选择结果回调
@@ -208,6 +198,5 @@ public class PhotoActivity extends BaseActivity {
                     }
                     break;
             }
-        }
     }
 }

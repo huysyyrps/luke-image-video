@@ -30,12 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".main.activity.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="sensorLandscape" />
-        <activity
-            android:name=".camera.activity.PhotoActivity" />
+        <activity android:name=".camera.activity.PhotoActivity" />
+        <activity android:name=".magnetic.activity.SendSelectActivity"/>
+        <activity android:name=".magnetic.activity.MainActivity"/>
     </application>
 
 </manifest>

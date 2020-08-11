@@ -1,4 +1,4 @@
-package com.example.luke_imagevideo_send.main.activity;
+package com.example.luke_imagevideo_send.magnetic.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -36,6 +37,7 @@ import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import java.io.File;
@@ -85,107 +87,133 @@ public class MainActivity extends BaseActivity {
     FrameLayout frameLayout;
     Bitmap mBitmap;
     String name = "";
+    private String saveSelect;
     Handler handler;
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
+    SharePreferencesUtils sharePreferencesUtils;
 
     // 位置管理
     private LocationManager locationManager;
+    private static boolean isExit = false;
+    //推出程序
+    Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            isExit = false;
+        }
+    };
+
+    //推出程序
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void exit() {
+        if (!isExit) {
+            isExit = true;
+            alertDialogUtil.showDialog("您确定要退出程序吗", new AlertDialogCallBack() {
+
+                @Override
+                public void confirm(String name) {
+                    finish();
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+
+                @Override
+                public void save(String name) {
+
+                }
+
+                @Override
+                public void checkName(String name) {
+
+                }
+            });
+            mHandler.sendEmptyMessageDelayed(0, 2000);
+        } else {
+            finish();
+            System.exit(0);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        initTime();
+        initGPS();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        sharePreferencesUtils = new SharePreferencesUtils();
+        saveSelect = sharePreferencesUtils.getString(this,"sendSelect","");
+        Toast.makeText(this, saveSelect, Toast.LENGTH_SHORT).show();
         radioGroup.setVisibility(View.GONE);
-        linearLayout.setVisibility(View.GONE);
+//        linearLayout.setVisibility(View.GONE);
 
         alertDialogUtil = new AlertDialogUtil(this);
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();
-        List<PermissionItem> mList = new ArrayList<PermissionItem>();
-        mList.add(new PermissionItem(Manifest.permission.RECORD_AUDIO, "录音", R.drawable.permission_ic_phone));
-        mList.add(new PermissionItem(Manifest.permission.CAMERA, "照相机", R.drawable.permission_ic_camera));
-        mList.add(new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "位置", R.drawable.permission_ic_location));
-        mList.add(new PermissionItem(Manifest.permission.READ_EXTERNAL_STORAGE, "读取文件", R.drawable.permission_ic_storage));
-        mList.add(new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, "写入文件", R.drawable.permission_ic_storage));
-
-        HiPermission.create(MainActivity.this)
-                .title("亲爱的用户")
-                .permissions(mList)
-                .filterColor(ResourcesCompat.getColor(getResources(), R.color.green, getTheme()))//图标的颜色
-                .animStyle(R.style.PermissionAnimScale)//设置动画
-                .msg("此应用需要获取以下权限")
-                .checkMutiPermission(new PermissionCallback() {
-                    @Override
-                    public void onClose() {
-                        Log.e("TAG", "close");
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        //"所有权限申请完成"
-                        frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
-                        Toast.makeText(MainActivity.this, "所有权限申请完毕", Toast.LENGTH_SHORT).show();
-                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
-                        radioGroup.setVisibility(View.VISIBLE);
-                        header.setVisibility(View.GONE);
-                        //设置自适应屏幕，两者合用
-                        //将图片调整到适合webview的大小
-                        webSettings.setUseWideViewPort(true);
-                        // 缩放至屏幕的大小
-                        webSettings.setLoadWithOverviewMode(true);
-                        //关闭webview中缓存
-                        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-                        //不使用缓存
-                        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //"所有权限申请完成"
+        frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
+        radioGroup.setVisibility(View.VISIBLE);
+        header.setVisibility(View.GONE);
+        //设置自适应屏幕，两者合用
+        //将图片调整到适合webview的大小
+        webSettings.setUseWideViewPort(true);
+        // 缩放至屏幕的大小
+        webSettings.setLoadWithOverviewMode(true);
+        //关闭webview中缓存
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        //不使用缓存
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 //                        //全屏设置
-                        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-                        //访问网页
-                        webView.loadUrl(api + "?action=stream");
-                        //系统默认会通过手机浏览器打开网页，为了能够直接通过WebView显示网页，则必须设置
-                        webView.setWebViewClient(new WebViewClient() {
-                            @Override
-                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                //使用WebView加载显示url
-                                view.loadUrl(url);
-                                //返回true
-                                return true;
-                            }
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        //访问网页
+        webView.loadUrl(api + "?action=stream");
+        //系统默认会通过手机浏览器打开网页，为了能够直接通过WebView显示网页，则必须设置
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                //使用WebView加载显示url
+                view.loadUrl(url);
+                //返回true
+                return true;
+            }
 
-                            @Override
-                            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 
-                                super.onReceivedError(view, errorCode, description, failingUrl);
-                                webView.setVisibility(View.GONE);
-                                imageView.setVisibility(View.GONE);
-                                linearLayout.setVerticalGravity(View.GONE);
-                                loadError = true;
-                            }
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                webView.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
+                linearLayout.setVerticalGravity(View.GONE);
+                loadError = true;
+            }
 
-                            @Override
-                            public void onPageFinished(WebView view, String url) {
-                                super.onPageFinished(view, url);
-                                if (loadError != true) {
-                                    webView.setVisibility(View.VISIBLE);
-                                    imageView.setVisibility(View.GONE);
-                                    linearLayout.setVerticalGravity(View.VISIBLE);
-                                }
-                            }
-                        });
-                    }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (loadError != true) {
+                    webView.setVisibility(View.VISIBLE);
+                    imageView.setVisibility(View.GONE);
+                    linearLayout.setVerticalGravity(View.VISIBLE);
+                }
+            }
+        });
 
-                    @Override
-                    public void onDeny(String permission, int position) {
-                    }
-
-                    @Override
-                    public void onGuarantee(String permission, int position) {
-                    }
-                });
-
-        initTime();
-        initGPS();
     }
 
     @Override
@@ -248,19 +276,20 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 // TODO Auto-generated method stub
+                Log.e("XXX","1");
 
             }
 
             @Override
             public void onProviderEnabled(String provider) {
                 // TODO Auto-generated method stub
-
+                Log.e("XXX","11");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
                 // TODO Auto-generated method stub
-
+                Log.e("XXX","111");
             }
 
             //位置改变的时候调用，这个方法用于返回一些位置信息

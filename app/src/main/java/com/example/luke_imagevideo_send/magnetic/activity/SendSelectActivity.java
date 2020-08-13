@@ -242,8 +242,8 @@ public class SendSelectActivity extends AppCompatActivity {
                 sharePreferencesUtils.setString(SendSelectActivity.this,"workCode",etWorkCode.getText().toString());
                 if (menuEntity.title.equals("本地存储")){
                     sharePreferencesUtils.setString(SendSelectActivity.this,"sendSelect","本地存储");
-//                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
-                    intent = new Intent(SendSelectActivity.this, TestActivity.class);
+                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
+//                    intent = new Intent(SendSelectActivity.this, TestActivity.class);
                     startActivity(intent);
                     finish();
                 }else if (menuEntity.title.equals("实时上传")){

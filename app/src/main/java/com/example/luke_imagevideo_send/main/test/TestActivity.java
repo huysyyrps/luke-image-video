@@ -83,7 +83,6 @@ public class TestActivity extends AppCompatActivity {
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         //context的方法，获取windowManager
-        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         width = 1080;
         height = 1920;
         dpi = 1;
@@ -99,10 +98,34 @@ public class TestActivity extends AppCompatActivity {
         filePath = file.getAbsolutePath();
 
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-//        if (mediaProjection==null){
-//
-//        }
-        StartRecorder();
+        mediaProjection = Constant.mediaProjection;
+        if (mediaProjection==null){
+            StartRecorder();
+        }else {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        try {
+                            prepareEncoder();
+                            mediaMuxer = new MediaMuxer(filePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        virtualDisplay = mediaProjection.createVirtualDisplay(TAG + "-display",
+                                width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                                surface, null, null);
+                        recordVirtualDisplay();
+
+                    } finally {
+                        release();
+                    }
+                }
+            }.start();
+
+            Toast.makeText(this, "Recorder is running...", Toast.LENGTH_SHORT).show();
+        }
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
             public void run() {

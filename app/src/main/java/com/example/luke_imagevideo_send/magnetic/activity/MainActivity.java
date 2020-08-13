@@ -7,15 +7,26 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -37,6 +48,7 @@ import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.main.test.TestActivity;
@@ -47,10 +59,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,9 +109,25 @@ public class MainActivity extends BaseActivity {
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
     Intent intent;
+    int width = 1080;
+    int height = 1920;
+    int dpi = 1;
+    Surface surface;
+    MediaProjectionManager projectionManager;
+    MediaProjection mediaProjection;
+    MediaCodec mediaCodec;
+    MediaMuxer mediaMuxer;
+    VirtualDisplay virtualDisplay;
+    private MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+    private int videoTrackIndex = -1;
+    String filePath;
     // 位置管理
     private LocationManager locationManager;
     private static boolean isExit = false;
+    private boolean muxerStarted = false;
+    private static final String TAG = "TAG";
+    private AtomicBoolean mQuit = new AtomicBoolean(false);
+
     //推出程序
     Handler mHandler = new Handler() {
 
@@ -162,7 +192,6 @@ public class MainActivity extends BaseActivity {
         saveSelect = sharePreferencesUtils.getString(this,"sendSelect","");
         Toast.makeText(this, saveSelect, Toast.LENGTH_SHORT).show();
         radioGroup.setVisibility(View.GONE);
-//        linearLayout.setVisibility(View.GONE);
 
         alertDialogUtil = new AlertDialogUtil(this);
         //声明WebSettings子类
@@ -181,7 +210,7 @@ public class MainActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         //不使用缓存
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-//                        //全屏设置
+        //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         //访问网页
         webView.loadUrl(api + "?action=stream");
@@ -395,8 +424,48 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
-                intent = new Intent(this, TestActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, TestActivity.class);
+//                startActivity(intent);
+
+                File file = new File(Environment.getExternalStorageDirectory(),
+                        "record-" + width + "x" + height + "-" + System.currentTimeMillis() + ".mp4");
+                filePath = file.getAbsolutePath();
+
+                projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+                mediaProjection = Constant.mediaProjection;
+                if (mediaProjection==null){
+                    StartRecorder();
+                }else {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                try {
+                                    prepareEncoder();
+                                    mediaMuxer = new MediaMuxer(filePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                virtualDisplay = mediaProjection.createVirtualDisplay(TAG + "-display",
+                                        width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                                        surface, null, null);
+                                recordVirtualDisplay();
+
+                            } finally {
+                                release();
+                            }
+                        }
+                    }.start();
+
+                    Toast.makeText(this, "Recorder is running...", Toast.LENGTH_SHORT).show();
+                }
+                Handler mHandler = new Handler();
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        StopRecorder();
+                    }
+                }, 3500); //延迟3.5秒跳转
                 break;
             case R.id.rbAlbum:
                 intent = new Intent(this, TestActivity.class);
@@ -453,6 +522,118 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+        mediaProjection = Constant.mediaProjection;
+        if (mediaProjection==null){
+            StartRecorder();
+        }else {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        try {
+                            prepareEncoder();
+                            mediaMuxer = new MediaMuxer(filePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        virtualDisplay = mediaProjection.createVirtualDisplay(TAG + "-display",
+                                width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                                surface, null, null);
+                        recordVirtualDisplay();
+
+                    } finally {
+                        release();
+                    }
+                }
+            }.start();
+
+            Toast.makeText(this, "Recorder is running...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void recordVirtualDisplay() {
+        while (!mQuit.get()) {
+            int index = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+            if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                resetOutputFormat();
+            } else if (index >= 0) {
+                encodeToVideoTrack(index);
+                mediaCodec.releaseOutputBuffer(index, false);
+            }
+        }
+    }
+
+    private void encodeToVideoTrack(int index) {
+        ByteBuffer encodedData = mediaCodec.getOutputBuffer(index);
+
+        if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+            bufferInfo.size = 0;
+        }
+        if (bufferInfo.size == 0) {
+            encodedData = null;
+        }
+        if (encodedData != null) {
+            encodedData.position(bufferInfo.offset);
+            encodedData.limit(bufferInfo.offset + bufferInfo.size);
+            mediaMuxer.writeSampleData(videoTrackIndex, encodedData, bufferInfo);
+        }
+    }
+
+    private void resetOutputFormat() {
+        MediaFormat newFormat = mediaCodec.getOutputFormat();
+        videoTrackIndex = mediaMuxer.addTrack(newFormat);
+        mediaMuxer.start();
+        muxerStarted = true;
+    }
+
+    private void prepareEncoder() throws IOException {
+        MediaFormat format = MediaFormat.createVideoFormat("video/avc", width, height);
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 6000000);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
+
+        mediaCodec = MediaCodec.createEncoderByType("video/avc");
+        mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        surface = mediaCodec.createInputSurface();
+        mediaCodec.start();
+    }
+
+    public void StartRecorder() {
+        Intent intent = new Intent();
+        intent.setClassName("com.android.systemui", "com.android.systemui.media.MediaProjectionPermissionActivity");
+        startActivityForResult(intent, Constant.TAG_ONE);
+    }
+
+    public void StopRecorder() {
+        mQuit.set(true);
+        Toast.makeText(this, "Recorder stop", Toast.LENGTH_SHORT).show();
+    }
+
+    private void release() {
+        if (mediaCodec != null) {
+            mediaCodec.stop();
+            mediaCodec.release();
+            mediaCodec = null;
+        }
+        if (virtualDisplay != null) {
+            virtualDisplay.release();
+        }
+        if (mediaProjection != null) {
+            mediaProjection.stop();
+        }
+        if (mediaMuxer != null) {
+            mediaMuxer.release();
+            mediaMuxer = null;
+        }
     }
 
 }

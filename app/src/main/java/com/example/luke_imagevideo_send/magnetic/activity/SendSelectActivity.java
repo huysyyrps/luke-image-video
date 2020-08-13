@@ -2,6 +2,9 @@ package com.example.luke_imagevideo_send.magnetic.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.hardware.display.DisplayManager;
+import android.media.MediaMuxer;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,15 +30,19 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.magnetic.view.RecyclerViewDelegate;
+import com.example.luke_imagevideo_send.main.test.TestActivity;
+import com.example.luke_imagevideo_send.main.test.TestActivity1;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
 import com.mingle.sweetpick.ViewPagerDelegate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +68,7 @@ public class SendSelectActivity extends AppCompatActivity {
     private static boolean isExit = false;
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
+    MediaProjectionManager projectionManager;
     //推出程序
     Handler mHandler = new Handler() {
 
@@ -117,6 +125,7 @@ public class SendSelectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_select);
+        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
         sharePreferencesUtils = new SharePreferencesUtils();
         new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
@@ -153,7 +162,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        initData();
+                        initPermission();
                     }
 
                     @Override
@@ -166,8 +175,36 @@ public class SendSelectActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * 获取权限
+     */
+    private void initPermission() {
+        Intent intent = new Intent();
+        intent.setClassName("com.android.systemui", "com.android.systemui.media.MediaProjectionPermissionActivity");
+        startActivityForResult(intent, Constant.TAG_ONE);
+    }
+
+    /**
+     * 录屏权限回掉
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode==Constant.TAG_ONE){
+//            if (resultCode==RESULT_OK){
+        Constant.mediaProjection = projectionManager.getMediaProjection(resultCode, data);
+        initData();
+//            }
+//        }
+    }
+
+
     //设置SweetSheet上的数据
     public void initData() {
+
         ArrayList<MenuEntity> list = new ArrayList<>();
         //添加测试数据
         MenuEntity bean1 = new MenuEntity();
@@ -205,7 +242,8 @@ public class SendSelectActivity extends AppCompatActivity {
                 sharePreferencesUtils.setString(SendSelectActivity.this,"workCode",etWorkCode.getText().toString());
                 if (menuEntity.title.equals("本地存储")){
                     sharePreferencesUtils.setString(SendSelectActivity.this,"sendSelect","本地存储");
-                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
+//                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
+                    intent = new Intent(SendSelectActivity.this, TestActivity.class);
                     startActivity(intent);
                     finish();
                 }else if (menuEntity.title.equals("实时上传")){

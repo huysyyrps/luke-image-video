@@ -2,6 +2,7 @@ package com.example.luke_imagevideo_send.http.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.projection.MediaProjection;
 
 /**
  * @author: Allen.
@@ -86,6 +87,7 @@ public class SharePreferencesUtils {
         edit.putInt(key, value);
         edit.commit();
     }
+
 
 
     public static void setString(Context context, String key, String value) {

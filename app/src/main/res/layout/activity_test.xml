@@ -1,40 +1,49 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始" />
+
+
+        <Button
+            android:id="@+id/button_contro2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂停" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/redio_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/surfaceView"/>
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/sd_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+        <RadioButton
+            android:id="@+id/hd_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+    </RadioGroup>
 
+    <CheckBox
+        android:id="@+id/audio_check_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-    <ImageView
-        android:id="@+id/btn"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="50dp"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/rbcamera"/>
-    <ImageView
-        android:id="@+id/camera"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="50dp"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:layout_marginBottom="6dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/rbvideo"/>
-    <ImageView
-        android:id="@+id/change"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:layout_marginBottom="6dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/rbalbum"/>
-</RelativeLayout>
+</FrameLayout>

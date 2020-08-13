@@ -1,5 +1,7 @@
 package com.example.luke_imagevideo_send.http.base;
 
+import android.media.projection.MediaProjection;
+
 public class Constant {
 
     public static final int TAG_ONE=1;
@@ -11,5 +13,7 @@ public class Constant {
     public static final int TAG_SEVEN=7;
     public static final int TAG_EIGHT=8;
     public static final int TAG_NINE=9;
+
+    public static MediaProjection mediaProjection = null;
 
 }

@@ -50,7 +50,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.tvProgress)
     public void onViewClicked() {
-        Intent intent = new Intent(this, SendSelectActivity.class);
+        Intent intent = new Intent(this,  SendSelectActivity.class);
         startActivity(intent);
         mHandler.removeCallbacksAndMessages(null);
         finish();

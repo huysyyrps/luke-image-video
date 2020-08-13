@@ -39,6 +39,8 @@ import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.main.test.TestActivity;
+import com.example.luke_imagevideo_send.main.test.TestActivity1;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -92,7 +94,7 @@ public class MainActivity extends BaseActivity {
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
-
+    Intent intent;
     // 位置管理
     private LocationManager locationManager;
     private static boolean isExit = false;
@@ -393,9 +395,11 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
+                intent = new Intent(this, TestActivity.class);
+                startActivity(intent);
                 break;
             case R.id.rbAlbum:
-                Intent intent = new Intent(this, PhotoActivity.class);
+                intent = new Intent(this, TestActivity.class);
                 startActivity(intent);
                 break;
             case R.id.rbSetting:

@@ -5,24 +5,35 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.MANAGE_MEDIA_PROJECTION"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".main.test.TestActivity" />
+        <activity android:name=".main.test.TestActivity1"></activity>
+        <!-- android:requestLegacyExternalStorage="true" -->
+        <service android:name=".main.test.ScreenRecordService" />
+        <service android:name=".magnetic.service.ScreenRecordService" />
+
+        <activity android:name=".main.test.TestActivity"></activity>
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +42,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".camera.activity.PhotoActivity" />
-        <activity android:name=".magnetic.activity.SendSelectActivity"/>
-        <activity android:name=".magnetic.activity.MainActivity"/>
+        <activity android:name=".magnetic.activity.SendSelectActivity" />
+        <activity android:name=".magnetic.activity.MainActivity" />
     </application>
 
 </manifest>

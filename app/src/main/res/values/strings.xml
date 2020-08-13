@@ -7,4 +7,8 @@
     <string name="title_tips_cancel">取消</string>
     <string name="title_tips_checkname">命名</string>
     <string name="again_out">再点一次退出程序</string>
+    <string name="record_video_tip">停止录制</string>
+    <string name="can_not_record_tip">暂时无法录制</string>
+    <string name="record_space_tip">存储空间不足</string>
+    <string name="record_time_end_tip">录制已到限定时长</string>
 </resources>

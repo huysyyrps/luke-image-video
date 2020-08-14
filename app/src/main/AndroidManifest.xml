@@ -28,12 +28,8 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".main.test.TestActivity1"></activity>
-        <!-- android:requestLegacyExternalStorage="true" -->
-        <service android:name=".main.test.ScreenRecordService" />
         <service android:name=".magnetic.service.ScreenRecordService" />
 
-        <activity android:name=".main.test.TestActivity"></activity>
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

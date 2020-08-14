@@ -35,12 +35,9 @@ import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.magnetic.view.RecyclerViewDelegate;
-import com.example.luke_imagevideo_send.main.test.TestActivity;
-import com.example.luke_imagevideo_send.main.test.TestActivity1;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
-import com.mingle.sweetpick.ViewPagerDelegate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -162,7 +159,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        initPermission();
+                        initData();
                     }
 
                     @Override
@@ -175,32 +172,31 @@ public class SendSelectActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * 获取权限
-     */
-    private void initPermission() {
-        Intent intent = new Intent();
-        intent.setClassName("com.android.systemui", "com.android.systemui.media.MediaProjectionPermissionActivity");
-        startActivityForResult(intent, Constant.TAG_ONE);
-    }
+//    /**
+//     * 获取权限
+//     */
+//    private void initPermission() {
+//        Intent intent = new Intent();
+//        intent.setClassName("com.android.systemui", "com.android.systemui.media.MediaProjectionPermissionActivity");
+//        startActivityForResult(intent, Constant.TAG_ONE);
+//    }
 
-    /**
-     * 录屏权限回掉
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode==Constant.TAG_ONE){
-//            if (resultCode==RESULT_OK){
-        Constant.mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-        initData();
-//            }
-//        }
-    }
-
+//    /**
+//     * 录屏权限回掉
+//     * @param requestCode
+//     * @param resultCode
+//     * @param data
+//     */
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+////        if (requestCode==Constant.TAG_ONE){
+////            if (resultCode==RESULT_OK){
+//        Constant.mediaProjection = projectionManager.getMediaProjection(resultCode, data);
+//        initData();
+////            }
+////        }
+//    }
 
     //设置SweetSheet上的数据
     public void initData() {

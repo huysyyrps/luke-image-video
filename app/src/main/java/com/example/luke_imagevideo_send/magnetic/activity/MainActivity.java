@@ -569,8 +569,6 @@ public class MainActivity extends BaseActivity {
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
         format.setInteger(MediaFormat.KEY_IS_ADTS, 1);
-
-
         mediaCodec = MediaCodec.createEncoderByType("video/avc");
         mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         surface = mediaCodec.createInputSurface();

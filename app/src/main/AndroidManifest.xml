@@ -28,7 +28,6 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <service android:name=".magnetic.service.ScreenRecordService" />
 
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
@@ -39,7 +38,9 @@
         </activity>
         <activity android:name=".camera.activity.PhotoActivity" />
         <activity android:name=".magnetic.activity.SendSelectActivity" />
-        <activity android:name=".magnetic.activity.MainActivity" />
+        <activity
+            android:name=".magnetic.activity.MainActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

@@ -2,8 +2,14 @@ package com.example.luke_imagevideo_send.magnetic.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,10 +26,14 @@ import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -32,6 +42,7 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,7 +50,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import androidx.core.app.ActivityCompat;
+
+import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
@@ -48,6 +63,12 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.magnetic.util.AudioEncodeConfig;
+import com.example.luke_imagevideo_send.magnetic.util.Notifications;
+import com.example.luke_imagevideo_send.magnetic.util.ScreenRecorder;
+import com.example.luke_imagevideo_send.magnetic.util.VideoEncodeConfig;
+import com.example.luke_imagevideo_send.magnetic.view.NamedSpinner;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -56,10 +77,17 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.media.MediaFormat.MIMETYPE_AUDIO_AAC;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_AVC;
+import static android.os.Build.VERSION_CODES.M;
 import static com.example.luke_imagevideo_send.ApiAddress.api;
 
 public class MainActivity extends BaseActivity {
@@ -99,7 +127,6 @@ public class MainActivity extends BaseActivity {
     int height = 1920;
     int dpi = 1;
     Surface surface;
-    MediaProjectionManager projectionManager;
     MediaProjection mediaProjection;
     MediaCodec mediaCodec;
     MediaMuxer mediaMuxer;
@@ -109,10 +136,24 @@ public class MainActivity extends BaseActivity {
     String filePath;
     // 位置管理
     Intent captureIntent;
+    private static final int REQUEST_MEDIA_PROJECTION = 1;
+    private static final int REQUEST_PERMISSIONS = 2;
+    private MediaProjectionManager mMediaProjectionManager;
+    private Notifications mNotifications;
+    /**
+     * <b>NOTE:</b>
+     * {@code ScreenRecorder} should run in background Service
+     * instead of a foreground Activity in this demonstrate.
+     */
+    private ScreenRecorder mRecorder;
+    private MediaProjection mMediaProjection;
+    private VirtualDisplay mVirtualDisplay;
+
     private LocationManager locationManager;
     private static boolean isExit = false;
     private boolean muxerStarted = false;
-    private static final String TAG = "TAG";
+    static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
+    static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
 
     //推出程序
@@ -172,14 +213,19 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-        StartRecorder();
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+        mNotifications = new Notifications(getApplicationContext());
+        if (mMediaProjection == null) {
+            requestMediaProjection();
+        } else {
+            Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+            startCapturing(mMediaProjection);
+        }
         initTime();
         initGPS();
         sharePreferencesUtils = new SharePreferencesUtils();
         saveSelect = sharePreferencesUtils.getString(this,"sendSelect","");
-        Toast.makeText(this, saveSelect, Toast.LENGTH_SHORT).show();
         radioGroup.setVisibility(View.GONE);
 
         alertDialogUtil = new AlertDialogUtil(this);
@@ -353,7 +399,6 @@ public class MainActivity extends BaseActivity {
 //        locationListeners = null;
     }
 
-
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSetting})
     public void onClick(View view1) {
         switch (view1.getId()) {
@@ -380,7 +425,6 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".jpg";
                             }
-//                                saveBitmap(path,name,mBitmap);
                             saveImg(mBitmap, name, MainActivity.this);
                         }
 
@@ -395,7 +439,6 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".jpg";
                             }
-//                                saveBitmap(path, name, mBitmap);
                             saveImg(mBitmap, name, MainActivity.this);
                         }
 
@@ -404,7 +447,6 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".jpg";
                             }
-//                                saveBitmap(path, name, mBitmap);
                             saveImg(mBitmap, name, MainActivity.this);
                         }
                     });
@@ -413,45 +455,20 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
-                File file = new File(Environment.getExternalStorageDirectory(), "record-" + width + "x" + height + "-" + System.currentTimeMillis() + ".mp4");
-                filePath = file.getAbsolutePath();
-                if (mediaProjection==null){
-                    StartRecorder();
-                }else {
-                    radioGroup.setVisibility(View.GONE);
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                try {
-                                    prepareEncoder();
-                                    mediaMuxer = new MediaMuxer(filePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                virtualDisplay = mediaProjection.createVirtualDisplay(TAG + "-display",
-                                        width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
-                                        surface, null, null);
-                                recordVirtualDisplay();
-
-                            } finally {
-                                release();
-                            }
-                        }
-                    }.start();
-
-                    Toast.makeText(this, "Recorder is running...", Toast.LENGTH_SHORT).show();
-//                    startActivityForResult(captureIntent, Constant.TAG_TWO);
-//
-//                    Toast.makeText(this, "Recorder is running...", Toast.LENGTH_SHORT).show();
-                }
-                Handler mHandler = new Handler();
-                mHandler.postDelayed(new Runnable() {
-                    public void run() {
-                        StopRecorder();
+                if (mRecorder != null) {
+                    stopRecordingAndOpenFile(view1.getContext());
+                } else if (hasPermissions()) {
+                    if (mMediaProjection == null) {
+                        requestMediaProjection();
+                    } else {
+                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+                        startCapturing(mMediaProjection);
                     }
-                }, 3500); //延迟3.5秒跳转
+                } else if (Build.VERSION.SDK_INT >= M) {
+                    requestPermissions();
+                } else {
+                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.rbAlbum:
 //                intent = new Intent(this, TestActivity.class);
@@ -471,7 +488,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 保存方法
+     * 保存图片方法
      */
     public boolean saveImg(Bitmap bitmap, String name, Context context) {
         try {
@@ -510,99 +527,244 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
+    private void requestMediaProjection() {
+        Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(captureIntent, REQUEST_MEDIA_PROJECTION);
+    }
+
+    private void startCapturing(MediaProjection mediaProjection) {
+        VideoEncodeConfig video = createVideoConfig();
+        AudioEncodeConfig audio = createAudioConfig(); // audio can be null
+        if (video == null) {
+            Toast.makeText(this, "Create ScreenRecorder failure", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File dir = new File(Environment.getExternalStorageDirectory()+"/LUKEVideo/");
+        if (!dir.exists() && !dir.mkdirs()) {
+            cancelRecorder();
+            return;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+        final File file = new File(dir, "LUKEVideo-" + format.format(new Date())+ "-" + video.width + "x" + video.height + ".mp4");
+        Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
+        mRecorder = newRecorder(mediaProjection, video, audio, file);
+        if (hasPermissions()) {
+            startRecorder();
+        } else {
+            cancelRecorder();
+        }
+    }
+
+    private ScreenRecorder newRecorder(MediaProjection mediaProjection, VideoEncodeConfig video,
+                                       AudioEncodeConfig audio, File output) {
+        final VirtualDisplay display = getOrCreateVirtualDisplay(mediaProjection, video);
+        ScreenRecorder r = new ScreenRecorder(video, audio, display, output.getAbsolutePath());
+        r.setCallback(new ScreenRecorder.Callback() {
+            long startTime = 0;
+
+            @Override
+            public void onStop(Throwable error) {
+                runOnUiThread(() -> stopRecorder());
+                if (error != null) {
+                    toast("Recorder error ! See logcat for more details");
+                    error.printStackTrace();
+                    output.delete();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                            .addCategory(Intent.CATEGORY_DEFAULT)
+                            .setData(Uri.fromFile(output));
+                    sendBroadcast(intent);
+                }
+            }
+
+            @Override
+            public void onStart() {
+                mNotifications.recording(0);
+            }
+
+            @Override
+            public void onRecording(long presentationTimeUs) {
+                if (startTime <= 0) {
+                    startTime = presentationTimeUs;
+                }
+                long time = (presentationTimeUs - startTime) / 1000;
+                mNotifications.recording(time);
+            }
+        });
+        return r;
+    }
+
+    private VirtualDisplay getOrCreateVirtualDisplay(MediaProjection mediaProjection, VideoEncodeConfig config) {
+        if (mVirtualDisplay == null) {
+            mVirtualDisplay = mediaProjection.createVirtualDisplay("ScreenRecorder-display0",
+                    config.width, config.height, 1 /*dpi*/,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                    null /*surface*/, null, null);
+        } else {
+            // resize if size not matched
+            Point size = new Point();
+            mVirtualDisplay.getDisplay().getSize(size);
+            if (size.x != config.width || size.y != config.height) {
+                mVirtualDisplay.resize(config.width, config.height, 1);
+            }
+        }
+        return mVirtualDisplay;
+    }
+
+    private AudioEncodeConfig createAudioConfig() {
+        String codec = "c2.android.aac.encoder";
+        int bitrate = 80000;
+        int samplerate = 44100;
+        int channelCount = 1;
+        int profile = 1;
+
+        return new AudioEncodeConfig(codec, AUDIO_AAC, bitrate, samplerate, channelCount, profile);
+    }
+
+    private VideoEncodeConfig createVideoConfig() {
+        final String codec = "OMX.hisi.video.encoder.avc";
+        // video size
+        int width = 1080;
+        int height = 1920;
+        int framerate = 15;
+        int iframe =1;
+        int bitrate = 600000;
+        MediaCodecInfo.CodecProfileLevel profileLevel = null;
+        return new VideoEncodeConfig(width, height, bitrate, framerate, iframe, codec, VIDEO_AVC, profileLevel);
+    }
+
+    private void startRecorder() {
+        if (mRecorder == null) return;
+        mRecorder.start();
+        registerReceiver(mStopActionReceiver, new IntentFilter(ACTION_STOP));
+    }
+
+    private void stopRecorder() {
+        mNotifications.clear();
+        if (mRecorder != null) {
+            mRecorder.quit();
+        }
+        mRecorder = null;
+        try {
+            unregisterReceiver(mStopActionReceiver);
+        } catch (Exception e) {
+            //ignored
+        }
+    }
+
+    private void cancelRecorder() {
+        if (mRecorder == null) return;
+        Toast.makeText(mNotifications, "Permission denied! Screen recorder is cancel", Toast.LENGTH_SHORT).show();
+        stopRecorder();
+    }
+
+    @TargetApi(M)
+    private void requestPermissions() {
+        String[] permissions = new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO};
+        boolean showRationale = false;
+        for (String perm : permissions) {
+            showRationale |= shouldShowRequestPermissionRationale(perm);
+        }
+        if (!showRationale) {
+            requestPermissions(permissions, REQUEST_PERMISSIONS);
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setMessage("Using your mic to record audio and your sd card to save video file")
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                        requestPermissions(permissions, REQUEST_PERMISSIONS))
+                .setNegativeButton(android.R.string.cancel, null)
+                .create()
+                .show();
+    }
+
+    private boolean hasPermissions() {
+        PackageManager pm = getPackageManager();
+        String packageName = getPackageName();
+        int granted = pm.checkPermission(RECORD_AUDIO, packageName);
+        return granted == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void toast(String message, Object... args) {
+
+        int length_toast = Locale.getDefault().getCountry().equals("BR") ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+        // In Brazilian Portuguese this may take longer to read
+
+        Toast toast = Toast.makeText(this,
+                (args.length == 0) ? message : String.format(Locale.US, message, args),
+                length_toast);
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            runOnUiThread(toast::show);
+        } else {
+            toast.show();
+        }
+    }
+
+    private void stopRecordingAndOpenFile(Context context) {
+        File file = new File(mRecorder.getSavedPath());
+        stopRecorder();
+        Toast.makeText(context, "Using your mic to record audio and your sd card to save video file", Toast.LENGTH_SHORT).show();
+        StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
+        try {
+            // disable detecting FileUriExposure on public file
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
+//            viewResult(file);
+        } finally {
+            StrictMode.setVmPolicy(vmPolicy);
+        }
+    }
+
+    private void viewResult(File file) {
+        Intent view = new Intent(Intent.ACTION_VIEW);
+        view.addCategory(Intent.CATEGORY_DEFAULT);
+        view.setDataAndType(Uri.fromFile(file), VIDEO_AVC);
+        view.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(view);
+        } catch (ActivityNotFoundException e) {
+            // no activity can open this video
+        }
+    }
+
+    public static final String ACTION_STOP = BuildConfig.APPLICATION_ID + ".action.STOP";
+
+    private BroadcastReceiver mStopActionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_STOP.equals(intent.getAction())) {
+                stopRecordingAndOpenFile(context);
+            }
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case Constant.TAG_ONE:
-                mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-                if (mediaProjection == null) {
-                    Log.e("@@", "media projection is null");
-                    return;
-                }
-                break;
-        }
+        if (requestCode == REQUEST_MEDIA_PROJECTION) {
+            // NOTE: Should pass this result data into a Service to run ScreenRecorder.
+            // The following codes are merely exemplary.
 
+            MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
+            if (mediaProjection == null) {
+                Log.e("@@", "media projection is null");
+                return;
+            }
+
+            mMediaProjection = mediaProjection;
+            mMediaProjection.registerCallback(mProjectionCallback, new Handler());
+//            startCapturing(mMediaProjection);
+        }
     }
 
-    private void recordVirtualDisplay() {
-        while (!mQuit.get()) {
-            int index = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
-            if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                resetOutputFormat();
-            } else if (index >= 0) {
-                encodeToVideoTrack(index);
-                mediaCodec.releaseOutputBuffer(index, false);
+    private MediaProjection.Callback mProjectionCallback = new MediaProjection.Callback() {
+        @Override
+        public void onStop() {
+            if (mRecorder != null) {
+                stopRecorder();
             }
         }
-    }
-
-    private void encodeToVideoTrack(int index) {
-        ByteBuffer encodedData = mediaCodec.getOutputBuffer(index);
-
-        if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
-            bufferInfo.size = 0;
-        }
-        if (bufferInfo.size == 0) {
-            encodedData = null;
-        }
-        if (encodedData != null) {
-            encodedData.position(bufferInfo.offset);
-            encodedData.limit(bufferInfo.offset + bufferInfo.size);
-            mediaMuxer.writeSampleData(videoTrackIndex, encodedData, bufferInfo);
-        }
-    }
-
-    private void resetOutputFormat() {
-        MediaFormat newFormat = mediaCodec.getOutputFormat();
-        videoTrackIndex = mediaMuxer.addTrack(newFormat);
-        mediaMuxer.start();
-        muxerStarted = true;
-    }
-
-    private void prepareEncoder() throws IOException {
-        MediaFormat format = MediaFormat.createVideoFormat("video/avc", width, height);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 6000000);
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
-        format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-        format.setInteger(MediaFormat.KEY_IS_ADTS, 1);
-        mediaCodec = MediaCodec.createEncoderByType("video/avc");
-        mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        surface = mediaCodec.createInputSurface();
-        mediaCodec.start();
-    }
-
-    public void StartRecorder() {
-        captureIntent = projectionManager.createScreenCaptureIntent();
-        startActivityForResult(captureIntent, Constant.TAG_ONE);
-    }
-
-    public void StopRecorder() {
-        mQuit.set(true);
-        radioGroup.setVisibility(View.VISIBLE);
-        Toast.makeText(this, "Recorder stop", Toast.LENGTH_SHORT).show();
-    }
-
-    private void release() {
-        if (mediaCodec != null) {
-            mediaCodec.stop();
-            mediaCodec.release();
-            mediaCodec = null;
-        }
-        if (virtualDisplay != null) {
-            virtualDisplay.release();
-        }
-//        if (mediaProjection != null) {
-////            mediaProjection.stop();
-////        }
-        if (mediaMuxer != null) {
-            mediaMuxer.release();
-            mediaMuxer = null;
-        }
-        mQuit.set(false);
-    }
+    };
 
 }

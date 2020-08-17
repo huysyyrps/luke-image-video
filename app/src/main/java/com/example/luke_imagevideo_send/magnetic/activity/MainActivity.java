@@ -16,6 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -76,9 +78,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -123,17 +129,6 @@ public class MainActivity extends BaseActivity {
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
-    int width = 1080;
-    int height = 1920;
-    int dpi = 1;
-    Surface surface;
-    MediaProjection mediaProjection;
-    MediaCodec mediaCodec;
-    MediaMuxer mediaMuxer;
-    VirtualDisplay virtualDisplay;
-    private MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-    private int videoTrackIndex = -1;
-    String filePath;
     // 位置管理
     Intent captureIntent;
     private static final int REQUEST_MEDIA_PROJECTION = 1;
@@ -155,6 +150,8 @@ public class MainActivity extends BaseActivity {
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
+    // 卫星信号
+    private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>();
 
     //推出程序
     Handler mHandler = new Handler() {
@@ -213,7 +210,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        webView.setVisibility(View.GONE);
+        initGPS();
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        initTime();
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
         if (mMediaProjection == null) {
@@ -222,10 +222,8 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
             startCapturing(mMediaProjection);
         }
-        initTime();
-        initGPS();
         sharePreferencesUtils = new SharePreferencesUtils();
-        saveSelect = sharePreferencesUtils.getString(this,"sendSelect","");
+        saveSelect = sharePreferencesUtils.getString(this, "sendSelect", "");
         radioGroup.setVisibility(View.GONE);
 
         alertDialogUtil = new AlertDialogUtil(this);
@@ -261,7 +259,6 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 webView.setVisibility(View.GONE);
                 imageView.setVisibility(View.GONE);
@@ -335,27 +332,53 @@ public class MainActivity extends BaseActivity {
     private void initGPS() {
         //获取定位管理器
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.addGpsStatusListener(statusListener);
+        if (!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(this, "请开启GPS模块", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //取当前状态
+        GpsStatus status = locationManager.getGpsStatus(null);
         //设置定位信息
-        //坐标位置改变，回调此监听方法
         LocationListener listener = new LocationListener() {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 // TODO Auto-generated method stub
-                Log.e("XXX","1");
+                Log.e("XXX", "1");
 
             }
 
             @Override
             public void onProviderEnabled(String provider) {
                 // TODO Auto-generated method stub
-                Log.e("XXX","11");
+                Log.e("XXX", "11");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
                 // TODO Auto-generated method stub
-                Log.e("XXX","111");
+                Log.e("XXX", "111");
             }
 
             //位置改变的时候调用，这个方法用于返回一些位置信息
@@ -389,6 +412,49 @@ public class MainActivity extends BaseActivity {
             return;
         }
         locationManager.requestLocationUpdates("gps", 10000, 0, listener);//Register for location updates
+    }
+
+    private final GpsStatus.Listener statusListener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) { // GPS状态变化时的回调，如卫星数
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            GpsStatus status = locationManager.getGpsStatus(null); //取当前状态
+            updateGpsStatus(event, status);
+        }
+    };
+
+    private void updateGpsStatus(int event, GpsStatus status) {
+        if (status != null) {
+            alertDialogUtil.showSmallDialogCli("当前区域无GPS信号", new AlertDialogCallBack() {
+                @Override
+                public void confirm(String name) {
+                    finish();
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+
+                @Override
+                public void save(String name) {
+
+                }
+
+                @Override
+                public void checkName(String name) {
+
+                }
+            });
+        }
     }
 
     @Override

@@ -11,10 +11,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.location.GpsSatellite;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,6 +23,7 @@ import android.media.MediaCodecInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,12 +35,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -50,15 +54,14 @@ import androidx.core.app.ActivityCompat;
 import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.AlbumActivity;
-import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
-import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
-import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
-import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
+import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
+import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.views.Header;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,9 +69,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -109,39 +110,29 @@ public class MainActivity extends BaseActivity {
     LinearLayout linearLayout;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
-    Bitmap mBitmap;
-    String name = "";
     @BindView(R.id.rbSound)
     RadioButton rbSound;
-    private String saveSelect;
+
+    Bitmap mBitmap;
+    String name = "";
+
     Handler handler;
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
-    SharePreferencesUtils sharePreferencesUtils;
-    // 位置管理
-    Intent captureIntent;
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private static final int REQUEST_PERMISSIONS = 2;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
-    /**
-     * <b>NOTE:</b>
-     * {@code ScreenRecorder} should run in background Service
-     * instead of a foreground Activity in this demonstrate.
-     */
     private ScreenRecorder mRecorder;
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
 
     private LocationManager locationManager;
     private static boolean isExit = false;
-    private boolean muxerStarted = false;
     private String haveAudio = "noAudio";
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
-    // 卫星信号
-    private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>();
 
     //推出程序
     Handler mHandler = new Handler() {
@@ -199,8 +190,13 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        webView.setVisibility(View.GONE);
-        radioGroup.setVisibility(View.GONE);
+        header.setVisibility(View.GONE);
+        imageView.setVisibility(View.GONE);
+        frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
+        alertDialogUtil = new AlertDialogUtil(this);
+        // 设置全屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         initGPS();
         initTime();
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
@@ -208,29 +204,11 @@ public class MainActivity extends BaseActivity {
         if (mMediaProjection == null) {
             requestMediaProjection();
         }
-        sharePreferencesUtils = new SharePreferencesUtils();
-        saveSelect = sharePreferencesUtils.getString(this, "sendSelect", "");
-        radioGroup.setVisibility(View.GONE);
 
-        alertDialogUtil = new AlertDialogUtil(this);
-        //声明WebSettings子类
-        WebSettings webSettings = webView.getSettings();
-        //"所有权限申请完成"
-        frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
-        radioGroup.setVisibility(View.VISIBLE);
-        header.setVisibility(View.GONE);
-        //设置自适应屏幕，两者合用
-        //将图片调整到适合webview的大小
-        webSettings.setUseWideViewPort(true);
-        // 缩放至屏幕的大小
-        webSettings.setLoadWithOverviewMode(true);
-        //关闭webview中缓存
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        //不使用缓存
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        //全屏设置
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        webView.setBackgroundColor(Color.BLACK);
+        webView.getSettings().setJavaScriptEnabled(true);
+        //访问网页
+        webView.loadUrl(api + "?action=stream");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -250,18 +228,30 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (loadError != true) {
-                    webView.setVisibility(View.VISIBLE);
-                    imageView.setVisibility(View.GONE);
-                    linearLayout.setVerticalGravity(View.VISIBLE);
-                }
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                super.onReceivedSslError(view, handler, error);
+                handler.proceed();
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                //DialogShow.showRoundProcessDialog();
             }
         });
-        //访问网页
-        webView.loadUrl(api + "?action=stream");
-        webView.setVisibility(View.VISIBLE);
+        //声明WebSettings子类
+        WebSettings webSettings = webView.getSettings();
+        //设置自适应屏幕，两者合用
+        //将图片调整到适合webview的大小
+        webSettings.setUseWideViewPort(true);
+        // 缩放至屏幕的大小
+        webSettings.setLoadWithOverviewMode(true);
+        //关闭webview中缓存
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        //不使用缓存
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //全屏设置
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
     }
 
     @Override
@@ -587,13 +577,13 @@ public class MainActivity extends BaseActivity {
             return;
         }
         File dir = null;
-        if (haveAudio.equals("Audio")){
+        if (haveAudio.equals("Audio")) {
             dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
             }
-        }else if (haveAudio.equals("noAudio")){
+        } else if (haveAudio.equals("noAudio")) {
             dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
@@ -603,10 +593,10 @@ public class MainActivity extends BaseActivity {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
         File file = null;
-        if (haveAudio.equals("Audio")){
+        if (haveAudio.equals("Audio")) {
             file = new File(dir, "LUKEVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
-        }else if (haveAudio.equals("noAudio")){
-            file  = new File(dir, "LUKENOVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
+        } else if (haveAudio.equals("noAudio")) {
+            file = new File(dir, "LUKENOVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
         }
 //        final File file = new File(dir, "LUKEVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
         Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);

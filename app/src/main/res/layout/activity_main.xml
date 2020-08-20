@@ -22,6 +22,7 @@
         android:background="@drawable/linelayout_radion">
     </WebView>
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -55,6 +56,7 @@
         <RadioButton
             android:id="@+id/rbSetting"
             style="@style/RadionButton"
+            android:visibility="gone"
             android:drawableLeft="@drawable/rbsetting"/>
 
         <RadioButton

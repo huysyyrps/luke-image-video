@@ -52,7 +52,7 @@ public class VideoHaveAudioFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_photo, container, false);
         ButterKnife.bind(this, view);
         getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<File>(getActivity(), R.layout.album_item, imagePaths) {
             @Override
@@ -64,7 +64,8 @@ public class VideoHaveAudioFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), SeeImageOrVideoActivity.class);
-                        intent.putExtra("path", o);
+                        intent.putExtra("path", o.getAbsolutePath());
+                        intent.putExtra("tag", "video");
                         startActivity(intent);
                     }
                 });
@@ -152,7 +153,11 @@ public class VideoHaveAudioFragment extends Fragment {
         } finally {
             mmr.release();
         }
-        return timeParse(Long.parseLong(duration));
+        if (duration!=null){
+            return timeParse(Long.parseLong(duration));
+        }else {
+            return "null";
+        }
     }
 
     /**

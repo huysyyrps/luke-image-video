@@ -213,7 +213,6 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         ImageView iv = getView(viewId);
         Glide.with(context)
                 .load(path)
-                .centerCrop()
                 .placeholder(R.color.app_color_f6)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv);

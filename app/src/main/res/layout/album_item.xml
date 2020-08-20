@@ -12,15 +12,14 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="130dp"
+        android:scaleType="fitXY"
         tools:src="@color/app_color_f6" />
 
     <CheckBox
         android:id="@+id/cbSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
         android:scaleType="centerInside"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        style="@style/CustomCheckboxTheme"/>
 
 
     <TextView

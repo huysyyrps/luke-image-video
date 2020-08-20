@@ -46,7 +46,7 @@
         <RadioButton
             android:id="@+id/rbVideo"
             style="@style/RadionButton"
-            android:drawableLeft="@drawable/rbvideo"/>
+            android:drawableLeft="@drawable/ic_nosound"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
@@ -62,7 +62,7 @@
         <RadioButton
             android:id="@+id/rbSound"
             style="@style/RadionButton"
-            android:drawableLeft="@drawable/ic_nosound"/>
+            android:drawableLeft="@drawable/ic_sound"/>
     </RadioGroup>
 
     <LinearLayout

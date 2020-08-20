@@ -413,14 +413,10 @@ public class MainActivity extends BaseActivity {
 //        locationListeners = null;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSetting, R.id.rbSound})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
-                if (webView.getVisibility() == View.GONE) {
-                    Toast.makeText(this, "app未连接到设备,暂不能拍照", Toast.LENGTH_SHORT).show();
-                    break;
-                }
                 radioGroup.setVisibility(View.GONE);
                 name = getNowDate();
                 View view = view1.getRootView();
@@ -446,6 +442,7 @@ public class MainActivity extends BaseActivity {
                         public void cancel() {
                             webView.setVisibility(View.VISIBLE);
                             imageView.setVisibility(View.GONE);
+                            radioGroup.setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -469,11 +466,7 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
-                if (webView.getVisibility() == View.GONE) {
-                    Toast.makeText(this, "app未连接到设备,暂不能录屏", Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                haveAudio = "Audio";
+                haveAudio = "noAudio";
                 if (mRecorder != null) {
                     stopRecordingAndOpenFile(view1.getContext());
                 } else if (hasPermissions()) {
@@ -494,7 +487,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.rbSound:
-                haveAudio = "noAudio";
+                haveAudio = "Audio";
                 if (mRecorder != null) {
                     stopRecordingAndOpenFile(view1.getContext());
                 } else if (hasPermissions()) {
@@ -509,8 +502,6 @@ public class MainActivity extends BaseActivity {
                 } else {
                     Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case R.id.rbSetting:
                 break;
         }
     }
@@ -677,8 +668,10 @@ public class MainActivity extends BaseActivity {
     private VideoEncodeConfig createVideoConfig() {
         final String codec = "OMX.hisi.video.encoder.avc";
         // video size
-        int width = 1080;
-        int height = 1920;
+        int width = 570;
+        int height = 350;
+//        int width = 1080;
+//        int height = 1920;
         int framerate = 15;
         int iframe = 1;
         int bitrate = 600000;

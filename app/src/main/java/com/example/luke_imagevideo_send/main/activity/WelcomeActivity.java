@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.views.CircleTextProgressbar;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
-import com.example.luke_imagevideo_send.magnetic.activity.SendSelectActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

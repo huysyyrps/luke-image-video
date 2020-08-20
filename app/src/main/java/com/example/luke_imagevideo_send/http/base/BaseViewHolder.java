@@ -1,12 +1,15 @@
 package com.example.luke_imagevideo_send.http.base;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -15,9 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.luke_imagevideo_send.MyApplication;
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.camera.activity.PhotoActivity;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
@@ -175,6 +176,18 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
+     * checkBox选择事件
+     * @param viewId
+     * @param listener
+     * @return
+     */
+    public BaseViewHolder setCheckClickListener(int viewId, CompoundButton.OnClickListener listener) {
+        CheckBox view = getView(viewId);
+        view.setOnClickListener(listener);
+        return this;
+    }
+
+    /**
      * 设置图片
      */
     public BaseViewHolder setGile(Context context,int viewId, String path, LocalMedia media) {
@@ -192,5 +205,26 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
                 .into(iv);
         return this;
     }
+
+    /**
+     * 设置图片
+     */
+    public BaseViewHolder setImage (Context context,int viewId, String path) {
+        ImageView iv = getView(viewId);
+        Glide.with(context)
+                .load(path)
+                .centerCrop()
+                .placeholder(R.color.app_color_f6)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(iv);
+        return this;
+    }
+
+    public BaseViewHolder setBitmap (int viewId, Bitmap bitmap) {
+        ImageView imageView = getView(viewId);
+        imageView.setImageBitmap(bitmap);
+        return this;
+    }
+
 
 }

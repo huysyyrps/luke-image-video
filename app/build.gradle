@@ -72,5 +72,7 @@ dependencies {
     //动态底部弹出框
     implementation 'com.github.zzz40500:AndroidSweetSheet:1.1.0'
     implementation 'com.hjq:toast:5.2'
+    //tabLayout
+    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
 }

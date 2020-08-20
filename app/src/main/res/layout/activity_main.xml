@@ -56,6 +56,11 @@
             android:id="@+id/rbSetting"
             style="@style/RadionButton"
             android:drawableLeft="@drawable/rbsetting"/>
+
+        <RadioButton
+            android:id="@+id/rbSound"
+            style="@style/RadionButton"
+            android:drawableLeft="@drawable/ic_nosound"/>
     </RadioGroup>
 
     <LinearLayout

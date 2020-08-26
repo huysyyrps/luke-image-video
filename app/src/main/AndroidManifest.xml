@@ -18,7 +18,8 @@
     <uses-permission
         android:name="android.permission.MANAGE_MEDIA_PROJECTION"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -30,13 +31,16 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity"></activity>
-        <activity android:name=".chifen.camera.activity.AlbumActivity" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+        <activity android:name=".main.activity.PermissionActivity"></activity>
+        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
+        <activity android:name=".chifen.camera.activity.AlbumActivity">
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
@@ -49,6 +53,7 @@
         <activity
             android:name=".chifen.magnetic.activity.MainActivity"
             android:screenOrientation="landscape" />
+        <activity android:name=".main.activity.CaptureActivity" />
     </application>
 
 </manifest>

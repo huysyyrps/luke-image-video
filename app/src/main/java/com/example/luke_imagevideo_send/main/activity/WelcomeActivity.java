@@ -32,7 +32,7 @@ public class WelcomeActivity extends AppCompatActivity {
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 //你需要跳转的地方的代码
-                Intent intent=new Intent(WelcomeActivity.this, SendSelectActivity.class);
+                Intent intent=new Intent(WelcomeActivity.this, PermissionActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -49,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.tvProgress)
     public void onViewClicked() {
-        Intent intent = new Intent(this,  SendSelectActivity.class);
+        Intent intent = new Intent(this,  PermissionActivity.class);
         startActivity(intent);
         mHandler.removeCallbacksAndMessages(null);
         finish();

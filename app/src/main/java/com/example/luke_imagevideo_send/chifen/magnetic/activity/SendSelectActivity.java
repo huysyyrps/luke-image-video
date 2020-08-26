@@ -20,6 +20,7 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
+import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
@@ -122,37 +123,42 @@ public class SendSelectActivity extends AppCompatActivity {
             }
         });
 
-        List<PermissionItem> mList = new ArrayList<PermissionItem>();
-        mList.add(new PermissionItem(Manifest.permission.RECORD_AUDIO, "录音", R.drawable.permission_ic_phone));
-        mList.add(new PermissionItem(Manifest.permission.CAMERA, "照相机", R.drawable.permission_ic_camera));
-        mList.add(new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "位置", R.drawable.permission_ic_location));
-        mList.add(new PermissionItem(Manifest.permission.READ_EXTERNAL_STORAGE, "读取文件", R.drawable.permission_ic_storage));
-        mList.add(new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, "写入文件", R.drawable.permission_ic_storage));
-        HiPermission.create(SendSelectActivity.this)
-                .title("亲爱的用户")
-                .permissions(mList)
-                .filterColor(ResourcesCompat.getColor(getResources(), R.color.green, getTheme()))//图标的颜色
-                .animStyle(R.style.PermissionAnimScale)//设置动画
-                .msg("此应用需要获取以下权限")
-                .checkMutiPermission(new PermissionCallback() {
-                    @Override
-                    public void onClose() {
-                        Log.e("TAG", "close");
-                    }
+        LoadingDialog loadingDialog = new LoadingDialog(this,"连接服务中",R.mipmap.ic_dialog_loading);
+        loadingDialog.show();
+        connectModBus();
 
-                    @Override
-                    public void onFinish() {
-                        initData();
-                    }
+        initData();
+    }
 
-                    @Override
-                    public void onDeny(String permission, int position) {
-                    }
-
-                    @Override
-                    public void onGuarantee(String permission, int position) {
-                    }
-                });
+    /**
+     * 连接modbus
+     */
+    private void connectModBus() {
+        String host = "";
+        String port = "";
+//        param = TcpParam.create(host, port)
+//                .setTimeout(1000)
+//                .setRetries(0)
+//                .setEncapsulated(false)
+//                .setKeepAlive(true);
+//
+//        ModbusManager.get().closeModbusMaster();
+//        ModbusManager.get().init(param, new ModbusCallback<ModbusMaster>() {
+//        @Override
+//        public void onSuccess(ModbusMaster modbusMaster) {
+//            showOneToast("打开成功");
+//        }
+//
+//        @Override
+//        public void onFailure(Throwable tr) {
+//            showOneToast("打开失败," + tr);
+//        }
+//
+//        @Override
+//        public void onFinally() {
+//            updateDeviceSwitchButton();
+//        }
+//    });
     }
 
 //    /**

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
@@ -24,9 +25,12 @@ import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
+import com.example.luke_imagevideo_send.modbus.Modbus4jUtils;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
+import com.serotonin.modbus4j.ModbusMaster;
+import com.serotonin.modbus4j.exception.ModbusInitException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,67 +129,15 @@ public class SendSelectActivity extends AppCompatActivity {
 
         LoadingDialog loadingDialog = new LoadingDialog(this,"连接服务中",R.mipmap.ic_dialog_loading);
         loadingDialog.show();
-        connectModBus();
-
+        try {
+            ModbusMaster master = Modbus4jUtils.getMaster();
+            Toast.makeText(this, "zzzzzz", Toast.LENGTH_SHORT).show();
+        } catch (ModbusInitException e) {
+            e.printStackTrace();
+        }
         initData();
     }
 
-    /**
-     * 连接modbus
-     */
-    private void connectModBus() {
-        String host = "";
-        String port = "";
-//        param = TcpParam.create(host, port)
-//                .setTimeout(1000)
-//                .setRetries(0)
-//                .setEncapsulated(false)
-//                .setKeepAlive(true);
-//
-//        ModbusManager.get().closeModbusMaster();
-//        ModbusManager.get().init(param, new ModbusCallback<ModbusMaster>() {
-//        @Override
-//        public void onSuccess(ModbusMaster modbusMaster) {
-//            showOneToast("打开成功");
-//        }
-//
-//        @Override
-//        public void onFailure(Throwable tr) {
-//            showOneToast("打开失败," + tr);
-//        }
-//
-//        @Override
-//        public void onFinally() {
-//            updateDeviceSwitchButton();
-//        }
-//    });
-    }
-
-//    /**
-//     * 获取权限
-//     */
-//    private void initPermission() {
-//        Intent intent = new Intent();
-//        intent.setClassName("com.android.systemui", "com.android.systemui.media.MediaProjectionPermissionActivity");
-//        startActivityForResult(intent, Constant.TAG_ONE);
-//    }
-
-//    /**
-//     * 录屏权限回掉
-//     * @param requestCode
-//     * @param resultCode
-//     * @param data
-//     */
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-////        if (requestCode==Constant.TAG_ONE){
-////            if (resultCode==RESULT_OK){
-//        Constant.mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-//        initData();
-////            }
-////        }
-//    }
 
     //设置SweetSheet上的数据
     public void initData() {

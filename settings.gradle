@@ -1,2 +1,2 @@
-include ':app',':picture_library', ':ucrop'
+include ':app',
 rootProject.name = "luke-imagevideo-send"

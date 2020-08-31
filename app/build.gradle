@@ -31,6 +31,13 @@ android {
         }
     }
 
+    configurations {
+        all {
+            exclude module: 'httpclient'
+            exclude module: 'commons-logging'
+        }
+    }
+
 }
 
 dependencies {
@@ -75,5 +82,7 @@ dependencies {
     implementation 'com.hjq:toast:5.2'
     //tabLayout
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+    // modbus4j
+    implementation 'com.github.licheedev:modbus4j:v3.0.6-alpha1'
 
 }

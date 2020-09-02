@@ -31,7 +31,8 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".main.activity.PermissionActivity"></activity>
+        <activity android:name=".chifen.magnetic.activity.SettingActivity"></activity>
+        <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity">
 

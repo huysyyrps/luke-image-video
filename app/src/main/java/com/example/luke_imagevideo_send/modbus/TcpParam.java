@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.modbus;
 
+
 import com.serotonin.modbus4j.ModbusFactory;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.ip.IpParameters;
@@ -7,7 +8,7 @@ import com.serotonin.modbus4j.ip.IpParameters;
 /**
  * TCP参数
  */
-public class TcpParam implements ModbusParam<TcpParam> {
+public class TcpParam implements ModbusParam<TcpParam>, com.licheedev.modbus4android.ModbusParam {
 
     private final IpParameters mParameters;
     /**

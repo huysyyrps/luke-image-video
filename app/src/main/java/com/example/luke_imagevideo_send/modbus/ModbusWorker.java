@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.licheedev.modbus4android.param.TcpParam;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
@@ -281,7 +282,7 @@ public class ModbusWorker implements IModbusWorker {
      * @return
      */
     @NonNull
-    private Callable<ModbusMaster> callableInit(final ModbusParam param) {
+    private Callable<ModbusMaster> callableInit(final TcpParam param) {
         return new Callable<ModbusMaster>() {
             @Override
             public ModbusMaster call() throws Exception {
@@ -326,7 +327,7 @@ public class ModbusWorker implements IModbusWorker {
      * @throws ModbusInitException
      */
     @NonNull
-    public synchronized ModbusMaster syncInit(final ModbusParam param)
+    public synchronized ModbusMaster syncInit(final TcpParam param)
         throws InterruptedException, ExecutionException, ModbusTransportException,
         ModbusInitException, ModbusRespException {
 
@@ -340,7 +341,7 @@ public class ModbusWorker implements IModbusWorker {
      * @return
      */
     @Override
-    public Observable<ModbusMaster> rxInit(final ModbusParam param) {
+    public Observable<ModbusMaster> rxInit(final TcpParam param) {
         return getRxObservable(callableInit(param)).subscribeOn(Schedulers.io());
     }
 
@@ -351,7 +352,7 @@ public class ModbusWorker implements IModbusWorker {
      * @param callback
      */
     @Override
-    public void init(final ModbusParam param, final ModbusCallback<ModbusMaster> callback) {
+    public void init(final TcpParam param, final ModbusCallback<ModbusMaster> callback) {
 
         rxInit(param).observeOn(AndroidSchedulers.mainThread()).doFinally(new Action() {
             @Override

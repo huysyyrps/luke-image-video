@@ -7,7 +7,7 @@ import com.serotonin.modbus4j.ModbusMaster;
  *
  * @param <T>
  */
-public interface ModbusParam<T extends ModbusParam> {
+public interface ModbusParam<T extends com.licheedev.modbus4android.ModbusParam> {
 
     /**
      * 默认超时（毫秒）

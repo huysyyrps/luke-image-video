@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.luke_imagevideo_send.chifen.magnetic.activity.SettingActivity">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="设置"
+        app:header_is_left_iv_visiable="false">
+    </com.example.luke_imagevideo_send.http.views.Header>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="交流模式" />
+        <Switch
+            android:id="@+id/switchJL"
+            style="@style/TextView" />
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="直流模式"/>
+        <Switch
+            android:id="@+id/switchZL"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="黑光模式"/>
+        <Switch
+            android:id="@+id/switchHG"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="白光模式"/>
+        <Switch
+            android:id="@+id/switchBG"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="点动模式"/>
+        <Switch
+            android:id="@+id/switchDD"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="联动模式"/>
+        <Switch
+            android:id="@+id/switchLD"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/TextView"
+            android:text="联动开关"/>
+        <Switch
+            android:id="@+id/switchKG"
+            style="@style/TextView"/>
+    </LinearLayout>
+    <View style="@style/Line"/>
+
+    <Button
+        android:id="@+id/btnSure"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="40dp"
+        android:background="@drawable/linelayout_color_radion"
+        android:text="确定"
+        android:textSize="17dp"
+        android:textColor="@color/white"/>
+</LinearLayout>

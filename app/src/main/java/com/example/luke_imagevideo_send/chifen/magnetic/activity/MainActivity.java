@@ -54,6 +54,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.AlbumActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
@@ -61,7 +62,14 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.modbus.ModbusCallback;
+import com.example.luke_imagevideo_send.modbus.ModbusManager;
+import com.licheedev.modbus4android.param.TcpParam;
+import com.serotonin.modbus4j.ModbusMaster;
+import com.serotonin.modbus4j.msg.WriteRegistersResponse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -126,13 +134,16 @@ public class MainActivity extends BaseActivity {
     private ScreenRecorder mRecorder;
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
-
+    private Intent intent;
     private LocationManager locationManager;
     private static boolean isExit = false;
     private String haveAudio = "noAudio";
+    //磁粉
+    short[] data = new short[37];
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
+    String zhiliu = "",jiaoliu = "",heiguang = "",baiguang = "",diandong = "",liandong = "",kaiguan = "";
 
     //推出程序
     Handler mHandler = new Handler() {
@@ -199,6 +210,7 @@ public class MainActivity extends BaseActivity {
 
         initGPS();
         initTime();
+        makeConnection();
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
         if (mMediaProjection == null) {
@@ -272,6 +284,78 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void rightClient() {
 
+    }
+
+    //建立modbus连接
+    private void makeConnection() {
+        LoadingDialog loadingDialog = new LoadingDialog(this, "连接服务中", R.mipmap.ic_dialog_loading);
+        loadingDialog.show();
+        // TCP
+        TcpParam param;
+        param = TcpParam.create("", 502)
+                .setTimeout(1000)
+                .setRetries(0)
+                .setEncapsulated(false)
+                .setKeepAlive(true);
+
+        ModbusManager.get().closeModbusMaster(); // 先关闭一下
+        ModbusManager.get().init(param, new ModbusCallback<ModbusMaster>() {
+            @Override
+            public void onSuccess(ModbusMaster modbusMaster) {
+                Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
+                ModbusManager.get()
+                        .writeRegisters(0, 1, getData(),
+                                new ModbusCallback<WriteRegistersResponse>() {
+                                    @Override
+                                    public void onSuccess(WriteRegistersResponse writeRegistersResponse) {
+                                        // 发送成功
+                                        Toast.makeText(MainActivity.this, "F16写入成功", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable tr) {
+                                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFinally() {
+
+                                    }
+                                });
+            }
+
+            @Override
+            public void onFailure(Throwable tr) {
+                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
+                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
+                    @Override
+                    public void confirm(String name) {
+
+                    }
+
+                    @Override
+                    public void cancel() {
+                        finish();
+                    }
+
+                    @Override
+                    public void save(String name) {
+
+                    }
+
+                    @Override
+                    public void checkName(String name) {
+
+                    }
+                });
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFinally() {
+                // todo updateDeviceSwitchButton();
+            }
+        });
     }
 
     // 初始化时间方法
@@ -405,15 +489,71 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 关闭监听
-//        locationManager.removeUpdates(locationListeners);
-//        locationListeners = null;
+    /**
+     * 数据组装
+     */
+    private short[] getData() {
+        //传输标识
+        data[0] = 0;
+        data[1] = 0;
+        //协议标识
+        data[2] = 0;
+        data[3] = 0;
+        //字节长度
+        data[4] = 0;
+        data[5] = 19;
+        //单位标识符
+        data[6] = 1;
+        //功能码
+        data[7] = 10;
+        //地址码
+        data[8] = 0;
+        data[9] = 1;
+        //寄存器个数
+        data[10] = 0;
+        data[11] = 6;
+        //字节数
+        data[12] = 12;
+        //型号
+//        data[13] = 0x01;
+        data[13] = 1;
+        data[14] = 0;
+        data[15] = 0;
+        data[16] = 0;
+        data[17] = 0;
+        //时间
+        data[18] = 2;
+        data[19] = 0;
+        data[20] = 0;
+        data[21] = 0;
+        data[22] = 0;
+
+//        //mac
+//        data[23] = 3;
+//        data[24] = 0;
+//        data[25] = 0;
+//        data[26] = 0;
+//        data[27] = 0;
+
+        //交直模式
+        data[23] = 6;
+        data[24] = 0;
+//        //电量
+//        data[28] = 5;
+//        data[29] = 0;
+        //联动时长
+        data[25] = 7;
+        data[26] = 0;
+        //黑白光切换
+        data[27] = 8;
+        data[28] = 0;
+        //点动联动切换
+        data[29] = 9;
+        data[30] = 0;
+        return data;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -483,7 +623,7 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbAlbum:
-                Intent intent = new Intent(this, AlbumActivity.class);
+                intent = new Intent(this, AlbumActivity.class);
                 startActivity(intent);
                 break;
             case R.id.rbSound:
@@ -502,6 +642,10 @@ public class MainActivity extends BaseActivity {
                 } else {
                     Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.rbSetting:
+                intent = new Intent(this, SettingActivity.class);
+                startActivityForResult(intent, Constant.TAG_TWO);
                 break;
         }
     }
@@ -790,21 +934,56 @@ public class MainActivity extends BaseActivity {
     };
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_MEDIA_PROJECTION) {
-            // NOTE: Should pass this result data into a Service to run ScreenRecorder.
-            // The following codes are merely exemplary.
+    protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
+        super.onActivityResult(requestCode, resultCode, backdata);
+        switch (requestCode){
+            case REQUEST_MEDIA_PROJECTION:
+                MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
+                if (mediaProjection == null) {
+                    Log.e("@@", "media projection is null");
+                    return;
+                }
+                mMediaProjection = mediaProjection;
+                mMediaProjection.registerCallback(mProjectionCallback, new Handler());
+                break;
+            case Constant.TAG_TWO:
+                if (resultCode==Constant.TAG_ONE){
+                    Setting setting = (Setting) backdata.getSerializableExtra("data");
+                    jiaoliu = setting.getJiaoliu();
+                    zhiliu = setting.getZhiliu();
+                    heiguang = setting.getHeiguang();
+                    baiguang = setting.getBaiguang();
+                    diandong = setting.getDiandong();
+                    liandong = setting.getLiandong();
+                    kaiguan = setting.getKaiguan();
+                    if (jiaoliu.equals("yes")){
+                        data[24] = 0;
+                    }
+                    if (zhiliu.equals("yes")){
+                        data[24] = 0;
+                    }
 
-            MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
-            if (mediaProjection == null) {
-                Log.e("@@", "media projection is null");
-                return;
-            }
+                    if (kaiguan.equals("yes")){
+                        data[26] = 0;
+                    }
 
-            mMediaProjection = mediaProjection;
-            mMediaProjection.registerCallback(mProjectionCallback, new Handler());
-//            startCapturing(mMediaProjection);
+                    if (heiguang.equals("yes")){
+                        data[28] = 0;
+                    }
+                    if (baiguang.equals("yes")){
+                        data[28] = 0;
+                    }
+
+                    if (diandong.equals("yes")){
+                        data[30] = 0;
+                    }
+                    if (liandong.equals("yes")){
+                        data[30] = 0;
+                    }
+                    ModbusManager.get().release();
+                    makeConnection();
+                }
+                break;
         }
     }
 
@@ -816,5 +995,14 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ModbusManager.get().release();
+        // 关闭监听
+//        locationManager.removeUpdates(locationListeners);
+//        locationListeners = null;
+    }
 
 }

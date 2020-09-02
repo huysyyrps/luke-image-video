@@ -1,12 +1,10 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
@@ -25,19 +22,19 @@ import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
-import com.example.luke_imagevideo_send.modbus.Modbus4jUtils;
+import com.example.luke_imagevideo_send.modbus.Modbus4jWriteUtils;
+import com.example.luke_imagevideo_send.modbus.ModbusCallback;
+import com.example.luke_imagevideo_send.modbus.ModbusManager;
+import com.licheedev.modbus4android.param.TcpParam;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
+import com.serotonin.modbus4j.exception.ModbusTransportException;
+import com.serotonin.modbus4j.msg.WriteRegistersResponse;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import me.weyye.hipermission.HiPermission;
-import me.weyye.hipermission.PermissionCallback;
-import me.weyye.hipermission.PermissionItem;
 
 /**
  * 磁粉检测上传方式选择页
@@ -46,10 +43,11 @@ public class SendSelectActivity extends AppCompatActivity {
     private RelativeLayout relativeLayout;
     private ImageView ivBack;
     private TextView tvHeader;
-    private EditText etCompName,etWorkName,etWorkCode;
+    private EditText etCompName, etWorkName, etWorkCode;
     //富有动感的Sheet弹窗
     private SweetSheet sheet;
     Intent intent;
+    private short[] mRegValues;
     private static boolean isExit = false;
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
@@ -126,19 +124,8 @@ public class SendSelectActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        LoadingDialog loadingDialog = new LoadingDialog(this,"连接服务中",R.mipmap.ic_dialog_loading);
-        loadingDialog.show();
-        try {
-            ModbusMaster master = Modbus4jUtils.getMaster();
-            Toast.makeText(this, "zzzzzz", Toast.LENGTH_SHORT).show();
-        } catch (ModbusInitException e) {
-            e.printStackTrace();
-        }
         initData();
     }
-
-
     //设置SweetSheet上的数据
     public void initData() {
 
@@ -164,7 +151,7 @@ public class SendSelectActivity extends AppCompatActivity {
         //设置数据源 (数据源支持设置 list 数组,也支持从menu 资源中获取)
         sheet.setMenuList(list);
         //根据设置不同的 Delegate 来显示不同的风格
-        sheet.setDelegate(new RecyclerViewDelegate(true,this));
+        sheet.setDelegate(new RecyclerViewDelegate(true, this));
 //        sheet.setDelegate(new ViewPagerDelegate(2));
         //根据设置不同Effect来设置背景效果:BlurEffect 模糊效果.DimEffect 变暗效果,NoneEffect 没有效果
         sheet.setBackgroundEffect(new DimEffect(8));
@@ -174,18 +161,18 @@ public class SendSelectActivity extends AppCompatActivity {
             public boolean onItemClick(int position, MenuEntity menuEntity) {
 //                Toast.makeText(SendSelectActivity.this, "点击了：" + menuEntity.title, Toast.LENGTH_SHORT).show();
                 //根据返回值, true 会关闭 SweetSheet ,false 则不会
-                sharePreferencesUtils.setString(SendSelectActivity.this,"compName",etCompName.getText().toString());
-                sharePreferencesUtils.setString(SendSelectActivity.this,"workName",etWorkName.getText().toString());
-                sharePreferencesUtils.setString(SendSelectActivity.this,"workCode",etWorkCode.getText().toString());
-                if (menuEntity.title.equals("本地存储")){
-                    sharePreferencesUtils.setString(SendSelectActivity.this,"sendSelect","本地存储");
-                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
+                sharePreferencesUtils.setString(SendSelectActivity.this, "compName", etCompName.getText().toString());
+                sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
+                sharePreferencesUtils.setString(SendSelectActivity.this, "workCode", etWorkCode.getText().toString());
+                if (menuEntity.title.equals("本地存储")) {
+                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
+                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
 //                    intent = new Intent(SendSelectActivity.this, TestActivity.class);
                     startActivity(intent);
                     finish();
-                }else if (menuEntity.title.equals("实时上传")){
-                    sharePreferencesUtils.setString(SendSelectActivity.this,"sendSelect","实时上传");
-                    intent = new Intent(SendSelectActivity.this,MainActivity.class);
+                } else if (menuEntity.title.equals("实时上传")) {
+                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
+                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }

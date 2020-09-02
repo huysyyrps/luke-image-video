@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.modbus;
 
+import com.licheedev.modbus4android.param.TcpParam;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 
@@ -54,7 +55,7 @@ interface IModbusWorker {
      * @param param
      * @return
      */
-    Observable<ModbusMaster> rxInit(final ModbusParam param);
+    Observable<ModbusMaster> rxInit(final TcpParam param);
 
     /**
      * 初始化modbus
@@ -62,7 +63,7 @@ interface IModbusWorker {
      * @param param
      * @param callback
      */
-    void init(final ModbusParam param, final ModbusCallback<ModbusMaster> callback);
+    void init(final TcpParam param, final ModbusCallback<ModbusMaster> callback);
 
     /**
      * 检查工作状态，判断是否正确初始化，或者已经被释放

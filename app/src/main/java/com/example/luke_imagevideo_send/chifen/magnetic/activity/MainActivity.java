@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity {
     private static boolean isExit = false;
     private String haveAudio = "noAudio";
     //磁粉
-    short[] data = new short[37];
+    short[] data = new short[30];
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);

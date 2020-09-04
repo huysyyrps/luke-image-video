@@ -219,6 +219,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public BaseViewHolder setResource (int viewId, int path) {
+        ImageView iv = getView(viewId);
+        iv.setImageResource(path);
+        return this;
+    }
+
     public BaseViewHolder setBitmap (int viewId, Bitmap bitmap) {
         ImageView imageView = getView(viewId);
         imageView.setImageBitmap(bitmap);

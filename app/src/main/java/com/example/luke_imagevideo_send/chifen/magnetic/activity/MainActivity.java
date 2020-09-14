@@ -335,7 +335,7 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void cancel() {
-                        finish();
+//                        finish();
                     }
 
                     @Override

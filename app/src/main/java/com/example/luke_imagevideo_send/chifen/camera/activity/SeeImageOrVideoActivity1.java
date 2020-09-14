@@ -56,7 +56,6 @@ public class SeeImageOrVideoActivity1 extends BaseActivity implements View.OnCli
         imgScreenshot = (DrawingView) findViewById(R.id.img_screenshot);
 //        mUndo = (ImageButton) findViewById(R.id.undo);
 //        mSave = (ImageButton) findViewById(R.id.save);
-
 //        mUndo.setOnClickListener(this);
 //        mSave.setOnClickListener(this);
         initPaintMode();

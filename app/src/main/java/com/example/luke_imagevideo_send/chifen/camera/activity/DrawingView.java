@@ -15,12 +15,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
 
 import java.util.LinkedList;
 
-public class DrawingView extends View {
+public class DrawingView extends ImageView {
     private static final String TAG = "DrawingView";
     private static final float TOUCH_TOLERANCE = 4;
     private Bitmap mBitmap;
@@ -100,16 +101,27 @@ public class DrawingView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         // 根据图片尺寸缩放图片，同样只考虑了高大于宽的情况
-        float proportion = (float) canvas.getHeight() / mBitmap.getHeight();
+//        float proportion = (float) canvas.getHeight() / mBitmap.getHeight();
+//        if (proportion < 1) {
+//            mProportion = proportion;
+//            matrix.reset();
+//            matrix.postScale(proportion, proportion);
+//            matrix.postTranslate((canvas.getWidth() - mBitmap.getWidth() * proportion) / 2, 0);
+//            canvas.drawBitmap(mBitmap, matrix, mBitmapPaint);
+//        } else {
+//            mProportion = 0;
+//            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+//        }
+        float proportion = (float) canvas.getHeight() / mBitmap.getWidth();
         if (proportion < 1) {
+            mProportion = 0;
+            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+        } else {
             mProportion = proportion;
             matrix.reset();
             matrix.postScale(proportion, proportion);
             matrix.postTranslate((canvas.getWidth() - mBitmap.getWidth() * proportion) / 2, 0);
             canvas.drawBitmap(mBitmap, matrix, mBitmapPaint);
-        } else {
-            mProportion = 0;
-            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         }
     }
 
@@ -144,6 +156,10 @@ public class DrawingView extends View {
                 mY = y;
                 mCanvas.drawPath(mPath, mPaint);
                 break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                //屏幕上已经有一个点按住 再按下一点时触发该事件
+                //计算最初的两个手指之间的距离
+                break;
             case MotionEvent.ACTION_MOVE:
                 float dx = Math.abs(x - mX);
                 float dy = Math.abs(y - mY);
@@ -152,18 +168,13 @@ public class DrawingView extends View {
                     mX = x;
                     mY = y;
                 }
-//                mCanvas.drawPath(mPath, mPaint);
+                mCanvas.drawPath(mPath, mPaint);
                 mCanvas.drawLine(mX, mY, (x + mX) / 2, (y + mY) / 2, mPaint);
                 break;
             case MotionEvent.ACTION_UP:
                 mPath.lineTo(mX, mY);
                 double a = (y - e) * (y - e) + (x - s) * (x - s);
                 int length = (int) Math.sqrt(a);
-                Log.d("XXX", length + "");
-                Log.d("XXX", y + "");
-                Log.d("XXX", e + "");
-                Log.d("XXX", x + "");
-                Log.d("XXX", s + "");
                 mCanvas.drawPath(mPath, mPaint);
                 mCanvas.drawTextOnPath("" + length, mPath, 0, -15, mPaint);//vOffset设置垂直方向位移的距离。
                 mLastDrawPath = new DrawPath(mPath, mPaint.getColor(), mPaint.getStrokeWidth());
@@ -175,12 +186,6 @@ public class DrawingView extends View {
         }
         invalidate();
         return true;
-    }
-
-    private float distance(MotionEvent event) {
-        float dx = event.getX(1) - event.getX(0);
-        float dy = event.getY(1) - event.getY(0);
-        return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
     public void initializePen() {
@@ -215,10 +220,6 @@ public class DrawingView extends View {
         mPaint.setStrokeWidth(size);
     }
 
-    public float getPenSize() {
-        return mPaint.getStrokeWidth();
-    }
-
     /**
      * This method should ONLY be called by clicking paint toolbar(outer class)
      */
@@ -227,23 +228,16 @@ public class DrawingView extends View {
         mPaint.setColor(color);
     }
 
-    public
-    @ColorInt
-    int getPenColor() {
-        return mPaint.getColor();
-    }
-
-    /**
-     * @return 当前画布上的内容
-     */
-    public Bitmap getImageBitmap() {
-        return mBitmap;
-    }
-
-    public void loadImage(Bitmap bitmap) {
+    public void loadImage(Bitmap bitmap,int width,int height) {
         Log.d(TAG, "loadImage: ");
         mOriginBitmap = bitmap;
         mBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Matrix matrix = new Matrix();
+        matrix.setTranslate(10,10);
+        matrix.postScale(height/mBitmap.getHeight(), width/mBitmap.getWidth()*1.8f);
+        //获取新的bitmap
+        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+//        mOriginBitmap = Bitmap.createBitmap(mOriginBitmap, 0, 0, mOriginBitmap.getWidth(), mOriginBitmap.getHeight(), matrix, true);
         mCanvas = new Canvas(mBitmap);
         invalidate();
     }
@@ -253,7 +247,7 @@ public class DrawingView extends View {
         if (savePath != null && savePath.size() > 0) {
             // 清空画布
             mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            loadImage(mOriginBitmap);
+            loadImage(mOriginBitmap,1,1);
 
             savePath.removeLast();
 

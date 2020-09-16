@@ -68,7 +68,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -77,14 +77,15 @@
             android:gravity="center"
             android:textSize="20dp"
             android:textColor="@color/red"/>
+
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
-            android:text="时间"
             android:gravity="center"
-            android:textSize="20dp"
-            android:textColor="@color/red"/>
+            android:text="时间"
+            android:textColor="@color/red"
+            android:textSize="20dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="45dp"
@@ -102,5 +103,58 @@
             android:textSize="20dp"
             android:textColor="@color/red"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="工程名称:"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/red"/>
+        <TextView
+            android:id="@+id/tvCompName"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/red"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="工件名称:"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/red"/>
+        <TextView
+            android:id="@+id/tvWorkName"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/red"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="工件编号:"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/red"/>
+        <TextView
+            android:id="@+id/tvWorkCode"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/red"/>
+    </LinearLayout>
+
 
 </FrameLayout>

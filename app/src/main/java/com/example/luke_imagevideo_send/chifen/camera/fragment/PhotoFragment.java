@@ -43,7 +43,7 @@ public class PhotoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_photo, container, false);
         ButterKnife.bind(this, view);
         getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/");
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<String>(getActivity(), R.layout.album_item, imagePaths) {
             @Override

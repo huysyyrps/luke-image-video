@@ -36,14 +36,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -120,6 +118,14 @@ public class MainActivity extends BaseActivity {
     FrameLayout frameLayout;
     @BindView(R.id.rbSound)
     RadioButton rbSound;
+    @BindView(R.id.tvCompName)
+    TextView tvCompName;
+    @BindView(R.id.tvWorkName)
+    TextView tvWorkName;
+    @BindView(R.id.tvWorkCode)
+    TextView tvWorkCode;
+    @BindView(R.id.linearLayout1)
+    LinearLayout linearLayout1;
 
     Bitmap mBitmap;
     String name = "";
@@ -143,7 +149,8 @@ public class MainActivity extends BaseActivity {
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
-    String zhiliu = "",jiaoliu = "",heiguang = "",baiguang = "",diandong = "",liandong = "",kaiguan = "";
+    String zhiliu = "", jiaoliu = "", heiguang = "", baiguang = "", diandong = "", liandong = "", kaiguan = "";
+    private String compName = "", workName = "", workCode = "";
 
     //推出程序
     Handler mHandler = new Handler() {
@@ -201,6 +208,22 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        Intent intent = getIntent();
+        compName = intent.getStringExtra("etCompName");
+        workName = intent.getStringExtra("etWorkName");
+        workCode = intent.getStringExtra("etWorkCode");
+        if (compName.equals("") && workName.equals("") && workCode.equals("")) {
+            linearLayout1.setVisibility(View.GONE);
+        }
+        if (!compName.equals("")){
+            tvCompName.setText(compName);
+        }
+        if (!workName.equals("")){
+            tvWorkName.setText(workName);
+        }
+        if (!workCode.equals("")){
+            tvWorkCode.setText(workCode);
+        }
         header.setVisibility(View.GONE);
         imageView.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
@@ -936,7 +959,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
         super.onActivityResult(requestCode, resultCode, backdata);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_MEDIA_PROJECTION:
                 MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
                 if (mediaProjection == null) {
@@ -947,7 +970,7 @@ public class MainActivity extends BaseActivity {
                 mMediaProjection.registerCallback(mProjectionCallback, new Handler());
                 break;
             case Constant.TAG_TWO:
-                if (resultCode==Constant.TAG_ONE){
+                if (resultCode == Constant.TAG_ONE) {
                     Setting setting = (Setting) backdata.getSerializableExtra("data");
                     jiaoliu = setting.getJiaoliu();
                     zhiliu = setting.getZhiliu();
@@ -956,28 +979,28 @@ public class MainActivity extends BaseActivity {
                     diandong = setting.getDiandong();
                     liandong = setting.getLiandong();
                     kaiguan = setting.getKaiguan();
-                    if (jiaoliu.equals("yes")){
+                    if (jiaoliu.equals("yes")) {
                         data[24] = 0;
                     }
-                    if (zhiliu.equals("yes")){
+                    if (zhiliu.equals("yes")) {
                         data[24] = 0;
                     }
 
-                    if (kaiguan.equals("yes")){
+                    if (kaiguan.equals("yes")) {
                         data[26] = 0;
                     }
 
-                    if (heiguang.equals("yes")){
+                    if (heiguang.equals("yes")) {
                         data[28] = 0;
                     }
-                    if (baiguang.equals("yes")){
+                    if (baiguang.equals("yes")) {
                         data[28] = 0;
                     }
 
-                    if (diandong.equals("yes")){
+                    if (diandong.equals("yes")) {
                         data[30] = 0;
                     }
-                    if (liandong.equals("yes")){
+                    if (liandong.equals("yes")) {
                         data[30] = 0;
                     }
                     ModbusManager.get().release();

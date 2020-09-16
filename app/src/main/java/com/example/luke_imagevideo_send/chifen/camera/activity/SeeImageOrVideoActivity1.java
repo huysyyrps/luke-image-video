@@ -1,11 +1,14 @@
 package com.example.luke_imagevideo_send.chifen.camera.activity;
 
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.luke_imagevideo_send.R;
@@ -28,6 +31,7 @@ public class SeeImageOrVideoActivity1 extends BaseActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
         String path = getIntent().getStringExtra("path");
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
@@ -83,7 +87,10 @@ public class SeeImageOrVideoActivity1 extends BaseActivity implements View.OnCli
     }
 
     public void loadImage() {
-        imgScreenshot.loadImage(bitmap);
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        int width = wm.getDefaultDisplay().getWidth();
+        int height = wm.getDefaultDisplay().getHeight();
+        imgScreenshot.loadImage(bitmap,width,height);
     }
 
     public void saveImage() {

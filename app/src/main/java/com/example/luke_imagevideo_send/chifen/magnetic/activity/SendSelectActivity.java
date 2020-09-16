@@ -167,12 +167,17 @@ public class SendSelectActivity extends AppCompatActivity {
                 if (menuEntity.title.equals("本地存储")) {
                     sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                     intent = new Intent(SendSelectActivity.this, MainActivity.class);
-//                    intent = new Intent(SendSelectActivity.this, TestActivity.class);
+                    intent.putExtra("etCompName",etCompName.getText().toString());
+                    intent.putExtra("etWorkName",etWorkName.getText().toString());
+                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
                     startActivity(intent);
                     finish();
                 } else if (menuEntity.title.equals("实时上传")) {
                     sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
                     intent = new Intent(SendSelectActivity.this, MainActivity.class);
+                    intent.putExtra("etCompName",etCompName.getText().toString());
+                    intent.putExtra("etWorkName",etWorkName.getText().toString());
+                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
                     startActivity(intent);
                     finish();
                 }

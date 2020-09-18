@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SeeImageOrVideoActivity;
-import com.example.luke_imagevideo_send.chifen.camera.activity.SeeImageOrVideoActivity1;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 
@@ -52,7 +51,7 @@ public class PhotoFragment extends Fragment {
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), SeeImageOrVideoActivity1.class);
+                        Intent intent = new Intent(getActivity(), SeeImageOrVideoActivity.class);
                         intent.putExtra("path", o);
                         intent.putExtra("tag", "photo");
                         startActivity(intent);

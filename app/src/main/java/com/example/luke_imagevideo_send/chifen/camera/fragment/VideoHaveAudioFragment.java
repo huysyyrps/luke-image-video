@@ -69,7 +69,6 @@ public class VideoHaveAudioFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
-
 //                holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {

@@ -2,6 +2,7 @@ package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -10,7 +11,9 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,6 +21,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
+
+import com.example.luke_imagevideo_send.R;
 
 import java.util.LinkedList;
 
@@ -42,6 +47,12 @@ public class DrawingView extends ImageView {
 
     private int mode = 0;// 初始状态
     private static final int MODE_ZOOM = 2;//缩放
+    private Rect mSrcRect, mDestRect;
+    Bitmap bitmapLeft,bitmapRight;
+    private static int height = 30;
+    private static int bottom = 10;
+
+
     /** 两个手指的中间点 */
     private PointF midPoint = new PointF(0,0);
 
@@ -55,6 +66,8 @@ public class DrawingView extends ImageView {
 
     public DrawingView(Context c, AttributeSet attrs, int defStyle) {
         super(c, attrs, defStyle);
+        bitmapLeft = BitmapFactory.decodeResource(getResources(),R.drawable.ic_downleft);
+        bitmapRight = BitmapFactory.decodeResource(getResources(),R.drawable.ic_downright);
         init();
     }
 
@@ -155,10 +168,13 @@ public class DrawingView extends ImageView {
                 mX = x;
                 mY = y;
                 mCanvas.drawPath(mPath, mPaint);
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                //屏幕上已经有一个点按住 再按下一点时触发该事件
-                //计算最初的两个手指之间的距离
+//                mSrcRect = new Rect((int) s, (int)e, (int) s, (int)e);
+//                mDestRect = new Rect((int) s, (int)e, (int) s, (int)e);
+//                mCanvas.drawTextOnPath("111", mPath, s, e, mPaint);
+//                drawTrangle(mCanvas, mPaint, s-15, s-10, s+15, s-10, height, bottom);
+//                Path path1 = new Path();
+//                path1.lineTo(s, e);
+//                mCanvas.drawTextOnPath("qq", path1, 0, 0, mPaint);
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dx = Math.abs(x - mX);
@@ -176,9 +192,13 @@ public class DrawingView extends ImageView {
                 double a = (y - e) * (y - e) + (x - s) * (x - s);
                 int length = (int) Math.sqrt(a);
                 mCanvas.drawPath(mPath, mPaint);
-                mCanvas.drawTextOnPath("" + length, mPath, 0, -15, mPaint);//vOffset设置垂直方向位移的距离。
-                mLastDrawPath = new DrawPath(mPath, mPaint.getColor(), mPaint.getStrokeWidth());
-                savePath.add(mLastDrawPath);
+//                mCanvas.drawBitmap(bitmapLeft, s, e, mPaint);
+                mCanvas.drawTextOnPath("" + length, mPath, 0, -15, mPaint);
+//                Path path1 = new Path();
+//                path1.lineTo(x, y);
+//                mCanvas.drawTextOnPath("" + length, path1, 0, 0, mPaint);//vOffset设置垂直方向位移的距离。
+//                mLastDrawPath = new DrawPath(mPath, mPaint.getColor(), mPaint.getStrokeWidth());
+//                savePath.add(mLastDrawPath);
                 mPath = null;
                 break;
             default:
@@ -186,6 +206,40 @@ public class DrawingView extends ImageView {
         }
         invalidate();
         return true;
+    }
+
+    /**
+     * 绘制三角
+     * @param canvas
+     * @param fromX
+     * @param fromY
+     * @param toX
+     * @param toY
+     * @param height
+     * @param bottom
+     */
+    private void drawTrangle(Canvas canvas, Paint paintLine, float fromX, float fromY, float toX, float toY, int height, int bottom){
+        try{
+            float juli = (float) Math.sqrt((toX - fromX) * (toX - fromX)
+                    + (toY - fromY) * (toY - fromY));// 获取线段距离
+            float juliX = toX - fromX;// 有正负，不要取绝对值
+            float juliY = toY - fromY;// 有正负，不要取绝对值
+            float dianX = toX - (height / juli * juliX);
+            float dianY = toY - (height / juli * juliY);
+            float dian2X = fromX + (height / juli * juliX);
+            float dian2Y = fromY + (height / juli * juliY);
+            //终点的箭头
+            Path path = new Path();
+            path.moveTo(toX, toY);// 此点为三边形的起点
+            path.lineTo(dianX + (bottom / juli * juliY), dianY
+                    - (bottom / juli * juliX));
+            path.lineTo(dianX - (bottom / juli * juliY), dianY
+                    + (bottom / juli * juliX));
+            path.close(); // 使这些点构成封闭的三边形
+            canvas.drawPath(path, paintLine);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void initializePen() {

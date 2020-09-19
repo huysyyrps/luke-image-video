@@ -90,7 +90,6 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         imgScreenshot.setPenColor(getResources().getColor(R.color.red));
     }
 
-
     public void loadImage() {
         WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         int width = wm.getDefaultDisplay().getWidth();

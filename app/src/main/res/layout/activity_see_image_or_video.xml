@@ -7,12 +7,50 @@
     android:orientation="vertical"
     android:background="@color/dark">
 
-    <com.example.luke_imagevideo_send.chifen.camera.activity.DrawingView
-        android:id="@+id/img_screenshot"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:layout_margin="10dp"
-        android:scaleType="fitXY"/>
+        android:layout_height="match_parent">
+        <com.example.luke_imagevideo_send.chifen.camera.activity.DrawingView
+            android:id="@+id/img_screenshot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:layout_margin="10dp"
+            android:scaleType="fitXY"/>
+        <LinearLayout
+            android:id="@+id/paint_bar"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:orientation="vertical">
+
+
+            <ImageButton
+                android:id="@+id/color_panel"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_color_red" />
+
+            <ImageButton
+                android:id="@+id/undo"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_undo" />
+
+            <ImageButton
+                android:id="@+id/save"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_save" />
+
+        </LinearLayout>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

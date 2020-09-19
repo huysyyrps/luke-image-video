@@ -596,7 +596,7 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void confirm(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".jpg";
+                                name = name1 + ".png";
                             }
                             saveImg(mBitmap, name, MainActivity.this);
                         }
@@ -611,7 +611,7 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void save(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".jpg";
+                                name = name1 + ".png";
                             }
                             saveImg(mBitmap, name, MainActivity.this);
                         }
@@ -619,7 +619,7 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void checkName(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".jpg";
+                                name = name1 + ".png";
                             }
                             saveImg(mBitmap, name, MainActivity.this);
                         }
@@ -678,7 +678,7 @@ public class MainActivity extends BaseActivity {
      */
     private String getNowDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDateFormat.format(new Date()) + ".jpg";
+        return simpleDateFormat.format(new Date()) + ".png";
     }
 
     /**

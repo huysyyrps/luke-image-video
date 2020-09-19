@@ -102,11 +102,8 @@ public class PhotoFragment extends Fragment {
     public static boolean checkIsImageFile(String fName) {
         boolean isImageFile = false;
         //获取拓展名
-        String fileEnd = fName.substring(fName.lastIndexOf(".") + 1,
-                fName.length()).toLowerCase();
-//        if (fileEnd.equals("jpg") || fileEnd.equals("png") || fileEnd.equals("gif")
-//                || fileEnd.equals("jpeg") || fileEnd.equals("bmp")) {
-        if (fileEnd.equals("jpg")) {
+        String fileEnd = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase();
+        if (fileEnd.equals("png")) {
             isImageFile = true;
         } else {
             isImageFile = false;

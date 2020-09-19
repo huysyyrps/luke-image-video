@@ -138,6 +138,13 @@ public class DrawingView extends ImageView {
         }
     }
 
+    /**
+     * @return 当前画布上的内容
+     */
+    public Bitmap getImageBitmap() {
+        return mBitmap;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 如果你的界面有多个模式，你需要有个变量来判断当前是否可draw
@@ -168,6 +175,7 @@ public class DrawingView extends ImageView {
                 mX = x;
                 mY = y;
                 mCanvas.drawPath(mPath, mPaint);
+                mCanvas.drawTextOnPath("<", mPath, 0, 0, mPaint);
 //                mSrcRect = new Rect((int) s, (int)e, (int) s, (int)e);
 //                mDestRect = new Rect((int) s, (int)e, (int) s, (int)e);
 //                mCanvas.drawTextOnPath("111", mPath, s, e, mPaint);
@@ -194,11 +202,8 @@ public class DrawingView extends ImageView {
                 mCanvas.drawPath(mPath, mPaint);
 //                mCanvas.drawBitmap(bitmapLeft, s, e, mPaint);
                 mCanvas.drawTextOnPath("" + length, mPath, 0, -15, mPaint);
-//                Path path1 = new Path();
-//                path1.lineTo(x, y);
-//                mCanvas.drawTextOnPath("" + length, path1, 0, 0, mPaint);//vOffset设置垂直方向位移的距离。
-//                mLastDrawPath = new DrawPath(mPath, mPaint.getColor(), mPaint.getStrokeWidth());
-//                savePath.add(mLastDrawPath);
+                drawArrow(s,e,mX,mY,5,mPaint);
+                drawArrow(mX,mY,s,e,5,mPaint);
                 mPath = null;
                 break;
             default:
@@ -209,38 +214,107 @@ public class DrawingView extends ImageView {
     }
 
     /**
-     * 绘制三角
-     * @param canvas
-     * @param fromX
-     * @param fromY
-     * @param toX
-     * @param toY
-     * @param height
-     * @param bottom
+     * 画箭头
+     *
+     * @param sx
+     * @param sy
+     * @param ex
+     * @param ey
+     * @param paint
      */
-    private void drawTrangle(Canvas canvas, Paint paintLine, float fromX, float fromY, float toX, float toY, int height, int bottom){
-        try{
-            float juli = (float) Math.sqrt((toX - fromX) * (toX - fromX)
-                    + (toY - fromY) * (toY - fromY));// 获取线段距离
-            float juliX = toX - fromX;// 有正负，不要取绝对值
-            float juliY = toY - fromY;// 有正负，不要取绝对值
-            float dianX = toX - (height / juli * juliX);
-            float dianY = toY - (height / juli * juliY);
-            float dian2X = fromX + (height / juli * juliX);
-            float dian2Y = fromY + (height / juli * juliY);
-            //终点的箭头
-            Path path = new Path();
-            path.moveTo(toX, toY);// 此点为三边形的起点
-            path.lineTo(dianX + (bottom / juli * juliY), dianY
-                    - (bottom / juli * juliX));
-            path.lineTo(dianX - (bottom / juli * juliY), dianY
-                    + (bottom / juli * juliX));
-            path.close(); // 使这些点构成封闭的三边形
-            canvas.drawPath(path, paintLine);
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
+    private void drawArrow(float sx, float sy, float ex, float ey, int width, Paint paint) {
+        int size = 3;
+        int count = 20;
+        float x = ex - sx;
+        float y = ey - sy;
+        double d = x * x + y * y;
+        double r = Math.sqrt(d);
+        float zx = (float) (ex - (count * x / r));
+        float zy = (float) (ey - (count * y / r));
+        float xz = zx - sx;
+        float yz = zy - sy;
+        double zd = xz * xz + yz * yz;
+        double zr = Math.sqrt(zd);
+        Path triangle = new Path();
+        triangle.moveTo(sx, sy);
+        triangle.lineTo((float) (zx + size * yz / zr), (float) (zy - size * xz / zr));
+        triangle.lineTo((float) (zx + size * 2 * yz / zr), (float) (zy - size * 2 * xz / zr));
+        triangle.lineTo(ex, ey);
+        triangle.lineTo((float) (zx - size * 2 * yz / zr), (float) (zy + size * 2 * xz / zr));
+        triangle.lineTo((float) (zx - size * yz / zr), (float) (zy + size * xz / zr));
+        triangle.close();
+        mCanvas.drawPath(triangle, paint);
+//        float x = ex - sx;
+//        float y = ey - sy;
+//        double d = x * x + y * y;
+//        //直线长度
+//        double r = Math.sqrt(d);
+//        float zx = (float) (ex - (count * x / r));
+//        float zy = (float) (ey - (count * y / r));
+//        float xz = zx - sx;
+//        float yz = zy - sy;
+//        double zd = xz * xz + yz * yz;
+//        //起点到箭头端点的距离
+//        double zr = Math.sqrt(zd);
+//
+//        Path triangle = new Path();
+//        triangle.moveTo(sx, sy);
+//        triangle.lineTo((float) (zx + size * yz / zr), (float) (zy - size * xz / zr));
+//        triangle.lineTo((float) (zx + size * 2 * yz / zr), (float) (zy - size * 2 * xz / zr));
+//
+////        triangle.moveTo((float) (zx + size * yz / zr), (float) (zy - size * xz / zr));
+////        triangle.lineTo((float) (zx + 5 * 2 * yz / zr), (float) (zy - 5 * 2 * xz / zr));
+//
+//        triangle.moveTo((float) (sx - (10 * x / r)), (float) (sy - (10 * y / r)));//箭头点
+//        triangle.lineTo((float) (0), (float) (0));
+////        triangle.lineTo((float) (0), (float) (0));
+////        triangle.moveTo((float) (zx + 5 * 2 * yz / zr), (float) (zy - 5 * 2 * xz / zr));
+////        triangle.lineTo((float) (zx + 5 * 2 * yz / zr), (float) (zy - 5 * 2 * xz / zr));
+//
+//
+//        triangle.moveTo(sx, sy);
+//        triangle.lineTo((float) (zx - size * 2 * yz / zr), (float) (zy + size * 2 * xz / zr));
+//        triangle.lineTo((float) (zx - size * yz / zr), (float) (zy + size * xz / zr));
+//
+//        triangle.moveTo((float) (zx - size * yz / zr), (float) (zy + size * xz / zr));
+//        triangle.lineTo((float) (zx - 5 * 2 * yz / zr), (float) (zy + 5 * 2 * xz / zr));
+//
+//        triangle.close();
+//        mCanvas.drawPath(triangle, paint);
     }
+//    /**
+//     * 绘制三角
+//     * @param canvas
+//     * @param fromX
+//     * @param fromY
+//     * @param toX
+//     * @param toY
+//     * @param height
+//     * @param bottom
+//     */
+//    private void drawTrangle(Canvas canvas, Paint paintLine, float fromX, float fromY, float toX, float toY, int height, int bottom){
+//        try{
+//            float juli = (float) Math.sqrt((toX - fromX) * (toX - fromX)
+//                    + (toY - fromY) * (toY - fromY));// 获取线段距离
+//            float juliX = toX - fromX;// 有正负，不要取绝对值
+//            float juliY = toY - fromY;// 有正负，不要取绝对值
+//            float dianX = toX - (height / juli * juliX);
+//            float dianY = toY - (height / juli * juliY);
+//            float dian2X = fromX + (height / juli * juliX);
+//            float dian2Y = fromY + (height / juli * juliY);
+//            //终点的箭头
+//            Path path = new Path();
+//            path.moveTo(toX, toY);// 此点为三边形的起点
+//            path.lineTo(dianX + (bottom / juli * juliY), dianY
+//                    - (bottom / juli * juliX));
+//            path.lineTo(dianX - (bottom / juli * juliY), dianY
+//                    + (bottom / juli * juliX));
+//            path.close(); // 使这些点构成封闭的三边形
+//            canvas.drawPath(path, paintLine);
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
+//    }
 
     public void initializePen() {
         mDrawMode = true;
@@ -299,9 +373,9 @@ public class DrawingView extends ImageView {
     public void undo() {
         Log.d(TAG, "undo: recall last path");
         if (savePath != null && savePath.size() > 0) {
-            // 清空画布
-            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            loadImage(mOriginBitmap,1,1);
+//            // 清空画布
+//            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//            loadImage(mOriginBitmap,1,1);
 
             savePath.removeLast();
 

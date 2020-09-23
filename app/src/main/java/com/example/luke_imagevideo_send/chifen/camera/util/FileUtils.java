@@ -1,4 +1,4 @@
-package com.example.luke_imagevideo_send.chifen.camera.activity;
+package com.example.luke_imagevideo_send.chifen.camera.util;
 
 import android.graphics.Bitmap;
 

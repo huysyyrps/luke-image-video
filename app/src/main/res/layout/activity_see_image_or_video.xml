@@ -10,14 +10,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.example.luke_imagevideo_send.chifen.camera.activity.DrawingView
-            android:id="@+id/img_screenshot"
+        <com.example.luke_imagevideo_send.chifen.camera.view.DrawView
+            android:id="@+id/drawView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:clickable="true"
-            android:layout_margin="10dp"
-            android:scaleType="fitXY"/>
+            android:layout_height="match_parent">
+        </com.example.luke_imagevideo_send.chifen.camera.view.DrawView>
         <LinearLayout
             android:id="@+id/paint_bar"
             android:layout_width="45dp"

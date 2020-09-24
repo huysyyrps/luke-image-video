@@ -15,8 +15,7 @@ public class FileUtils {
      * @param quality  质量
      * @return 是否保存成功
      */
-    public static boolean saveBitmap(String filePath, Bitmap bitmap, Bitmap.CompressFormat format,
-                                     int quality) {
+    public static boolean saveBitmap(String filePath, Bitmap bitmap, Bitmap.CompressFormat format, int quality) {
         if (quality > 100) {
             quality = 100;
         }

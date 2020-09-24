@@ -11,8 +11,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -21,7 +23,7 @@ import com.example.luke_imagevideo_send.chifen.camera.bean.PointBean;
 
 import java.util.LinkedList;
 
-public class DrawView extends View {
+public class DrawView extends ImageView {
 
     private LinkedList<PointBean> pointLists = new LinkedList<PointBean>();
     private LinkedList<Integer> rangeLists = new LinkedList<Integer>();
@@ -93,10 +95,12 @@ public class DrawView extends View {
         if (proportion < 1) {
             mProportion = 0;
             canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+            Log.e("TAG11", mBitmap.getWidth()+"__________"+mBitmap.getHeight());
             //绘制path
             canvas.drawPath(mPath, paint);
         } else {
             mProportion = proportion;
+            matrix = new Matrix();
             matrix.reset();
             matrix.postScale(proportion, proportion);
             matrix.postTranslate((canvas.getWidth() - mBitmap.getWidth() * proportion) / 2, 0);
@@ -277,12 +281,13 @@ public class DrawView extends View {
         bitmapHeight = height;
         bitmapWidth = width;
         mOriginBitmap = bitmap;
+        Log.e("TAG1", width+"__________"+height);
         mBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Matrix matrix = new Matrix();
-        matrix.setTranslate(10,10);
-        matrix.postScale(height/mBitmap.getHeight(), width/mBitmap.getWidth()*1.8f);
-        //获取新的bitmap
-        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+//        Matrix matrix = new Matrix();
+//        matrix.setTranslate(10,10);
+//        matrix.postScale(height/mBitmap.getHeight(), width/mBitmap.getWidth());
+//        //获取新的bitmap
+//        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
 //        mOriginBitmap = Bitmap.createBitmap(mOriginBitmap, 0, 0, mOriginBitmap.getWidth(), mOriginBitmap.getHeight(), matrix, true);
         mCanvas = new Canvas(mBitmap);
         invalidate();

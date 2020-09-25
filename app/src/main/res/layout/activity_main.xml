@@ -40,27 +40,27 @@
 
         <RadioButton
             android:id="@+id/rbCamera"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbcamera" />
 
         <RadioButton
             android:id="@+id/rbSound"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_sound"/>
 
         <RadioButton
             android:id="@+id/rbVideo"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_nosound"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbalbum"/>
 
         <RadioButton
             android:id="@+id/rbSetting"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbsetting"/>
 
     </RadioGroup>

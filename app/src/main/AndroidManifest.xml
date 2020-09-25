@@ -34,14 +34,15 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".chifen.magnetic.activity.SettingActivity"></activity>
+        <activity android:name=".yingduji.activity.MainYDJActivity"/>
+        <activity android:name=".chifen.magnetic.activity.SettingActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".chifen.camera.activity.AlbumActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
+        <activity
+            android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".chifen.camera.activity.AlbumActivity"
+            android:screenOrientation="landscape"></activity>
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,11 +50,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity"/>
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity
             android:name=".chifen.magnetic.activity.MainActivity"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape"/>
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".bluetooth.BluetoothListActivity" />
     </application>

@@ -23,7 +23,6 @@
         android:layout_width="45dp"
         android:layout_height="match_parent"
         android:layout_gravity="right"
-        android:layout_marginRight="15dp"
         android:background="@color/dark"
         android:orientation="vertical">
 

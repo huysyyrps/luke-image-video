@@ -27,8 +27,8 @@
 
     <!--自定义radionbutton属性-->
     <style name="RadionButton">
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
         <item name="android:paddingTop">3dip</item>
@@ -36,7 +36,19 @@
         <item name="android:layout_margin">6dip</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textSize">0dp</item>
+    </style>
+
+    <!--自定义radionbutton属性-->
+    <style name="MainRadionButton">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">45dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:paddingTop">3dip</item>
+        <item name="android:paddingBottom">6dip</item>
+        <item name="android:layout_margin">6dip</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <!-- 加载滚动条样式 -->
@@ -124,6 +136,13 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/shouye</item>
     </style>
+    <style name="VLine">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/shouye</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
 
     <!--自定义EditText-->
     <style name="EditText">
@@ -141,9 +160,9 @@
     <style name="TextView">
         <item name="android:layout_weight">1</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">20dp</item>
         <item name="android:background">@null</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:textSize">15dp</item>
@@ -171,6 +190,12 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:background">#00000000</item>
+    </style>
+
+    <style name="pop_text_style">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
 </resources>

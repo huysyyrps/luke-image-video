@@ -91,7 +91,7 @@ public class DrawView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float proportion = (float) canvas.getHeight() / mBitmap.getWidth();
+        float proportion = (float) canvas.getWidth() / mBitmap.getWidth();
         if (proportion < 1) {
             mProportion = 0;
             canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);

@@ -173,8 +173,8 @@
     <!-- 自定义CheckBox 样式 -->
     <style name="CustomCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox_selector</item>
-        <item name="android:layout_width">20dp</item>
-        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:layout_gravity">right|top</item>
         <item name="scaleType">centerInside</item>
         <item name="android:layout_marginRight">5dp</item>

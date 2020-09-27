@@ -38,7 +38,7 @@ public class SettingActivity extends BaseActivity {
     Button btnSure;
     Intent intent;
     Setting setting = new Setting();
-    String zhiliu = "",jiaoliu = "",heiguang = "",baiguang = "",diandong = "",liandong = "",kaiguan = "";
+    String zjliu = "",hbguang = "",dldong = "",kaiguan = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,7 @@ public class SettingActivity extends BaseActivity {
                     switchZL.setChecked(false);
                     setting.setJiaoliu("yes");
                     setting.setZhiliu("no");
+                    zjliu = "0";
                 }
             }
         });
@@ -83,6 +84,7 @@ public class SettingActivity extends BaseActivity {
                     switchJL.setChecked(false);
                     setting.setJiaoliu("no");
                     setting.setZhiliu("yes");
+                    zjliu = "1";
                 }
             }
         });
@@ -93,6 +95,7 @@ public class SettingActivity extends BaseActivity {
                     switchBG.setChecked(false);
                     setting.setHeiguang("yes");
                     setting.setBaiguang("no");
+                    hbguang = "0";
                 }
             }
         });
@@ -103,6 +106,7 @@ public class SettingActivity extends BaseActivity {
                     switchHG.setChecked(false);
                     setting.setHeiguang("no");
                     setting.setBaiguang("yes");
+                    hbguang = "1";
                 }
             }
         });
@@ -113,6 +117,7 @@ public class SettingActivity extends BaseActivity {
                     switchLD.setChecked(false);
                     setting.setDiandong("yes");
                     setting.setLiandong("no");
+                    dldong = "0";
                 }
             }
         });
@@ -123,6 +128,7 @@ public class SettingActivity extends BaseActivity {
                     switchDD.setChecked(false);
                     setting.setDiandong("no");
                     setting.setLiandong("yes");
+                    dldong = "1";
                 }
             }
         });
@@ -131,6 +137,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     setting.setKaiguan("yes");
+                    kaiguan = "1";
                 }
             }
         });

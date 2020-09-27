@@ -3,6 +3,7 @@ package com.example.luke_imagevideo_send.chifen.camera.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SeeImageOrVideoActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
+import com.example.luke_imagevideo_send.http.okhttp.QuietOkHttp;
+import com.example.luke_imagevideo_send.http.okhttp.StringCallBack;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 public class PhotoFragment extends Fragment {
     View view;
@@ -32,6 +36,7 @@ public class PhotoFragment extends Fragment {
     RecyclerView recyclerView;
     List<String> imagePaths = new ArrayList<>();
     List<String> selectList = new ArrayList<>();
+    List<File> fileList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
     @BindView(R.id.ivSend)
     ImageView ivSend;
@@ -122,6 +127,23 @@ public class PhotoFragment extends Fragment {
             Toast.makeText(getActivity(), "您还未选择图片", Toast.LENGTH_SHORT).show();
         }else {
             Toast.makeText(getActivity(), selectList.size()+"", Toast.LENGTH_SHORT).show();
+            for (int i=0;i<selectList.size();i++){
+                fileList.add(new File(selectList.get(i)));
+            }
+            QuietOkHttp.postFile("URL_UPLOAD")
+                    .uploadFile("files", fileList)
+//                    .addParams("key", "10926a9165054566b6df6a8410e45f08")
+                    .execute(new StringCallBack() {
+                        @Override
+                        protected void onSuccess(Call call, String response) {
+                            Log.e("TAG", "response:" + response);
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Exception e) {
+                            Log.e("TAG", "onFailure:" + e.toString());
+                        }
+                    });
         }
     }
 }

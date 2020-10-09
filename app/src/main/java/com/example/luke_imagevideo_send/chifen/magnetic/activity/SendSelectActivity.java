@@ -25,6 +25,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegat
 import com.example.luke_imagevideo_send.modbus.Modbus4jWriteUtils;
 import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
+import com.example.luke_imagevideo_send.yingduji.activity.MainYDJActivity;
 import com.licheedev.modbus4android.param.TcpParam;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
@@ -140,7 +141,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
         MenuEntity bean3 = new MenuEntity();
         bean3.iconId = R.drawable.ic_shishi;
-        bean3.title = "实时上传";
+        bean3.title = "实时上传（点击进入硬度计界面）";
 
         list.add(bean1);
         list.add(bean2);
@@ -172,14 +173,14 @@ public class SendSelectActivity extends AppCompatActivity {
                     intent.putExtra("etWorkCode",etWorkCode.getText().toString());
                     startActivity(intent);
                     finish();
-                } else if (menuEntity.title.equals("实时上传")) {
-                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
-                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
-                    intent.putExtra("etCompName",etCompName.getText().toString());
-                    intent.putExtra("etWorkName",etWorkName.getText().toString());
-                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
+                } else if (menuEntity.title.equals("实时上传（点击进入硬度计界面）")) {
+//                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
+//                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
+//                    intent.putExtra("etCompName",etCompName.getText().toString());
+//                    intent.putExtra("etWorkName",etWorkName.getText().toString());
+//                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
+                    intent = new Intent(SendSelectActivity.this, MainYDJActivity.class);
                     startActivity(intent);
-                    finish();
                 }
                 return false;
             }

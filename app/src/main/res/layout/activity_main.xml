@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginRight="10dp"
-        android:layout_gravity="right">
+        android:layout_gravity="right|center">
 
         <RadioButton
             android:id="@+id/rbCamera"
@@ -47,6 +47,12 @@
             android:id="@+id/rbSound"
             style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_sound"/>
+
+        <RadioButton
+            android:id="@+id/rbSuspend"
+            style="@style/MainRadionButton"
+            android:visibility="gone"
+            android:drawableLeft="@drawable/ic_suspend"/>
 
         <RadioButton
             android:id="@+id/rbVideo"

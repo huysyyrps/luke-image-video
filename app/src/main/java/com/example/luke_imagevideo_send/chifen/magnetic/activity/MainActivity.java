@@ -34,6 +34,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
@@ -61,7 +62,6 @@ import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
-import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
@@ -135,22 +135,27 @@ public class MainActivity extends BaseActivity {
     private static AlertDialogUtil alertDialogUtil;
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private static final int REQUEST_PERMISSIONS = 2;
+    @BindView(R.id.rbSuspend)
+    RadioButton rbSuspend;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private Intent intent;
+    Window window;
     private LocationManager locationManager;
     private static boolean isExit = false;
     private String haveAudio = "noAudio";
     //磁粉
-    short[] data = new short[30];
+    short[] data = new short[31];
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
     private AtomicBoolean mQuit = new AtomicBoolean(false);
     String zhiliu = "", jiaoliu = "", heiguang = "", baiguang = "", diandong = "", liandong = "", kaiguan = "";
     private String compName = "", workName = "", workCode = "";
+    boolean rbVideoV = true;
+    boolean rbSoundV = true;
 
     //推出程序
     Handler mHandler = new Handler() {
@@ -215,13 +220,13 @@ public class MainActivity extends BaseActivity {
         if (compName.equals("") && workName.equals("") && workCode.equals("")) {
             linearLayout1.setVisibility(View.GONE);
         }
-        if (!compName.equals("")){
+        if (!compName.equals("")) {
             tvCompName.setText(compName);
         }
-        if (!workName.equals("")){
+        if (!workName.equals("")) {
             tvWorkName.setText(workName);
         }
-        if (!workCode.equals("")){
+        if (!workCode.equals("")) {
             tvWorkCode.setText(workCode);
         }
         header.setVisibility(View.GONE);
@@ -311,11 +316,11 @@ public class MainActivity extends BaseActivity {
 
     //建立modbus连接
     private void makeConnection() {
-        LoadingDialog loadingDialog = new LoadingDialog(this, "连接服务中", R.mipmap.ic_dialog_loading);
-        loadingDialog.show();
+//        LoadingDialog loadingDialog = new LoadingDialog(this, "连接服务中", R.mipmap.ic_dialog_loading);
+//        loadingDialog.show();
         // TCP
         TcpParam param;
-        param = TcpParam.create("", 502)
+        param = TcpParam.create("192.168.1.10", 502)
                 .setTimeout(1000)
                 .setRetries(0)
                 .setEncapsulated(false)
@@ -326,56 +331,57 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(ModbusMaster modbusMaster) {
                 Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
-                ModbusManager.get()
-                        .writeRegisters(0, 1, getData(),
-                                new ModbusCallback<WriteRegistersResponse>() {
-                                    @Override
-                                    public void onSuccess(WriteRegistersResponse writeRegistersResponse) {
-                                        // 发送成功
-                                        Toast.makeText(MainActivity.this, "F16写入成功", Toast.LENGTH_SHORT).show();
-                                    }
+                ModbusManager.get().writeRegisters(1, 0, getData(), new ModbusCallback<WriteRegistersResponse>() {
+                    @Override
+                    public void onSuccess(WriteRegistersResponse writeRegistersResponse) {
+                        // 发送成功
+                        Toast.makeText(MainActivity.this, "F16写入成功", Toast.LENGTH_SHORT).show();
+                    }
 
-                                    @Override
-                                    public void onFailure(Throwable tr) {
-                                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
-                                    }
+                    @Override
+                    public void onFailure(Throwable tr) {
+                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
+                    }
 
-                                    @Override
-                                    public void onFinally() {
-
-                                    }
-                                });
+                    @Override
+                    public void onFinally() {
+                        Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailure(Throwable tr) {
-                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
-                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
-                    @Override
-                    public void confirm(String name) {
-
-                    }
-
-                    @Override
-                    public void cancel() {
-//                        finish();
-                    }
-
-                    @Override
-                    public void save(String name) {
-
-                    }
-
-                    @Override
-                    public void checkName(String name) {
-
-                    }
-                });
-                loadingDialog.dismiss();
+//                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
+//                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
+//                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
+//                    @Override
+//                    public void confirm(String name) {
+//
+//                    }
+//
+//                    @Override
+//                    public void cancel() {
+////                        finish();
+//                    }
+//
+//                    @Override
+//                    public void save(String name) {
+//
+//                    }
+//
+//                    @Override
+//                    public void checkName(String name) {
+//
+//                    }
+//                });
+//                loadingDialog.dismiss();
             }
 
             @Override
             public void onFinally() {
+                Log.e("XXX", "111");
+                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
                 // todo updateDeviceSwitchButton();
             }
         });
@@ -576,7 +582,7 @@ public class MainActivity extends BaseActivity {
         return data;
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting,R.id.rbSuspend})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -629,7 +635,41 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
+                if (rbVideoV) {
+                    rbCamera.setVisibility(View.INVISIBLE);
+                    rbAlbum.setVisibility(View.INVISIBLE);
+                    rbSound.setVisibility(View.INVISIBLE);
+                    rbSetting.setVisibility(View.INVISIBLE);
+                    rbVideo.setVisibility(View.GONE);
+                    rbSuspend.setVisibility(View.VISIBLE);
+                    hideBottomUIMenu();
+                    rbVideoV = false;
+                }
                 haveAudio = "noAudio";
+                if (mRecorder != null) {
+                    stopRecordingAndOpenFile(view1.getContext());
+                } else if (hasPermissions()) {
+                    if (mMediaProjection == null) {
+                        requestMediaProjection();
+                    } else {
+                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+                        startCapturing(mMediaProjection);
+                    }
+                } else if (Build.VERSION.SDK_INT >= M) {
+                    requestPermissions();
+                } else {
+                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.rbSuspend:
+                BottomUIMenu();
+                rbCamera.setVisibility(View.VISIBLE);
+                rbAlbum.setVisibility(View.VISIBLE);
+                rbSound.setVisibility(View.VISIBLE);
+                rbSetting.setVisibility(View.VISIBLE);
+                rbVideo.setVisibility(View.VISIBLE);
+                rbSuspend.setVisibility(View.GONE);
+                rbVideoV = true;
                 if (mRecorder != null) {
                     stopRecordingAndOpenFile(view1.getContext());
                 } else if (hasPermissions()) {
@@ -650,6 +690,16 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.rbSound:
+                if (rbSoundV) {
+                    rbCamera.setVisibility(View.INVISIBLE);
+                    rbAlbum.setVisibility(View.INVISIBLE);
+                    rbSound.setVisibility(View.INVISIBLE);
+                    rbSetting.setVisibility(View.INVISIBLE);
+                    rbVideo.setVisibility(View.GONE);
+                    rbSuspend.setVisibility(View.VISIBLE);
+                    hideBottomUIMenu();
+                    rbSoundV = false;
+                }
                 haveAudio = "Audio";
                 if (mRecorder != null) {
                     stopRecordingAndOpenFile(view1.getContext());
@@ -1026,6 +1076,37 @@ public class MainActivity extends BaseActivity {
         // 关闭监听
 //        locationManager.removeUpdates(locationListeners);
 //        locationListeners = null;
+    }
+
+    /**
+     * 隐藏虚拟按键，并且全屏
+     */
+    protected void hideBottomUIMenu() {
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
+
+    /**
+     * 显示虚拟按键，并且全屏
+     */
+    protected void BottomUIMenu() {
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.VISIBLE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(1);
+        }
     }
 
 }

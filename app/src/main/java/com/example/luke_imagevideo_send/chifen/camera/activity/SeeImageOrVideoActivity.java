@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -12,14 +14,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.util.FileUtils;
 import com.example.luke_imagevideo_send.chifen.camera.view.DrawView;
-import com.example.luke_imagevideo_send.chifen.camera.view.GraffitiView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 
 import butterknife.BindView;
@@ -36,12 +40,15 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     ImageButton save;
     @BindView(R.id.paint_bar)
     LinearLayout paintBar;
+    @BindView(R.id.drawView)
+    DrawView drawView;
     private static int COLOR_PANEL = 0;
     String fileName = "";
     Window window;
     Bitmap mBitmap;
-    @BindView(R.id.drawView)
-    DrawView drawView;
+    @BindView(R.id.videoView)
+    VideoView videoView;
+    String path = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +57,27 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
-        String path = getIntent().getStringExtra("path");
-        int start = path.lastIndexOf("/");
-        int end = path.lastIndexOf(".");
-        if (start != -1 && end != -1) {
-            fileName = path.substring(start + 1, end);
+        path = getIntent().getStringExtra("path");
+        String tag = getIntent().getStringExtra("tag");
+        if (tag.equals("photo")) {
+            drawView.setVisibility(View.VISIBLE);
+            paintBar.setVisibility(View.VISIBLE);
+            videoView.setVisibility(View.GONE);
+            int start = path.lastIndexOf("/");
+            int end = path.lastIndexOf(".");
+            if (start != -1 && end != -1) {
+                fileName = path.substring(start + 1, end);
+            }
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            Bitmap originalBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
+            Bitmap finalBitmap = Bitmap.createScaledBitmap(originalBitmap, dm.widthPixels, dm.heightPixels, true);
+            loadImage(finalBitmap);
+        } else if (tag.equals("video")) {
+            drawView.setVisibility(View.GONE);
+            paintBar.setVisibility(View.GONE);
+            videoView.setVisibility(View.VISIBLE);
+            setupVideo();
         }
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        Bitmap originalBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap finalBitmap = Bitmap.createScaledBitmap(originalBitmap, dm.widthPixels, dm.heightPixels, true);
-        loadImage(finalBitmap);
     }
 
     @Override
@@ -108,7 +126,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
                 view1.setDrawingCacheEnabled(true);
                 view1.buildDrawingCache();
                 mBitmap = view1.getDrawingCache();
-                Log.e("TAG", mBitmap.getWidth()+"__________"+mBitmap.getHeight());
+                Log.e("TAG", mBitmap.getWidth() + "__________" + mBitmap.getHeight());
                 if (mBitmap != null) {
                     saveImage();
                 } else {
@@ -140,6 +158,65 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
+    }
+
+    private void setupVideo() {
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                videoView.start();
+            }
+        });
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopPlaybackVideo();
+            }
+        });
+        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                stopPlaybackVideo();
+                return true;
+            }
+        });
+
+        try {
+            Uri uri = Uri.parse(path);
+            videoView.setVideoURI(uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!videoView.isPlaying()) {
+            videoView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (videoView.canPause()) {
+            videoView.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopPlaybackVideo();
+    }
+
+    private void stopPlaybackVideo() {
+        try {
+            videoView.stopPlayback();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

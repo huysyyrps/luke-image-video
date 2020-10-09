@@ -5,17 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:keepScreenOn="true"
+    android:hardwareAccelerated="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <com.example.luke_imagevideo_send.chifen.camera.view.DrawView
             android:id="@+id/drawView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/linelayout_color_radion">
+            android:layout_height="match_parent">
         </com.example.luke_imagevideo_send.chifen.camera.view.DrawView>
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
     <LinearLayout

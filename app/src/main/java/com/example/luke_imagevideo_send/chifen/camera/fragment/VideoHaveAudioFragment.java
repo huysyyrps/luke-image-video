@@ -52,7 +52,7 @@ public class VideoHaveAudioFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_photo, container, false);
         ButterKnife.bind(this, view);
         getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<File>(getActivity(), R.layout.album_item, imagePaths) {
             @Override
@@ -69,20 +69,6 @@ public class VideoHaveAudioFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
-//                holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (selectList.contains(o)) {
-//                            selectList.remove(o);
-//                        } else {
-//                            if (selectList.size()>=9){
-//                                Toast.makeText(getActivity(), "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
-//                            }else {
-//                                selectList.add(o);
-//                            }
-//                        }
-//                    }
-//                });
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);

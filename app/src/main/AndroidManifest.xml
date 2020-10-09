@@ -33,7 +33,8 @@
         android:supportsRtl="true"
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
-        tools:replace="android:theme">
+        tools:replace="android:theme"
+        android:hardwareAccelerated ="true">
         <activity android:name=".yingduji.activity.MainYDJActivity"/>
         <activity android:name=".chifen.magnetic.activity.SettingActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
@@ -43,16 +44,16 @@
         <activity
             android:name=".chifen.camera.activity.AlbumActivity"
             android:screenOrientation="landscape">
+
+        </activity>
+        <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.activity.WelcomeActivity">
-
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity">
         </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity
             android:name=".chifen.magnetic.activity.MainActivity"
             android:screenOrientation="landscape"/>

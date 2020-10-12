@@ -48,7 +48,6 @@ public class BluetoothListActivity extends BaseActivity {
     BaseRecyclerAdapter baseRecyclerAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     List<BluetoothDevice> bluetoothList = new ArrayList<>();
-    public static final String EXTRA_DEVICE_ADDRESS = "address";
     public static final int REQUEST_ENABLE_BT = 2;
 
     @Override
@@ -73,15 +72,17 @@ public class BluetoothListActivity extends BaseActivity {
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
-
+        initBluetooth();
         // 设置广播信息过滤 并注册
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        // 开始结束
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         this.registerReceiver(mFindBlueToothReceiver, filter);
-        // Register for broadcasts when discovery has finished
+        // 搜索到设备
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(mFindBlueToothReceiver, filter);
+        // 搜索结束
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mFindBlueToothReceiver, filter);
-        initBluetooth();
     }
 
     @Override
@@ -111,8 +112,9 @@ public class BluetoothListActivity extends BaseActivity {
         } else {
             // 检查蓝牙是否打开
             if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                mBluetoothAdapter.enable();
             } else {
                 discoveryDevice();
             }
@@ -147,13 +149,36 @@ public class BluetoothListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
-                // bluetooth is opened
                 discoveryDevice();
             } else {
                 // bluetooth is not open
                 Toast.makeText(this, "蓝牙没有开启", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * 扫描设备
+     */
+    private void discoveryDevice() {
+        setProgressBarIndeterminateVisibility(true);
+        // 添加一个item区分显示信息
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+        // 开始扫描，每扫描到一个设备，都会发送一个广播
+        mBluetoothAdapter.startDiscovery();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Make sure we're not doing discovery anymore
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+        // Unregister broadcast listeners
+        unregisterReceiver(mFindBlueToothReceiver);
     }
 
     /**
@@ -186,30 +211,4 @@ public class BluetoothListActivity extends BaseActivity {
             }
         }
     };
-
-    /**
-     * 扫描设备
-     */
-    private void discoveryDevice() {
-        setProgressBarIndeterminateVisibility(true);
-        // 添加一个item区分显示信息
-//        mDevicesArrayAdapter.add("未配对：");
-        // If we're already discovering, stop it
-        if (mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
-        // 开始扫描，每扫描到一个设备，都会发送一个广播
-        mBluetoothAdapter.startDiscovery();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Make sure we're not doing discovery anymore
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
-        // Unregister broadcast listeners
-        unregisterReceiver(mFindBlueToothReceiver);
-    }
 }

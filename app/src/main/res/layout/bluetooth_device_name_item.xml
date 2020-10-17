@@ -14,16 +14,27 @@
         android:layout_gravity="center"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:padding="5dp"
             android:textColor="@color/black"
             android:textSize="14dp"
             android:id="@+id/textView"
             android:gravity="center_vertical"
+            android:background="@color/white"/>
+        <TextView
+            android:id="@+id/text"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textSize="14dp"
+            android:gravity="center_vertical"
+            android:text="正在连接...."
             android:background="@color/white"/>
         <View style="@style/Line"/>
     </LinearLayout>

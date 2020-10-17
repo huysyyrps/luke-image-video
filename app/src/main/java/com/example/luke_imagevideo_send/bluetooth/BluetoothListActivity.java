@@ -48,7 +48,7 @@ public class BluetoothListActivity extends BaseActivity {
     List<BluetoothDevice> bluetoothList = new ArrayList<>();
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
-    private List<BluetoothGattService> servicesList;
+    BaseViewHolder mHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +69,17 @@ public class BluetoothListActivity extends BaseActivity {
                     AlertDialogUtil alertDialogUtil = new AlertDialogUtil(BluetoothListActivity.this);
                     alertDialogUtil.showSmallDialog("暂无可连接蓝牙");
                 } else {
-                    holder.setText(R.id.textView, device.getName()+"---"+device.getAddress()+"---"+device.getType());
+                    if (device.getName() == null) {
+                        holder.setText(R.id.textView, device.getAddress());
+                    } else {
+                        holder.setText(R.id.textView, device.getName() + "---" + device.getAddress());
+                    }
+
                     holder.setOnClickListener(R.id.textView, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            mHolder = holder;
+                            holder.setVisitionTextView(R.id.text);
                             mBluetoothAdapter.stopLeScan(callback);
                             //停止搜索一般需要一定的时间来完成，最好调用停止搜索函数之后加以100ms的延时，
                             // 保证系统能够完全停止搜索蓝牙设备。停止搜索之后启动连接过程。
@@ -90,9 +97,6 @@ public class BluetoothListActivity extends BaseActivity {
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
         initBluetooth();
-        //搜索设备
-        bluetoothList.clear();
-        mBluetoothAdapter.startLeScan(callback);
 
         gifView.setVisibility(View.VISIBLE);
         gifView.setGifResource(R.drawable.bleloading);
@@ -114,6 +118,13 @@ public class BluetoothListActivity extends BaseActivity {
             // 检查蓝牙是否打开
             if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
                 mBluetoothAdapter.enable();
+                //搜索设备
+                bluetoothList.clear();
+                mBluetoothAdapter.startLeScan(callback);
+            } else {
+                //搜索设备
+                bluetoothList.clear();
+                mBluetoothAdapter.startLeScan(callback);
             }
         }
     }
@@ -122,18 +133,16 @@ public class BluetoothListActivity extends BaseActivity {
 
         @Override
         public void onLeScan(BluetoothDevice device, int arg1, byte[] arg2) {
-            if (device.getName() != null) {
-                if (!device.getName().equals("") && !device.getName().equals("null")) {
-                    if (bluetoothList.size() == 0) {
-                        bluetoothList.add(device);
-                    } else if (bluetoothList.size() != 0) {
-                        if (!bluetoothList.contains(device)) {
-                            bluetoothList.add(device);
-                        }
-                    }
+            Log.e("XXXX", device.getAddress());
+            if (bluetoothList.size() == 0) {
+                bluetoothList.add(device);
+                baseRecyclerAdapter.notifyDataSetChanged();
+            } else if (bluetoothList.size() != 0) {
+                if (!bluetoothList.contains(device)) {
+                    bluetoothList.add(device);
+                    baseRecyclerAdapter.notifyDataSetChanged();
                 }
             }
-            baseRecyclerAdapter.notifyDataSetChanged();
         }
     };
 
@@ -159,8 +168,12 @@ public class BluetoothListActivity extends BaseActivity {
             if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
                 //启动服务发现  通过服务去获取可以操作的属性
                 gatt.discoverServices();
+                mHolder.setText(R.id.text, "连接成功");
+                gifView.setVisibility(View.GONE);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 closeConn();
+                mHolder.setText(R.id.text, "断开连接");
+                gifView.setVisibility(View.GONE);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
                 System.out.println("---------------------------->正在连接");
             }
@@ -196,7 +209,7 @@ public class BluetoothListActivity extends BaseActivity {
 
         }
 
-        //写数据
+         //发送数据后的回调
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
@@ -209,7 +222,7 @@ public class BluetoothListActivity extends BaseActivity {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.e("XXX", "read value: " + characteristic.getValue());
+                Log.e("XXX", "数据接收了哦"+(characteristic.getValue()));
             }
         }
 

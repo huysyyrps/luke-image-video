@@ -74,7 +74,8 @@ public class BluetoothListActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             mBluetoothAdapter.stopLeScan(callback);
-                            //停止搜索一般需要一定的时间来完成，最好调用停止搜索函数之后加以100ms的延时，// 保证系统能够完全停止搜索蓝牙设备。停止搜索之后启动连接过程。
+                            //停止搜索一般需要一定的时间来完成，最好调用停止搜索函数之后加以100ms的延时，
+                            // 保证系统能够完全停止搜索蓝牙设备。停止搜索之后启动连接过程。
                             Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 @Override

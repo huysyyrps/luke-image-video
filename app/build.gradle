@@ -87,5 +87,7 @@ dependencies {
 //    implementation 'com.github.licheedev:modbus4j:v3.0.6-alpha1'
     implementation 'com.github.licheedev:Modbus4Android:2.0.2'
     implementation "commons-logging:commons-logging:1.2"
+    implementation 'com.inuker.bluetooth:library:1.4.0'
+    implementation 'com.github.Cutta:GifView:1.4'
 
 }

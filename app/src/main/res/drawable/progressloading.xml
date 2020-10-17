@@ -12,7 +12,7 @@
             <bitmap
                 android:antialias="true"
                 android:filter="true"
-                android:src="@drawable/loading" />
+                android:src="@drawable/bleloading" />
         </rotate>
     </item>
 

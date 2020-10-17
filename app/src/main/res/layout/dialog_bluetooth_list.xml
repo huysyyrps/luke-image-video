@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.example.luke_imagevideo_send.http.views.Header
@@ -11,6 +12,29 @@
         app:header_title="蓝牙列表">
     </com.example.luke_imagevideo_send.http.views.Header>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="可用设备"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:textSize="16dp"/>
+
+        <com.cunoraz.gifview.library.GifView
+            android:id="@+id/gifView"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"/>
+
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

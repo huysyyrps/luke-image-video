@@ -51,6 +51,7 @@ public class BluetoothListActivity extends BaseActivity {
     BaseViewHolder mHolder;
     BluetoothGattService linkLossService;
     BluetoothGattCharacteristic alertLevel;
+    boolean isLink  = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,18 +161,22 @@ public class BluetoothListActivity extends BaseActivity {
             if (status == BluetoothGatt.GATT_SUCCESS ){
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     //启动服务发现  通过服务去获取可以操作的属性
-                    gatt.discoverServices();
-                    mHolder.setText(R.id.text, "连接成功");
-                    gifView.setVisibility(View.GONE);
+                    if (!isLink){
+                        gatt.discoverServices();
+                        mHolder.setText(R.id.text, "连接成功");
+                        isLink = true;
+                    }else {
+                        mBluetoothGatt.disconnect();
+                    }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     closeConn();
+                    isLink = false;
                     mHolder.setText(R.id.text, "断开连接");
-                    gifView.setVisibility(View.GONE);
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
                     System.out.println("---------------------------->正在连接");
                 }
             }else {
-                Toast.makeText(BluetoothListActivity.this, "错误码："+status, Toast.LENGTH_SHORT).show();
+                Log.e("XXXXX","错误码："+status);
                 mHolder.setText(R.id.text, "连接失败");
             }
         }

@@ -49,6 +49,8 @@ public class BluetoothListActivity extends BaseActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
     BaseViewHolder mHolder;
+    BluetoothGattService linkLossService;
+    BluetoothGattCharacteristic alertLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,31 +155,25 @@ public class BluetoothListActivity extends BaseActivity {
         //成功连接到设备回调
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-//            if (newState == BluetoothGatt.STATE_CONNECTED) {
-//                Log.e("XXX", "设备连接上 开始扫描服务");
-//                Toast.makeText(BluetoothListActivity.this, "设备连接上 开始扫描服务", Toast.LENGTH_SHORT).show();
-//                // 开始扫描服务，安卓蓝牙开发重要步骤之一
-//                mBluetoothGatt.discoverServices();
-//            }
-//            if (newState == BluetoothGatt.STATE_DISCONNECTED) {
-//                Log.e("XXX", "连接断开");
-//                // 连接断开
-//            }
             BluetoothDevice dev = gatt.getDevice();
             Log.i("XXX", String.format("onConnectionStateChange:%s,%s,%s,%s", dev.getName(), dev.getAddress(), status, newState));
-            if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
-                //启动服务发现  通过服务去获取可以操作的属性
-                gatt.discoverServices();
-                mHolder.setText(R.id.text, "连接成功");
-                gifView.setVisibility(View.GONE);
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                closeConn();
-                mHolder.setText(R.id.text, "断开连接");
-                gifView.setVisibility(View.GONE);
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
-                System.out.println("---------------------------->正在连接");
+            if (status == BluetoothGatt.GATT_SUCCESS ){
+                if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    //启动服务发现  通过服务去获取可以操作的属性
+                    gatt.discoverServices();
+                    mHolder.setText(R.id.text, "连接成功");
+                    gifView.setVisibility(View.GONE);
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    closeConn();
+                    mHolder.setText(R.id.text, "断开连接");
+                    gifView.setVisibility(View.GONE);
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
+                    System.out.println("---------------------------->正在连接");
+                }
+            }else {
+                Toast.makeText(BluetoothListActivity.this, "错误码："+status, Toast.LENGTH_SHORT).show();
+                mHolder.setText(R.id.text, "连接失败");
             }
-
         }
 
         //扫描到设备服务后回调
@@ -185,28 +181,28 @@ public class BluetoothListActivity extends BaseActivity {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             Log.i("XXX", String.format("onServicesDiscovered:%s,%s,%s", gatt.getDevice().getName(), gatt.getDevice().getAddress(), status));
             if (status == BluetoothGatt.GATT_SUCCESS) { //BLE服务发现成功
-//                //获取服务列表
-//                servicesList = mBluetoothGatt.getServices();
-//                // 遍历获取BLE服务Services/Characteristics/Descriptors的全部UUID
-//                for (BluetoothGattService service : gatt.getServices()) {
-//                    StringBuilder allUUIDs = new StringBuilder("UUIDs={\nS=" + service.getUuid().toString());
-//                    for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-//                        allUUIDs.append(",\nC=").append(characteristic.getUuid());
-//                        for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()){
-//                            allUUIDs.append(",\nD=").append(descriptor.getUuid());
-//                        }
-//
-//                    }
-//                    allUUIDs.append("}");
-//                    Log.e("XXX", "onServicesDiscovered:" + allUUIDs.toString());
-                Log.e("XXX", "onServicesDiscovered:" + "成功");
+                // 遍历获取BLE服务Services/Characteristics/Descriptors的全部UUID
+                for (BluetoothGattService service : gatt.getServices()) {
+                    StringBuilder allUUIDs = new StringBuilder("UUIDs={\nS=" + service.getUuid().toString());
+                    for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+                        allUUIDs.append(",\nC=").append(characteristic.getUuid());
+                        for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors())
+                            allUUIDs.append(",\nD=").append(descriptor.getUuid());
+                    }
+                    allUUIDs.append("}");
+                    Log.i("XXXXX", "onServicesDiscovered:" + allUUIDs.toString());
+                }
             }
         }
 
         //若开启监听成功回调
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Toast.makeText(BluetoothListActivity.this, "写入数据成功1", Toast.LENGTH_SHORT).show();
+            }else {
+                Log.e("XXXXX",status+"");
+            }
         }
 
          //发送数据后的回调
@@ -214,7 +210,11 @@ public class BluetoothListActivity extends BaseActivity {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Toast.makeText(BluetoothListActivity.this, "写入数据成功", Toast.LENGTH_SHORT).show();
+                UUID uuid = characteristic.getUuid();
+                String valueStr = new String(characteristic.getValue());
+                Toast.makeText(BluetoothListActivity.this, valueStr, Toast.LENGTH_SHORT).show();
+            }else {
+                Log.e("XXXXX",status+"");
             }
         }
 
@@ -260,7 +260,7 @@ public class BluetoothListActivity extends BaseActivity {
 
     @Override
     protected void rightClient() {
-
+        write();
     }
 
     @Override
@@ -270,6 +270,59 @@ public class BluetoothListActivity extends BaseActivity {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
+    }
+
+
+
+    /**
+     * 向蓝牙发送数据
+     */
+    // 注意：连续频繁读写数据容易失败，读写操作间隔最好200ms以上，或等待上次回调完成后再进行下次读写操作！
+    // 写入数据成功会回调->onCharacteristicWrite()
+    public void write() {
+        BluetoothGattService service = mBluetoothGatt.getService(UUID.fromString("00001828-0000-1000-8000-00805f9b34fb"));
+        if (service != null) {
+            String data = "A3 FF 00 00 00 00 02 00 FF FF C2 11 02 C4 01 01 00";
+            byte[] value = getInputBytes(data);
+//            byte[] value = new byte[17];
+//            value[0] = (byte) 0xA3;
+//            value[1] = (byte) 0xFF;
+//            value[2] = (byte) 0x00;
+//            value[3] = (byte) 0x00;
+//            value[4] = (byte) 0x00;
+//            value[5] = (byte) 0x00;
+//            value[6] = (byte) 0x02;
+//            value[7] = (byte) 0x00;
+//            value[8] = (byte) 0xFF;
+//            value[9] = (byte) 0xFF;
+//            value[10] = (byte) 0xC2;
+//            value[11] = (byte) 0x11;
+//
+//            value[12] = (byte) 0x02;
+//            value[13] = (byte) 0xC4;
+//            value[14] = (byte) 0x01;
+//            value[15] = (byte) 0x01;
+//            value[16] = (byte) 0x00;
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString("00002add-0000-1000-8000-00805f9b34fb"));//通过UUID获取可写的Characteristic
+            characteristic.setValue(value); //单次最多20个字节
+            mBluetoothGatt.writeCharacteristic(characteristic);
+        }else {
+            Toast.makeText(this, "没有找到服务UUID", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private byte[] getInputBytes(String input) {
+        String[] byteStrs = input.split(" ");
+        if (input.equals("")) {
+            return null;
+        }
+        byte[] result = new byte[byteStrs.length];
+        for (int i = 0; i < byteStrs.length; i++) {
+//            result[i] = Byte.parseByte(byteStrs[i], 16);
+            result[i] = (byte) (Integer.parseInt(byteStrs[i], 16) & 0xFF);
+        }
+        return result;
+
     }
 
 }

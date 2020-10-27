@@ -9,7 +9,9 @@
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
         style="@style/Header"
-        app:header_title="蓝牙列表">
+        app:header_title="蓝牙列表"
+        app:header_is_right_tv_visiable="true"
+        app:header_title_right="@string/app_name">
     </com.example.luke_imagevideo_send.http.views.Header>
 
 

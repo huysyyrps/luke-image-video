@@ -23,6 +23,7 @@ import android.widget.VideoView;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.util.FileUtils;
+import com.example.luke_imagevideo_send.chifen.camera.view.CustomerVideoView;
 import com.example.luke_imagevideo_send.chifen.camera.view.DrawView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 
@@ -47,7 +48,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     Window window;
     Bitmap mBitmap;
     @BindView(R.id.videoView)
-    VideoView videoView;
+    CustomerVideoView videoView;
     String path = "";
 
     @Override
@@ -214,6 +215,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     private void stopPlaybackVideo() {
         try {
             videoView.stopPlayback();
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }

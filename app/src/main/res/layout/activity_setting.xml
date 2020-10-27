@@ -104,8 +104,8 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_margin="40dp"
-        android:background="@drawable/linelayout_color_radion"
+        android:background="@color/white"
         android:text="确定"
         android:textSize="17dp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/black"/>
 </LinearLayout>

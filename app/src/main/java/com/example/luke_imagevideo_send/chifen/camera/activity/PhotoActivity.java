@@ -1,4 +1,4 @@
-package com.example.luke_imagevideo_send.chifen.camera.fragment;
+package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -6,22 +6,22 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.camera.activity.SeeImageOrVideoActivity;
+import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.okhttp.QuietOkHttp;
 import com.example.luke_imagevideo_send.http.okhttp.StringCallBack;
+import com.example.luke_imagevideo_send.http.views.Header;
+import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,8 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 
-public class PhotoFragment extends Fragment {
-    View view;
+public class PhotoActivity extends BaseActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     List<String> imagePaths = new ArrayList<>();
@@ -42,22 +41,28 @@ public class PhotoFragment extends Fragment {
     BaseRecyclerAdapter baseRecyclerAdapter;
     @BindView(R.id.ivSend)
     ImageView ivSend;
+    @BindView(R.id.header)
+    Header header;
+    @BindView(R.id.linearLayout)
+    LinearLayout linearLayout;
+    @BindView(R.id.pullToRefreshLayout)
+    PullToRefreshLayout pullToRefreshLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_photo, container, false);
-        ButterKnife.bind(this, view);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        linearLayout.setVisibility(View.GONE);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoActivity.this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
-        baseRecyclerAdapter = new BaseRecyclerAdapter<String>(getActivity(), R.layout.album_item, imagePaths) {
+        baseRecyclerAdapter = new BaseRecyclerAdapter<String>(PhotoActivity.this, R.layout.album_item, imagePaths) {
             @Override
             public void convert(BaseViewHolder holder, final String o) {
-                holder.setImage(getActivity(), R.id.imageView, o);
+                holder.setImage(PhotoActivity.this, R.id.imageView, o);
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), SeeImageOrVideoActivity.class);
+                        Intent intent = new Intent(PhotoActivity.this, SeeImageOrVideoActivity.class);
                         intent.putExtra("path", o);
                         intent.putExtra("tag", "photo");
                         startActivity(intent);
@@ -70,9 +75,9 @@ public class PhotoFragment extends Fragment {
                         if (selectList.contains(o)) {
                             selectList.remove(o);
                         } else {
-                            if (selectList.size()>=9){
-                                Toast.makeText(getActivity(), "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
-                            }else {
+                            if (selectList.size() >= 9) {
+                                Toast.makeText(PhotoActivity.this, "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
+                            } else {
                                 selectList.add(o);
                             }
                         }
@@ -82,7 +87,6 @@ public class PhotoFragment extends Fragment {
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
         baseRecyclerAdapter.notifyDataSetChanged();
-        return view;
     }
 
     @Override
@@ -98,17 +102,16 @@ public class PhotoFragment extends Fragment {
         File[] files = file.listFiles();
         try {
             for (int i = 0; i < files.length; i++) {
-                if (checkIsImageFile(files[i].getPath())&&files[i].getPath()!=null) {
+                if (checkIsImageFile(files[i].getPath()) && files[i].getPath() != null) {
                     Bitmap bitmap = null;
                     bitmap = BitmapFactory.decodeFile(files[i].getPath());
-                    if(bitmap != null){
+                    if (bitmap != null) {
                         imagePaths.add(files[i].getPath());
                     }
                 }
             }
-        }
-        catch(Exception e) {
-            Toast.makeText(getActivity(), e.toString()+"", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(PhotoActivity.this, e.toString() + "", Toast.LENGTH_SHORT).show();
         }
         return imagePaths;
     }
@@ -130,11 +133,11 @@ public class PhotoFragment extends Fragment {
 
     @OnClick(R.id.ivSend)
     public void onClick() {
-        if (selectList.size()==0){
-            Toast.makeText(getActivity(), "您还未选择图片", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getActivity(), selectList.size()+"", Toast.LENGTH_SHORT).show();
-            for (int i=0;i<selectList.size();i++){
+        if (selectList.size() == 0) {
+            Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(PhotoActivity.this, selectList.size() + "", Toast.LENGTH_SHORT).show();
+            for (int i = 0; i < selectList.size(); i++) {
                 fileList.add(new File(selectList.get(i)));
             }
             QuietOkHttp.postFile("URL_UPLOAD")
@@ -152,5 +155,20 @@ public class PhotoFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    @Override
+    protected int provideContentViewId() {
+        return R.layout.fragment_photo;
+    }
+
+    @Override
+    protected boolean isHasHeader() {
+        return true;
+    }
+
+    @Override
+    protected void rightClient() {
+
     }
 }

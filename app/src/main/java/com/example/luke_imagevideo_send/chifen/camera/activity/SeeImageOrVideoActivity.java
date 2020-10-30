@@ -27,6 +27,8 @@ import com.example.luke_imagevideo_send.chifen.camera.view.CustomerVideoView;
 import com.example.luke_imagevideo_send.chifen.camera.view.DrawView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,7 +59,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         ButterKnife.bind(this);
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
         path = getIntent().getStringExtra("path");
         String tag = getIntent().getStringExtra("tag");
         if (tag.equals("photo")) {
@@ -69,10 +71,19 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
             if (start != -1 && end != -1) {
                 fileName = path.substring(start + 1, end);
             }
-            DisplayMetrics dm = getResources().getDisplayMetrics();
-            Bitmap originalBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
-            Bitmap finalBitmap = Bitmap.createScaledBitmap(originalBitmap, dm.widthPixels, dm.heightPixels, true);
-            loadImage(finalBitmap);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options); //此时返回 bm 为空
+            options.inJustDecodeBounds = false; //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+//            int be = (int)(options.outHeight / (float)320);
+//            if (be <= 0)
+//                be = 1;
+//            options.inSampleSize = be; //重新读入图片，注意此时已经把 options.inJustDecodeBounds 设回 false 了
+            bitmap=BitmapFactory.decodeFile(path,options);
+//            DisplayMetrics dm = getResources().getDisplayMetrics();
+//            Bitmap originalBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
+//            Bitmap finalBitmap = Bitmap.createScaledBitmap(originalBitmap, dm.heightPixels, dm.widthPixels, true);//heightPixels
+            loadImage(bitmap);
         } else if (tag.equals("video")) {
             drawView.setVisibility(View.GONE);
             paintBar.setVisibility(View.GONE);

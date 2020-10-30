@@ -21,17 +21,17 @@
 
         <com.example.luke_imagevideo_send.chifen.camera.view.CustomerVideoView
             android:id="@+id/videoView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/paint_bar"
-        android:layout_width="45dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom"
         android:background="@color/dark"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
 
         <ImageButton

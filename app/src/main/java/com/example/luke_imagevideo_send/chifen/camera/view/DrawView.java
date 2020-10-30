@@ -91,23 +91,25 @@ public class DrawView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float proportion = (float) canvas.getWidth() / mBitmap.getWidth();
-        if (proportion < 1) {
-            mProportion = 0;
-            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-            Log.e("TAG11", mBitmap.getWidth()+"__________"+mBitmap.getHeight());
-            //绘制path
-            canvas.drawPath(mPath, paint);
-        } else {
-            mProportion = proportion;
-            matrix = new Matrix();
-            matrix.reset();
-            matrix.postScale(proportion, proportion);
-            matrix.postTranslate((canvas.getWidth() - mBitmap.getWidth() * proportion) / 2, 0);
-            canvas.drawBitmap(mBitmap, matrix, mBitmapPaint);
-            //绘制path
-            canvas.drawPath(mPath, paint);
-        }
+        canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+        canvas.drawPath(mPath, paint);
+//        float proportion = (float) canvas.getWidth() / mBitmap.getWidth();
+//        if (proportion < 1) {
+//            mProportion = 0;
+//            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+//            Log.e("TAG11", mBitmap.getWidth()+"__________"+mBitmap.getHeight());
+//            //绘制path
+//            canvas.drawPath(mPath, paint);
+//        } else {
+//            mProportion = proportion;
+//            matrix = new Matrix();
+//            matrix.reset();
+//            matrix.postScale(proportion, proportion);
+//            matrix.postTranslate((canvas.getWidth() - mBitmap.getWidth() * proportion) / 2, 0);
+//            canvas.drawBitmap(mBitmap, matrix, mBitmapPaint);
+//            //绘制path
+//            canvas.drawPath(mPath, paint);
+//        }
         if (pointLists != null && pointLists.size() > 0) {
             for (int i = 0; i < pointLists.size(); i++) {
                 PointBean pb = pointLists.get(i);

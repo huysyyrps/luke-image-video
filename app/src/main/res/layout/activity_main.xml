@@ -23,50 +23,50 @@
     </WebView>
 
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:scaleType="fitXY"/>-->
 
 
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="62dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="right|center">
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="6dp"
+        android:layout_gravity="bottom|center">
 
         <RadioButton
             android:id="@+id/rbCamera"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:drawableLeft="@drawable/rbcamera" />
 
         <RadioButton
             android:id="@+id/rbSound"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:drawableLeft="@drawable/ic_sound"/>
 
         <RadioButton
             android:id="@+id/rbSuspend"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:visibility="gone"
             android:drawableLeft="@drawable/ic_suspend"/>
 
         <RadioButton
             android:id="@+id/rbVideo"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:drawableLeft="@drawable/ic_nosound"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:drawableLeft="@drawable/rbalbum"/>
 
         <RadioButton
             android:id="@+id/rbSetting"
-            style="@style/MainRadionButton"
+            style="@style/RadionButton"
             android:drawableLeft="@drawable/rbsetting"/>
 
     </RadioGroup>
@@ -74,91 +74,94 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:text="时间:"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
+            android:layout_marginLeft="10dp"
             android:textColor="@color/red"/>
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="时间"
             android:textColor="@color/red"
-            android:textSize="20dp" />
+            android:textSize="14dp" />
+
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
             android:text="GPS:"
             android:gravity="center"
-            android:textSize="20dp"
-            android:layout_marginLeft="30dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
         <TextView
             android:id="@+id/tvGPS"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:text="获取位置中"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:text="工程名称:"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
         <TextView
             android:id="@+id/tvCompName"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:text="工件名称:"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:layout_marginLeft="30dp"
             android:textColor="@color/red"/>
         <TextView
             android:id="@+id/tvWorkName"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:text="工件编号:"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:layout_marginLeft="30dp"
             android:textColor="@color/red"/>
         <TextView
             android:id="@+id/tvWorkCode"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:textColor="@color/red"/>
     </LinearLayout>
 

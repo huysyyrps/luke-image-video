@@ -89,5 +89,12 @@ dependencies {
     implementation "commons-logging:commons-logging:1.2"
     implementation 'com.inuker.bluetooth:library:1.4.0'
     implementation 'com.github.Cutta:GifView:1.4'
+//    加载动画1
+    implementation 'com.github.zzz40500:android-shapeLoadingView:1.0.3.2'
+    //    加载动画2
+    implementation 'com.wang.avi:library:1.0.0'
+    implementation'com.nineoldandroids:library:2.4.0'
+//    上拉加载
+    compile 'com.jwenfeng.pulltorefresh:library:1.2.7'
 
 }

@@ -31,8 +31,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,8 +43,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -52,7 +54,9 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.camera.activity.AlbumActivity;
+import com.example.luke_imagevideo_send.chifen.camera.activity.HaveAudioActivity;
+import com.example.luke_imagevideo_send.chifen.camera.activity.NoAudioActivity;
+import com.example.luke_imagevideo_send.chifen.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
@@ -106,8 +110,8 @@ public class MainActivity extends BaseActivity {
     RadioGroup radioGroup;
     @BindView(R.id.webView)
     WebView webView;
-    @BindView(R.id.imageView)
-    ImageView imageView;
+//    @BindView(R.id.imageView)
+//    ImageView imageView;
     @BindView(R.id.tvTime)
     TextView tvTime;
     @BindView(R.id.tvGPS)
@@ -213,6 +217,13 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy( builder.build() );
+        }
+
         Intent intent = getIntent();
         compName = intent.getStringExtra("etCompName");
         workName = intent.getStringExtra("etWorkName");
@@ -230,7 +241,7 @@ public class MainActivity extends BaseActivity {
             tvWorkCode.setText(workCode);
         }
         header.setVisibility(View.GONE);
-        imageView.setVisibility(View.GONE);
+//        imageView.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         alertDialogUtil = new AlertDialogUtil(this);
         // 设置全屏
@@ -262,7 +273,7 @@ public class MainActivity extends BaseActivity {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 webView.setVisibility(View.GONE);
-                imageView.setVisibility(View.GONE);
+//                imageView.setVisibility(View.GONE);
                 linearLayout.setVerticalGravity(View.GONE);
                 loadError = true;
             }
@@ -340,12 +351,12 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(Throwable tr) {
-                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFinally() {
-                        Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -381,7 +392,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFinally() {
                 Log.e("XXX", "111");
-                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
                 // todo updateDeviceSwitchButton();
             }
         });
@@ -593,10 +604,9 @@ public class MainActivity extends BaseActivity {
                 view.buildDrawingCache();
                 mBitmap = view.getDrawingCache();
                 if (mBitmap != null) {
-                    webView.setVisibility(View.GONE);
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(mBitmap);
-
+//                    webView.setVisibility(View.GONE);
+//                    imageView.setVisibility(View.VISIBLE);
+//                    imageView.setImageBitmap(mBitmap);
                     alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
 
                         @Override
@@ -609,8 +619,8 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void cancel() {
-                            webView.setVisibility(View.VISIBLE);
-                            imageView.setVisibility(View.GONE);
+//                            webView.setVisibility(View.VISIBLE);
+//                            imageView.setVisibility(View.GONE);
                             radioGroup.setVisibility(View.VISIBLE);
                         }
 
@@ -652,7 +662,7 @@ public class MainActivity extends BaseActivity {
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
                         startCapturing(mMediaProjection);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
@@ -660,34 +670,6 @@ public class MainActivity extends BaseActivity {
                 } else {
                     Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case R.id.rbSuspend:
-                BottomUIMenu();
-                rbCamera.setVisibility(View.VISIBLE);
-                rbAlbum.setVisibility(View.VISIBLE);
-                rbSound.setVisibility(View.VISIBLE);
-                rbSetting.setVisibility(View.VISIBLE);
-                rbVideo.setVisibility(View.VISIBLE);
-                rbSuspend.setVisibility(View.GONE);
-                rbVideoV = true;
-                if (mRecorder != null) {
-                    stopRecordingAndOpenFile(view1.getContext());
-                } else if (hasPermissions()) {
-                    if (mMediaProjection == null) {
-                        requestMediaProjection();
-                    } else {
-                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
-                        startCapturing(mMediaProjection);
-                    }
-                } else if (Build.VERSION.SDK_INT >= M) {
-                    requestPermissions();
-                } else {
-                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.rbAlbum:
-                intent = new Intent(this, AlbumActivity.class);
-                startActivity(intent);
                 break;
             case R.id.rbSound:
                 if (rbSoundV) {
@@ -707,7 +689,7 @@ public class MainActivity extends BaseActivity {
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
                         startCapturing(mMediaProjection);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
@@ -716,11 +698,80 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.rbSuspend:
+                BottomUIMenu();
+                rbCamera.setVisibility(View.VISIBLE);
+                rbAlbum.setVisibility(View.VISIBLE);
+                rbSound.setVisibility(View.VISIBLE);
+                rbSetting.setVisibility(View.VISIBLE);
+                rbVideo.setVisibility(View.VISIBLE);
+                rbSuspend.setVisibility(View.GONE);
+                rbVideoV = true;
+                rbSoundV = true;
+                if (mRecorder != null) {
+                    stopRecordingAndOpenFile(view1.getContext());
+                } else if (hasPermissions()) {
+                    if (mMediaProjection == null) {
+                        requestMediaProjection();
+                    } else {
+//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
+                        startCapturing(mMediaProjection);
+                    }
+                } else if (Build.VERSION.SDK_INT >= M) {
+                    requestPermissions();
+                } else {
+                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.rbAlbum:
+//                intent = new Intent(this, AlbumActivity.class);
+//                intent = new Intent(this, PhotoActivity.class);
+//                startActivity(intent);
+                showPopupMenu(rbAlbum);
+                break;
             case R.id.rbSetting:
                 intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, Constant.TAG_TWO);
                 break;
         }
+    }
+
+    private void showPopupMenu(View view) {
+        // View当前PopupMenu显示的相对View的位置
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        // menu布局
+        popupMenu.getMenuInflater().inflate(R.menu.dialog, popupMenu.getMenu());
+        // menu的item点击事件
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getTitle().equals("图片")){
+                    intent = new Intent(MainActivity.this, PhotoActivity.class);
+                    startActivity(intent);
+                }else if (item.getTitle().equals("有声视频")){
+                    intent = new Intent(MainActivity.this, HaveAudioActivity.class);
+                    startActivity(intent);
+//                    Uri uri = Uri.parse("content://com.android.externalstorage.documents/document/primary:LUKEVideo");
+//                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                    intent.setType("video/*");
+//                    intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
+//                    startActivity(intent);
+                }else if (item.getTitle().equals("无声视频")){
+                    intent = new Intent(MainActivity.this, NoAudioActivity.class);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+        // PopupMenu关闭事件
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+            }
+        });
+
+        popupMenu.show();
     }
 
     /**
@@ -759,11 +810,10 @@ public class MainActivity extends BaseActivity {
             outputStream.close();
             //隐藏image显示webview
             Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
-            imageView.setVisibility(View.GONE);
-            webView.setVisibility(View.VISIBLE);
+//            imageView.setVisibility(View.GONE);
+//            webView.setVisibility(View.VISIBLE);
             radioGroup.setVisibility(View.VISIBLE);
             return true;
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -885,10 +935,10 @@ public class MainActivity extends BaseActivity {
     private VideoEncodeConfig createVideoConfig() {
         final String codec = "OMX.hisi.video.encoder.avc";
         // video size
-        int width = 570;
-        int height = 350;
-//        int width = 1080;
-//        int height = 1920;
+//        int width = 570;
+//        int height = 350;
+        int width = 1080;
+        int height = 1920;
         int framerate = 15;
         int iframe = 1;
         int bitrate = 600000;
@@ -972,7 +1022,7 @@ public class MainActivity extends BaseActivity {
     private void stopRecordingAndOpenFile(Context context) {
         File file = new File(mRecorder.getSavedPath());
         stopRecorder();
-        Toast.makeText(context, "Using your mic to record audio and your sd card to save video file", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "Using your mic to record audio and your sd card to save video file", Toast.LENGTH_SHORT).show();
         StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
         try {
             // disable detecting FileUriExposure on public file

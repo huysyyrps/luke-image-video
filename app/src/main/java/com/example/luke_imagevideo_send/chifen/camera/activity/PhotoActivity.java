@@ -140,8 +140,12 @@ public class PhotoActivity extends BaseActivity {
         //传入指定文件夹的路径
         File file = new File(path);
         files = file.listFiles();
-        allNum = files.length;
-        setData();
+        if (files!=null){
+            allNum = files.length;
+            setData();
+        }else {
+            handler.sendEmptyMessage(Constant.TAG_TWO);
+        }
     }
 
     private void setData(){
@@ -166,7 +170,6 @@ public class PhotoActivity extends BaseActivity {
                 pullToRefreshLayout.finishLoadMore();
                 pullToRefreshLayout.setCanLoadMore(false);
             }
-
         } catch (Exception e) {
 //            Toast.makeText(HaveAudioActivity.this, e.toString() + "", Toast.LENGTH_SHORT).show();
         }
@@ -182,6 +185,9 @@ public class PhotoActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
+                    linearLayout.setVisibility(View.GONE);
+                    break;
+                case Constant.TAG_TWO:
                     linearLayout.setVisibility(View.GONE);
                     break;
             }

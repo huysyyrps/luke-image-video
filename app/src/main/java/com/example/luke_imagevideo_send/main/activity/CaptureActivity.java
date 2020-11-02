@@ -200,7 +200,7 @@ public final class CaptureActivity extends BaseActivity implements
             beepManager.playBeepSoundAndVibrate();
             Intent intent = new Intent(CaptureActivity.this, SendSelectActivity.class);
             startActivity(intent);
-            Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show();
             finish();
 //            Intent intent = getIntent();
 //            intent.putExtra("codedContent", rawResult.getText());

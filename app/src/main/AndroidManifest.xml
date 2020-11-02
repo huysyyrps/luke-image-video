@@ -44,13 +44,13 @@
         <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity"/>
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
-
-        </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity">
+
         </activity>
         <!--android:screenOrientation="landscape"  activity横向-->
         <activity android:name=".chifen.magnetic.activity.MainActivity" />

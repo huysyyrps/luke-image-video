@@ -117,8 +117,12 @@ public class NoAudioActivity extends BaseActivity {
         //传入指定文件夹的路径
         File file = new File(path);
         files = file.listFiles();
-        allNum = files.length;
-        setData();
+        if (files!=null){
+            allNum = files.length;
+            setData();
+        }else {
+            handler.sendEmptyMessage(Constant.TAG_TWO);
+        }
     }
 
     private void setData(){
@@ -157,6 +161,9 @@ public class NoAudioActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
+                    linearLayout.setVisibility(View.GONE);
+                    break;
+                case Constant.TAG_TWO:
                     linearLayout.setVisibility(View.GONE);
                     break;
             }

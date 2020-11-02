@@ -161,57 +161,57 @@ public class MainActivity extends BaseActivity {
     boolean rbVideoV = true;
     boolean rbSoundV = true;
 
-    //推出程序
-    Handler mHandler = new Handler() {
+//    //推出程序
+//    Handler mHandler = new Handler() {
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            isExit = false;
+//        }
+//    };
 
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            isExit = false;
-        }
-    };
+//    //推出程序
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            exit();
+//            return false;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
-    //推出程序
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exit();
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    private void exit() {
-        if (!isExit) {
-            isExit = true;
-            alertDialogUtil.showDialog("您确定要退出程序吗", new AlertDialogCallBack() {
-
-                @Override
-                public void confirm(String name) {
-                    finish();
-                }
-
-                @Override
-                public void cancel() {
-
-                }
-
-                @Override
-                public void save(String name) {
-
-                }
-
-                @Override
-                public void checkName(String name) {
-
-                }
-            });
-            mHandler.sendEmptyMessageDelayed(0, 2000);
-        } else {
-            finish();
-            System.exit(0);
-        }
-    }
+//    private void exit() {
+//        if (!isExit) {
+//            isExit = true;
+//            alertDialogUtil.showDialog("您确定要退出程序吗", new AlertDialogCallBack() {
+//
+//                @Override
+//                public void confirm(String name) {
+//                    finish();
+//                }
+//
+//                @Override
+//                public void cancel() {
+//
+//                }
+//
+//                @Override
+//                public void save(String name) {
+//
+//                }
+//
+//                @Override
+//                public void checkName(String name) {
+//
+//                }
+//            });
+//            mHandler.sendEmptyMessageDelayed(0, 2000);
+//        } else {
+//            finish();
+//            System.exit(0);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

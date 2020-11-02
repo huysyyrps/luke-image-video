@@ -139,6 +139,8 @@ public class HaveAudioActivity extends BaseActivity {
                         imagePaths.add(files[i]);
                     }
                 }
+                lastNum = allNum;
+                pullToRefreshLayout.finishLoadMore();
                 pullToRefreshLayout.setCanLoadMore(false);
             }
 

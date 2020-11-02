@@ -145,9 +145,9 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.btnSure)
     public void onClick() {
-        intent = new Intent();
-        intent.putExtra("data",setting);
-        setResult(Constant.TAG_ONE, intent);
+//        intent = new Intent();
+//        intent.putExtra("data",setting);
+//        setResult(Constant.TAG_ONE, intent);
         finish();
     }
 }

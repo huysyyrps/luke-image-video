@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,9 +20,11 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
+import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.okhttp.QuietOkHttp;
 import com.example.luke_imagevideo_send.http.okhttp.StringCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
@@ -47,6 +51,11 @@ public class PhotoActivity extends BaseActivity {
     LinearLayout linearLayout;
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
+
+    private int startNum = 0;
+    private int lastNum = 24;
+    private int allNum;
+    File[] files;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +96,37 @@ public class PhotoActivity extends BaseActivity {
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
         baseRecyclerAdapter.notifyDataSetChanged();
+        pullToRefreshLayout.setRefreshListener(new BaseRefreshListener() {
+            @Override
+            public void refresh() {
+                startNum = 0;
+                lastNum = 24;
+                imagePaths.clear();
+                setData();
+            }
+
+            @Override
+            public void loadMore() {
+                if (allNum == lastNum){
+                    Toast.makeText(PhotoActivity.this, "暂无更多数据", Toast.LENGTH_SHORT).show();
+                    pullToRefreshLayout.finishLoadMore();
+                    pullToRefreshLayout.setCanLoadMore(false);
+                }else if (lastNum < allNum){
+                    startNum = lastNum;
+                    lastNum+=24;
+                    if (lastNum>=allNum){
+                        lastNum = allNum;
+                    }
+                    setData();
+                }
+            }
+        });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+            }
+        }).start();
     }
 
     @Override
@@ -95,26 +135,58 @@ public class PhotoActivity extends BaseActivity {
         getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/");
     }
 
-    public List<String> getFilesAllName(String path) {
+    public void getFilesAllName(String path) {
         imagePaths.clear();
         //传入指定文件夹的路径
         File file = new File(path);
-        File[] files = file.listFiles();
+        files = file.listFiles();
+        allNum = files.length;
+        setData();
+    }
+
+    private void setData(){
         try {
-            for (int i = 0; i < files.length; i++) {
-                if (checkIsImageFile(files[i].getPath()) && files[i].getPath() != null) {
-                    Bitmap bitmap = null;
-                    bitmap = BitmapFactory.decodeFile(files[i].getPath());
-                    if (bitmap != null) {
+            if (allNum > 24) {
+                for (int i = startNum; i < lastNum; i++) {
+                    if (checkIsImageFile(files[i].getPath()) && !files[i].getPath().equals("null")) {
                         imagePaths.add(files[i].getPath());
                     }
                 }
+            } else {
+                for (int i = 0; i < files.length; i++) {
+                    if (checkIsImageFile(files[i].getPath()) && files[i].getPath() != null) {
+                        Bitmap bitmap = null;
+                        bitmap = BitmapFactory.decodeFile(files[i].getPath());
+                        if (bitmap != null) {
+                            imagePaths.add(files[i].getPath());
+                        }
+                    }
+                }
+                lastNum = allNum;
+                pullToRefreshLayout.finishLoadMore();
+                pullToRefreshLayout.setCanLoadMore(false);
             }
+
         } catch (Exception e) {
-            Toast.makeText(PhotoActivity.this, e.toString() + "", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(HaveAudioActivity.this, e.toString() + "", Toast.LENGTH_SHORT).show();
         }
-        return imagePaths;
+        pullToRefreshLayout.finishLoadMore();
+        pullToRefreshLayout.finishRefresh();
+        handler.sendEmptyMessage(Constant.TAG_ONE);
     }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Constant.TAG_ONE:
+                    baseRecyclerAdapter.notifyDataSetChanged();
+                    linearLayout.setVisibility(View.GONE);
+                    break;
+            }
+        }
+    };
 
     /**
      * 判断是否是照片

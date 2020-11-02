@@ -11,7 +11,7 @@
         android:id="@+id/header"
         style="@style/Header"
         app:header_title="设置"
-        app:header_is_left_iv_visiable="false">
+        app:header_is_left_iv_visiable="true">
     </com.example.luke_imagevideo_send.http.views.Header>
     
     <LinearLayout
@@ -104,8 +104,8 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_margin="40dp"
-        android:background="@color/white"
+        android:background="@color/color_bg_selected"
         android:text="确定"
         android:textSize="17dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/white"/>
 </LinearLayout>

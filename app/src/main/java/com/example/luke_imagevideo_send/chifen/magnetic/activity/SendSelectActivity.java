@@ -172,7 +172,6 @@ public class SendSelectActivity extends AppCompatActivity {
                     intent.putExtra("etWorkName",etWorkName.getText().toString());
                     intent.putExtra("etWorkCode",etWorkCode.getText().toString());
                     startActivity(intent);
-                    finish();
                 } else if (menuEntity.title.equals("实时上传（点击进入硬度计界面）")) {
 //                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
 //                    intent = new Intent(SendSelectActivity.this, MainActivity.class);

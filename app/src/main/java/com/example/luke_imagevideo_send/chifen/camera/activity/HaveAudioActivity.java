@@ -183,7 +183,6 @@ public class HaveAudioActivity extends BaseActivity {
 
     /**
      * 获取视频时长
-     *
      * @param mUri
      * @return
      */

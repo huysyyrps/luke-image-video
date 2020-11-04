@@ -137,33 +137,56 @@
                         android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="冲击方向"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="冲击方向"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvCJFX"
                             android:textColor="@color/red"
                             android:layout_width="match_parent"
+                            android:layout_marginRight="20dp"
                             style="@style/TextView"/>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.3"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="误差值"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="误差值"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:visibility="invisible"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvWCZ"
                             android:textColor="@color/red"
                             android:layout_width="match_parent"
                             android:text="-50~50"
+                            android:layout_marginRight="20dp"
                             style="@style/TextView"/>
                     </LinearLayout>
 
@@ -172,15 +195,26 @@
                         android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="单位"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="单位"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvDW"
                             android:textColor="@color/red"
                             android:layout_width="match_parent"
+                            android:layout_marginRight="20dp"
                             style="@style/TextView"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -195,34 +229,55 @@
                         android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="测试次数"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
-
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="测试次数"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvCSCS"
                             style="@style/TextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="20dp"
                             android:textColor="@color/red" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.3"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="换算值"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="换算值"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvHSZ"
                             android:textColor="@color/red"
                             android:layout_width="match_parent"
+                            android:layout_marginRight="20dp"
                             style="@style/TextView"/>
                     </LinearLayout>
 
@@ -231,15 +286,26 @@
                         android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
-                        <TextView
-                            android:text="冲击类型"
-                            android:textColor="@color/black"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            style="@style/TextView"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:text="冲击类型"
+                                android:textColor="@color/black"
+                                style="@style/TextViewYDJ"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/ic_inverted_triangle"/>
+                        </LinearLayout>
                         <TextView
                             android:id="@+id/tvCJLX"
                             android:textColor="@color/red"
                             android:layout_width="match_parent"
+                            android:layout_marginRight="20dp"
                             style="@style/TextView"/>
                     </LinearLayout>
 
@@ -255,7 +321,8 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginRight="20dp">
                         <TextView
                             android:text="平均值"
                             android:textColor="@color/black"
@@ -270,9 +337,10 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.3"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginRight="20dp">
                         <TextView
                             android:text="最大值"
                             android:textColor="@color/black"
@@ -289,7 +357,8 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginRight="20dp">
                         <TextView
                             android:text="最小值"
                             android:textColor="@color/black"

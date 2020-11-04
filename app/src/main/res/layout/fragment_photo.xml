@@ -10,25 +10,6 @@
         app:header_title="图库">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal">
-        <ProgressBar
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="180dp"
-            android:layout_gravity="center_horizontal">
-        </ProgressBar>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="加载中..."
-            android:gravity="center"/>
-    </LinearLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

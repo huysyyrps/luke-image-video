@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
@@ -47,11 +48,9 @@ public class PhotoActivity extends BaseActivity {
     ImageView ivSend;
     @BindView(R.id.header)
     Header header;
-    @BindView(R.id.linearLayout)
-    LinearLayout linearLayout;
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
-
+    private SVProgressHUD mSVProgressHUD;
     private int startNum = 0;
     private int lastNum = 24;
     private int allNum;
@@ -61,7 +60,7 @@ public class PhotoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        linearLayout.setVisibility(View.GONE);
+        mSVProgressHUD = new SVProgressHUD(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoActivity.this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<String>(PhotoActivity.this, R.layout.album_item, imagePaths) {
@@ -121,10 +120,11 @@ public class PhotoActivity extends BaseActivity {
                 }
             }
         });
+        mSVProgressHUD.showWithStatus("加载中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/");
             }
         }).start();
     }
@@ -132,7 +132,7 @@ public class PhotoActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/");
+//        getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/");
     }
 
     public void getFilesAllName(String path) {
@@ -185,10 +185,11 @@ public class PhotoActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
-                    linearLayout.setVisibility(View.GONE);
+                    mSVProgressHUD.dismiss();
                     break;
                 case Constant.TAG_TWO:
-                    linearLayout.setVisibility(View.GONE);
+                    Toast.makeText(PhotoActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
+                    mSVProgressHUD.dismiss();
                     break;
             }
         }

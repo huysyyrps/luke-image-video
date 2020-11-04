@@ -791,11 +791,13 @@ public class MainActivity extends BaseActivity {
             String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/";//图片保存的文件夹名
 //            File file = new File(dir);
             File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/");
-            if (!file.exists()) {                                     //如果不存在  就mkdirs()创建此文件夹
+            //如果不存在  就mkdirs()创建此文件夹
+            if (!file.exists()) {
                 file.mkdirs();
             }
             Log.i("SaveImg", "file uri==>" + dir);
-            File mFile = new File(dir + name);                        //将要保存的图片文件
+            //将要保存的图片文件
+            File mFile = new File(dir + name);
             if (mFile.exists()) {
                 Toast.makeText(context, "该图片已存在!", Toast.LENGTH_SHORT).show();
                 mFile.delete();
@@ -816,8 +818,10 @@ public class MainActivity extends BaseActivity {
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            radioGroup.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
+            radioGroup.setVisibility(View.VISIBLE);
         }
         return false;
     }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
@@ -42,13 +43,12 @@ public class NoAudioActivity extends BaseActivity {
     ImageView ivSend;
     @BindView(R.id.header)
     Header header;
-    @BindView(R.id.linearLayout)
-    LinearLayout linearLayout;
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
     List<File> imagePaths = new ArrayList<>();
     List<String> selectList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
+    private SVProgressHUD mSVProgressHUD;
     private int startNum = 0;
     private int lastNum = 12;
     private int allNum;
@@ -60,6 +60,7 @@ public class NoAudioActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         header.setTvTitle("无声视频");
+        mSVProgressHUD = new SVProgressHUD(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(NoAudioActivity.this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<File>(NoAudioActivity.this, R.layout.album_item, imagePaths) {
@@ -105,6 +106,7 @@ public class NoAudioActivity extends BaseActivity {
                 }
             }
         });
+        mSVProgressHUD.showWithStatus("加载中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -161,10 +163,11 @@ public class NoAudioActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
-                    linearLayout.setVisibility(View.GONE);
+                    mSVProgressHUD.dismiss();
                     break;
                 case Constant.TAG_TWO:
-                    linearLayout.setVisibility(View.GONE);
+                    Toast.makeText(NoAudioActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
+                    mSVProgressHUD.dismiss();
                     break;
             }
         }

@@ -92,9 +92,8 @@ dependencies {
 //    加载动画1
     implementation 'com.github.zzz40500:android-shapeLoadingView:1.0.3.2'
     //    加载动画2
-    implementation 'com.wang.avi:library:1.0.0'
-    implementation'com.nineoldandroids:library:2.4.0'
+    implementation 'com.bigkoo:svprogresshud:1.0.6'
 //    上拉加载
-    compile 'com.jwenfeng.pulltorefresh:library:1.2.7'
+    implementation 'com.jwenfeng.pulltorefresh:library:1.2.7'
 
 }

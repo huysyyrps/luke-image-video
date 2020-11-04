@@ -87,7 +87,7 @@ public class MainYDJActivity extends BaseActivity {
         tvCJCL.setText(CJCLList.get(0));
         tvCJFX.setText(CJFXList.get(0));
         tvDW.setText(DWList.get(0));
-        tvCSCS.setText(CSCSList.get(0));
+        tvCSCS.setText(CSCSList.get(2));
         tvHSZ.setText(HSZList.get(0));
         tvCJLX.setText(CJLXList.get(0));
     }
@@ -122,12 +122,9 @@ public class MainYDJActivity extends BaseActivity {
 
         CJFXList.add("垂直向下");
         CJFXList.add("垂直向上");
-        CJFXList.add("水平向左");
-        CJFXList.add("水平向右");
-        CJFXList.add("左斜上45°");
-        CJFXList.add("左斜下45°");
-        CJFXList.add("右斜上45°");
-        CJFXList.add("右斜下45°");
+        CJFXList.add("水平方向");
+        CJFXList.add("斜上45°");
+        CJFXList.add("斜下45°");
 
         DWList.add("里氏");
         DWList.add("维氏");
@@ -152,9 +149,9 @@ public class MainYDJActivity extends BaseActivity {
         HSZList.add("KS(Klbs/in^2)");
         HSZList.add("TN(Tons/in^2)");
 
-        CJLXList.add("标准碳化钨");
-        CJLXList.add("金刚石");
-        CJLXList.add("DL冲击装置");
+        CJLXList.add("碳化物（LD）");
+        CJLXList.add("金刚石(DD)");
+        CJLXList.add("冲击装置(DL)");
     }
 
     // 初始化时间方法

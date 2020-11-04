@@ -56,7 +56,7 @@
         android:orientation="horizontal">
         <TextView
             style="@style/TextView"
-            android:text="白光模式"/>
+            android:text="紫光模式"/>
         <Switch
             android:id="@+id/switchBG"
             style="@style/TextView"/>

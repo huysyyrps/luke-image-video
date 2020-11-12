@@ -18,8 +18,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-feature android:name="android.hardware.bluetooth_le"
-                  android:required="true"/>
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
     <uses-permission
         android:name="android.permission.MANAGE_MEDIA_PROJECTION"
         tools:ignore="ProtectedPermissions" />
@@ -29,38 +32,38 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
-        tools:replace="android:theme"
-        android:hardwareAccelerated ="true">
-
-        <activity android:name=".yingduji.activity.MainYDJActivity"/>
-        <activity android:name=".chifen.magnetic.activity.SettingActivity" />
-        <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity"/>
-        <activity android:name=".chifen.camera.activity.AlbumActivity" />
-        <activity android:name=".main.activity.WelcomeActivity">
+        tools:replace="android:theme">
+        <activity android:name=".cehouyi.MainCHYActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity">
+        <activity android:name=".yingduji.activity.MainYDJActivity" />
+        <activity android:name=".chifen.magnetic.activity.SettingActivity" />
+        <activity android:name=".main.activity.PermissionActivity" />
+        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
+        <activity android:name=".chifen.camera.activity.AlbumActivity" />
+        <activity android:name=".main.activity.WelcomeActivity">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
         </activity>
-        <!--android:screenOrientation="landscape"  activity横向-->
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity"/>
         <activity android:name=".chifen.magnetic.activity.MainActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
-        <activity android:name=".bluetooth.BluetoothListActivity"/>
-        <activity android:name=".chifen.camera.activity.PhotoActivity"/>
-        <activity android:name=".chifen.camera.activity.HaveAudioActivity"/>
-        <activity android:name=".chifen.camera.activity.NoAudioActivity"/>
+        <activity android:name=".bluetooth.BluetoothListActivity" />
+        <activity android:name=".chifen.camera.activity.PhotoActivity" />
+        <activity android:name=".chifen.camera.activity.HaveAudioActivity" />
+        <activity android:name=".chifen.camera.activity.NoAudioActivity" />
     </application>
+
 </manifest>

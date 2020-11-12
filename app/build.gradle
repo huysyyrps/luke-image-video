@@ -95,5 +95,4 @@ dependencies {
     implementation 'com.bigkoo:svprogresshud:1.0.6'
 //    上拉加载
     implementation 'com.jwenfeng.pulltorefresh:library:1.2.7'
-
 }

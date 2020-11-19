@@ -12,16 +12,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.bean.Test;
+import com.example.luke_imagevideo_send.cehouyi.module.MainContract;
+import com.example.luke_imagevideo_send.cehouyi.presenter.MainPresenter;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
+public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener,
+        NumberPicker.OnScrollListener, NumberPicker.Formatter, MainContract.View {
 
     @BindView(R.id.header)
     Header header;
@@ -71,6 +76,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvCancle;
     @BindView(R.id.tvSure)
     TextView tvSure;
+    MainPresenter mainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         setNumberPickerDivider(hundredPicker);
         setNumberPickerDivider(thousandPicker);
         init();
+        mainPresenter = new MainPresenter(this,this);
     }
 
     private void init() {
@@ -210,6 +217,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 tvData.setText("0.0");
                 break;
             case R.id.rb2:
+                mainPresenter.getTest();
                 break;
             case R.id.rb3:
                 break;
@@ -262,5 +270,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         + String.valueOf(thousandPicker.getValue()));
                 break;
         }
+    }
+
+    @Override
+    public void setTest(List<Test> test) {
+        Toast.makeText(this, test.get(0).getDate(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setTestMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

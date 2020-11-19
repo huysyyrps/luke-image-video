@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.example.luke_imagevideo_send.http.network.CookieReadInterceptor;
 import com.example.luke_imagevideo_send.http.network.CookiesSaveInterceptor;
+import com.example.luke_imagevideo_send.http.okhttp.SSLSocketClient;
 import com.example.luke_imagevideo_send.http.utils.InterceptorUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,8 @@ public class MyApplication extends Application {
                     //cookie
                     .addInterceptor(new CookieReadInterceptor())
                     .addInterceptor(new CookiesSaveInterceptor())
+                    .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                    .hostnameVerifier(SSLSocketClient.getHostnameVerifier())//配置
                     .build();
         }
         return mOkHttpClient;

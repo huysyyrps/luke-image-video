@@ -11,7 +11,7 @@ public class ApiAddress {
     public final static String scoreUrl = "http://www.188bifen.com/";
 
     //生成环境
-    public final static String api = "http://192.168.1.251:8080/";
+    public final static String api = "http://192.168.1.7:5000/";
 
 
     /***********************首页*******************************/
@@ -36,6 +36,8 @@ public class ApiAddress {
 
     //获取图片验证码
     public final static String getVerifyCode = "getVerityCode.do";
+
+    public final static String test = "api/111";
 
 
 

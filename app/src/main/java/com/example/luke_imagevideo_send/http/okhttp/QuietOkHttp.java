@@ -21,6 +21,8 @@ public class QuietOkHttp {
                 .writeTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
                 .addInterceptor(logInterceptor)
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())//配置
                 .writeTimeout(20, TimeUnit.SECONDS).build();
     }
 

@@ -1,8 +1,8 @@
 package com.example.luke_imagevideo_send.http.utils;
 
+import com.example.luke_imagevideo_send.AllApi;
 import com.example.luke_imagevideo_send.ApiAddress;
 import com.example.luke_imagevideo_send.MyApplication;
-import com.example.luke_imagevideo_send.http.network.AllApi;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

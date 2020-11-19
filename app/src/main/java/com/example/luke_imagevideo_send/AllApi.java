@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send;
 
+import com.example.luke_imagevideo_send.cehouyi.bean.Test;
 import com.example.luke_imagevideo_send.http.base.BaseEntry;
 import com.example.luke_imagevideo_send.http.bean.Banner;
 import com.example.luke_imagevideo_send.http.bean.Login;
@@ -45,4 +46,11 @@ public interface AllApi {
      */
     @POST(ApiAddress.userLogin)
     Observable<BaseEntry<Login>> userLogin(@Body Map<String, String> maps);
+
+
+    /**
+     * 测试
+     */
+    @GET(ApiAddress.test)
+    Observable<List<Test>> getTset();
 }

@@ -34,29 +34,24 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/logoqq"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logoqq"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".cehouyi.MainCHYActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".cehouyi.MainCHYActivity"/>
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".chifen.magnetic.activity.SettingActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity"/>
         <activity android:name=".chifen.magnetic.activity.MainActivity" />

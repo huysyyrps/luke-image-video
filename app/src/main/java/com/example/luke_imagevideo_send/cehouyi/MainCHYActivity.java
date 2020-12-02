@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener,
-        NumberPicker.OnScrollListener, NumberPicker.Formatter, MainContract.View {
+        NumberPicker.OnScrollListener, NumberPicker.Formatter{
 
     @BindView(R.id.header)
     Header header;
@@ -87,7 +87,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         setNumberPickerDivider(hundredPicker);
         setNumberPickerDivider(thousandPicker);
         init();
-        mainPresenter = new MainPresenter(this,this);
+//        mainPresenter = new MainPresenter(this,this);
     }
 
     private void init() {
@@ -272,13 +272,13 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         }
     }
 
-    @Override
-    public void setTest(List<Test> test) {
-        Toast.makeText(this, test.get(0).getDate(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void setTestMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void setTest(List<Test> test) {
+//        Toast.makeText(this, test.get(0).getDate(), Toast.LENGTH_SHORT).show();
+//    }
+//
+//    @Override
+//    public void setTestMessage(String message) {
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//    }
 }

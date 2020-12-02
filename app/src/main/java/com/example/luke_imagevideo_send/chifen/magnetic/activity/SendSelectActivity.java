@@ -16,6 +16,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
+import com.example.luke_imagevideo_send.chifen.magnetic.module.TestContract;
+import com.example.luke_imagevideo_send.chifen.magnetic.presenter.TestPresenter;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.LoadingDialog;
@@ -40,7 +43,7 @@ import java.util.ArrayList;
 /**
  * 磁粉检测上传方式选择页
  */
-public class SendSelectActivity extends AppCompatActivity {
+public class SendSelectActivity extends AppCompatActivity implements TestContract.View {
     private RelativeLayout relativeLayout;
     private ImageView ivBack;
     private TextView tvHeader;
@@ -53,6 +56,7 @@ public class SendSelectActivity extends AppCompatActivity {
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
     MediaProjectionManager projectionManager;
+    TestPresenter testPresenter;
     //推出程序
     Handler mHandler = new Handler() {
 
@@ -126,6 +130,9 @@ public class SendSelectActivity extends AppCompatActivity {
             }
         });
         initData();
+
+        testPresenter = new TestPresenter(this,this);
+        testPresenter.getTest();
     }
     //设置SweetSheet上的数据
     public void initData() {
@@ -185,5 +192,19 @@ public class SendSelectActivity extends AppCompatActivity {
             }
         });
         sheet.toggle();
+    }
+
+    /**
+     * 测试接口网络返回数据
+     * @param test
+     */
+    @Override
+    public void setTest(Test01 test) {
+        Toast.makeText(SendSelectActivity.this, test.getLog_id(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setTestMessage(String message) {
+        Toast.makeText(SendSelectActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

@@ -54,10 +54,14 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.bean.Test;
 import com.example.luke_imagevideo_send.chifen.camera.activity.HaveAudioActivity;
 import com.example.luke_imagevideo_send.chifen.camera.activity.NoAudioActivity;
 import com.example.luke_imagevideo_send.chifen.camera.activity.PhotoActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
+import com.example.luke_imagevideo_send.chifen.magnetic.module.TestContract;
+import com.example.luke_imagevideo_send.chifen.magnetic.presenter.TestPresenter;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
@@ -80,6 +84,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -161,64 +166,10 @@ public class MainActivity extends BaseActivity {
     boolean rbVideoV = true;
     boolean rbSoundV = true;
 
-//    //推出程序
-//    Handler mHandler = new Handler() {
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            super.handleMessage(msg);
-//            isExit = false;
-//        }
-//    };
-
-//    //推出程序
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            exit();
-//            return false;
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
-
-//    private void exit() {
-//        if (!isExit) {
-//            isExit = true;
-//            alertDialogUtil.showDialog("您确定要退出程序吗", new AlertDialogCallBack() {
-//
-//                @Override
-//                public void confirm(String name) {
-//                    finish();
-//                }
-//
-//                @Override
-//                public void cancel() {
-//
-//                }
-//
-//                @Override
-//                public void save(String name) {
-//
-//                }
-//
-//                @Override
-//                public void checkName(String name) {
-//
-//                }
-//            });
-//            mHandler.sendEmptyMessageDelayed(0, 2000);
-//        } else {
-//            finish();
-//            System.exit(0);
-//        }
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy( builder.build() );

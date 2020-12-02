@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send;
 
 import com.example.luke_imagevideo_send.cehouyi.bean.Test;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
 import com.example.luke_imagevideo_send.http.base.BaseEntry;
 import com.example.luke_imagevideo_send.http.bean.Banner;
 import com.example.luke_imagevideo_send.http.bean.Login;
@@ -53,4 +54,10 @@ public interface AllApi {
      */
     @GET(ApiAddress.test)
     Observable<List<Test>> getTset();
+
+    /**
+     * 测试01
+     */
+    @GET(ApiAddress.getData)
+    Observable<Test01> getTset1();
 }

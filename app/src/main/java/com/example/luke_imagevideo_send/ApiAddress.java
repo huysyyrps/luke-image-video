@@ -11,7 +11,7 @@ public class ApiAddress {
     public final static String scoreUrl = "http://www.188bifen.com/";
 
     //生成环境
-    public final static String api = "http://192.168.1.7:5000/";
+    public final static String api = "https://172.16.18.73:5001";
 
 
     /***********************首页*******************************/
@@ -21,6 +21,9 @@ public class ApiAddress {
     public final static String getLivesList = "mobile/listLives.do";
     //最新资讯
     public final static String getZixunList = "mobile/listArticles.do";
+
+    //测试查询地址
+    public final static String getData = "/api/113";
 
 
 

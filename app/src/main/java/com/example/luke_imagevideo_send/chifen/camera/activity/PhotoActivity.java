@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
+import com.example.luke_imagevideo_send.AllApi;
+import com.example.luke_imagevideo_send.ApiAddress;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
@@ -219,9 +221,10 @@ public class PhotoActivity extends BaseActivity {
             for (int i = 0; i < selectList.size(); i++) {
                 fileList.add(new File(selectList.get(i)));
             }
-            QuietOkHttp.postFile("URL_UPLOAD")
+            QuietOkHttp.postFile(ApiAddress.api+ApiAddress.getData)
                     .uploadFile("files", fileList)
-//                    .addParams("key", "10926a9165054566b6df6a8410e45f08")
+                    .addParams("num", "4")
+                    .addParams("string", "4")
                     .execute(new StringCallBack() {
                         @Override
                         protected void onSuccess(Call call, String response) {

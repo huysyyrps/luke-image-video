@@ -11,39 +11,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
-import com.example.luke_imagevideo_send.chifen.magnetic.module.TestContract;
-import com.example.luke_imagevideo_send.chifen.magnetic.presenter.TestPresenter;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
-import com.example.luke_imagevideo_send.http.base.LoadingDialog;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
-import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
-import com.example.luke_imagevideo_send.modbus.Modbus4jWriteUtils;
-import com.example.luke_imagevideo_send.modbus.ModbusCallback;
-import com.example.luke_imagevideo_send.modbus.ModbusManager;
 import com.example.luke_imagevideo_send.yingduji.activity.MainYDJActivity;
-import com.licheedev.modbus4android.param.TcpParam;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
-import com.serotonin.modbus4j.ModbusMaster;
-import com.serotonin.modbus4j.exception.ModbusInitException;
-import com.serotonin.modbus4j.exception.ModbusTransportException;
-import com.serotonin.modbus4j.msg.WriteRegistersResponse;
 
 import java.util.ArrayList;
 
 /**
  * 磁粉检测上传方式选择页
  */
-public class SendSelectActivity extends AppCompatActivity implements TestContract.View {
+public class SendSelectActivity extends AppCompatActivity {
     private RelativeLayout relativeLayout;
     private ImageView ivBack;
     private TextView tvHeader;
@@ -56,7 +43,6 @@ public class SendSelectActivity extends AppCompatActivity implements TestContrac
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
     MediaProjectionManager projectionManager;
-    TestPresenter testPresenter;
     //推出程序
     Handler mHandler = new Handler() {
 
@@ -130,9 +116,6 @@ public class SendSelectActivity extends AppCompatActivity implements TestContrac
             }
         });
         initData();
-
-        testPresenter = new TestPresenter(this,this);
-        testPresenter.getTest();
     }
     //设置SweetSheet上的数据
     public void initData() {
@@ -194,17 +177,4 @@ public class SendSelectActivity extends AppCompatActivity implements TestContrac
         sheet.toggle();
     }
 
-    /**
-     * 测试接口网络返回数据
-     * @param test
-     */
-    @Override
-    public void setTest(Test01 test) {
-        Toast.makeText(SendSelectActivity.this, test.getLog_id(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void setTestMessage(String message) {
-        Toast.makeText(SendSelectActivity.this, message, Toast.LENGTH_SHORT).show();
-    }
 }

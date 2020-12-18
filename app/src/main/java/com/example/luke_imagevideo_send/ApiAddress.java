@@ -28,10 +28,6 @@ public class ApiAddress {
 
 
     /**************************************个人中心************************************************/
-    //忘记密码
-    public final static String forgetPwd = "mbforgetPwd.do";
-    //登录
-    public final static String userLogin = "mblogin.do";
     //注册
     public final static String userRegister = "mbregister.do";
     //发送验证码
@@ -41,6 +37,12 @@ public class ApiAddress {
     public final static String getVerifyCode = "getVerityCode.do";
 
     public final static String test = "api/111";
+    //登录
+    public final static String login = "app_login";
+    //修改密码
+    public final static String checkpassword = "app_change_password";
+    //注册
+    public final static String register = "mobile_phone/save";
 
 
 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="@string/login_register">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/ImaheView"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_phone" />
+
+        <EditText
+            android:id="@+id/etPhone"
+            style="@style/EditText"
+            android:hint="@string/write_phone"
+            android:inputType="number"
+            android:textColor="@color/bg_do_botttom" />
+    </LinearLayout>
+    <View style="@style/HourLine"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/ImaheView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_password" />
+
+        <EditText
+            android:id="@+id/etCode"
+            style="@style/EditText"
+            android:hint="@string/write_code"
+            android:textColor="@color/bg_do_botttom" />
+        <TextView
+            android:id="@+id/tvCode"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:text="@string/get_code"
+            android:gravity="center"
+            android:background="@color/qianhui"
+            android:textColor="@color/color_bg_selected" />
+    </LinearLayout>
+    <View style="@style/HourLine"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            style="@style/ImaheView"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_password" />
+
+        <EditText
+            android:id="@+id/etPassWord"
+            style="@style/EditText"
+            android:hint="@string/login_password"
+            android:inputType="textPassword"
+            android:textColor="@color/bg_do_botttom" />
+        <ImageView
+            android:id="@+id/ivSeeNewPw"
+            android:layout_width="45dp"
+            android:padding="10dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_login_see"/>
+    </LinearLayout>
+    <View style="@style/HourLine"/>
+
+    <Button
+        android:id="@+id/btnUp"
+        style="@style/Button"
+        android:layout_marginTop="40dp"
+        android:text="@string/title_tips_confim"/>
+
+</LinearLayout>

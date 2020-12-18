@@ -7,6 +7,7 @@ import com.example.luke_imagevideo_send.http.network.CookieReadInterceptor;
 import com.example.luke_imagevideo_send.http.network.CookiesSaveInterceptor;
 import com.example.luke_imagevideo_send.http.okhttp.SSLSocketClient;
 import com.example.luke_imagevideo_send.http.utils.InterceptorUtil;
+import com.mob.MobSDK;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +28,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MobSDK.submitPolicyGrantResult(true, null);
         myApp = this;
         context = getApplicationContext();
     }

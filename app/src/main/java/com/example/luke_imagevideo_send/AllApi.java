@@ -2,19 +2,19 @@ package com.example.luke_imagevideo_send;
 
 import com.example.luke_imagevideo_send.cehouyi.bean.Test;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
-import com.example.luke_imagevideo_send.http.base.BaseEntry;
-import com.example.luke_imagevideo_send.http.bean.Banner;
-import com.example.luke_imagevideo_send.http.bean.Login;
-import com.example.luke_imagevideo_send.http.bean.ZiXunAll;
+import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
+import com.example.luke_imagevideo_send.main.bean.Login;
+import com.example.luke_imagevideo_send.main.bean.Register;
 
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
-import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * @author: Allen.
@@ -24,17 +24,6 @@ import retrofit2.http.POST;
 
 public interface AllApi {
 
-    /**
-     * 获取banner
-     */
-    @GET(ApiAddress.getBannerList)
-    Observable<BaseEntry<List<Banner>>> getBanner();
-
-    /**
-     * 最新资讯
-     */
-    @GET(ApiAddress.getZixunList)
-    Observable<BaseEntry<List<ZiXunAll>>> getZixunData();
 
     /**
      * 获取图片验证码
@@ -45,8 +34,23 @@ public interface AllApi {
     /**
      * 登录
      */
-    @POST(ApiAddress.userLogin)
-    Observable<BaseEntry<Login>> userLogin(@Body Map<String, String> maps);
+    @GET(ApiAddress.login)
+    Observable<Login> getLogin(@Query("appLoginName") String appLoginName, @Query("appPassword") String appPassword
+            , @Query("type") String type);
+
+    /**
+     * 注册
+     */
+    @FormUrlEncoded
+    @POST(ApiAddress.register)
+    Observable<Register> getLineStation(@Field("account") String account, @Field("password") String password);
+
+    /**
+     * 修改密码
+     */
+    @FormUrlEncoded
+    @POST(ApiAddress.checkpassword)
+    Observable<CheckPassWord> getCheckPassWord(@Field("account") String account, @Field("newPwd") String newPwd);
 
 
     /**

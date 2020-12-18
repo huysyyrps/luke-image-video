@@ -1,16 +1,31 @@
 apply plugin: 'com.android.application'
+// 添加插件
+apply plugin: 'com.mob.sdk'
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "31bc5cafc24e4"
+    appSecret "93b27c040d3bd4eac391152e2fc1423a"
+    SMSSDK {gui false}
+}
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\Administrator\\Desktop\\androidkeystore.jks')
+            storePassword 'android'
+            keyAlias 'luke'
+            keyPassword 'android'
+        }
+    }
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.example.luke_detection"
+        applicationId "com.example.luke_imagevideo_send"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -92,4 +107,5 @@ dependencies {
     implementation 'com.bigkoo:svprogresshud:1.0.6'
 //    上拉加载
     implementation 'com.jwenfeng.pulltorefresh:library:1.2.7'
+
 }

@@ -18,11 +18,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-
     <uses-permission
         android:name="android.permission.MANAGE_MEDIA_PROJECTION"
         tools:ignore="ProtectedPermissions" />
@@ -41,19 +41,30 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".cehouyi.MainCHYActivity"/>
+        <meta-data
+            android:name="Mob-AppKey"
+            android:value="31bc5cafc24e4" />
+        <meta-data
+            android:name="Mob-AppSecret"
+            android:value="93b27c040d3bd4eac391152e2fc1423a" />
+        <activity android:name=".main.activity.AgreeActivity"></activity>
+        <activity android:name=".main.activity.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".main.activity.RegisterActivity" />
+        <activity android:name=".main.activity.CheckPassWordActivity" />
+        <activity android:name=".cehouyi.MainCHYActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".chifen.magnetic.activity.SettingActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
-        <activity android:name=".main.activity.WelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity"/>
+        <activity android:name=".main.activity.WelcomeActivity"></activity>
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".chifen.magnetic.activity.MainActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".bluetooth.BluetoothListActivity" />

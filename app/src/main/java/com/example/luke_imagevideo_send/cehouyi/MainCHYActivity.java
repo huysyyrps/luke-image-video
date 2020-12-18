@@ -9,17 +9,12 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.cehouyi.bean.Test;
-import com.example.luke_imagevideo_send.cehouyi.module.MainContract;
-import com.example.luke_imagevideo_send.cehouyi.presenter.MainPresenter;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,7 +71,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvCancle;
     @BindView(R.id.tvSure)
     TextView tvSure;
-    MainPresenter mainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,7 +211,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 tvData.setText("0.0");
                 break;
             case R.id.rb2:
-                mainPresenter.getTest();
+//                mainPresenter.getTest();
                 break;
             case R.id.rb3:
                 break;

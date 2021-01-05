@@ -11,7 +11,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
@@ -112,17 +111,13 @@ public final class CaptureActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
         // CameraManager必须在这里初始化，而不是在onCreate()中。
         // 这是必须的，因为当我们第一次进入时需要显示帮助页，我们并不想打开Camera,测量屏幕大小
         // 当扫描框的尺寸不正确时会出现bug
         cameraManager = new CameraManager(getApplication());
-
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         viewfinderView.setCameraManager(cameraManager);
-
         handler = null;
-
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
@@ -179,8 +174,7 @@ public final class CaptureActivity extends BaseActivity implements
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
@@ -193,7 +187,6 @@ public final class CaptureActivity extends BaseActivity implements
      */
     public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
         inactivityTimer.onActivity();
-
         boolean fromLiveScan = barcode != null;
         //这里处理解码完成后的结果，此处将参数回传到Activity处理
         if (fromLiveScan) {

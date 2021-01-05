@@ -49,11 +49,7 @@
             android:value="93b27c040d3bd4eac391152e2fc1423a" />
         <activity android:name=".main.activity.AgreeActivity"></activity>
         <activity android:name=".main.activity.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".main.activity.RegisterActivity" />
         <activity android:name=".main.activity.CheckPassWordActivity" />
@@ -63,7 +59,13 @@
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
-        <activity android:name=".main.activity.WelcomeActivity"></activity>
+        <activity android:name=".main.activity.WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".chifen.magnetic.activity.MainActivity" />
         <activity android:name=".main.activity.CaptureActivity" />

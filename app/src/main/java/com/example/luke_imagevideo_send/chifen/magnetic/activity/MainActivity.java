@@ -275,7 +275,7 @@ public class MainActivity extends BaseActivity {
 //        loadingDialog.show();
         // TCP
         TcpParam param;
-        param = TcpParam.create("192.168.1.10", 502)
+        param = TcpParam.create("172.16.16.128", 502)
                 .setTimeout(1000)
                 .setRetries(0)
                 .setEncapsulated(false)
@@ -307,7 +307,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onFailure(Throwable tr) {
-//                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
 //                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
 //                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
 //                    @Override
@@ -336,7 +336,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFinally() {
                 Log.e("XXX", "111");
-//                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
                 // todo updateDeviceSwitchButton();
             }
         });
@@ -485,55 +485,55 @@ public class MainActivity extends BaseActivity {
         data[3] = 0;
         //字节长度
         data[4] = 0;
-        data[5] = 19;
-        //单位标识符
-        data[6] = 1;
-        //功能码
-        data[7] = 10;
-        //地址码
-        data[8] = 0;
-        data[9] = 1;
-        //寄存器个数
-        data[10] = 0;
-        data[11] = 6;
-        //字节数
-        data[12] = 12;
-        //型号
-//        data[13] = 0x01;
-        data[13] = 1;
-        data[14] = 0;
-        data[15] = 0;
-        data[16] = 0;
-        data[17] = 0;
-        //时间
-        data[18] = 2;
-        data[19] = 0;
-        data[20] = 0;
-        data[21] = 0;
-        data[22] = 0;
-
-//        //mac
-//        data[23] = 3;
+        data[5] = 5;
+//        //单位标识符
+//        data[6] = 1;
+//        //功能码
+//        data[7] = 10;
+//        //地址码
+//        data[8] = 0;
+//        data[9] = 1;
+//        //寄存器个数
+//        data[10] = 0;
+//        data[11] = 6;
+//        //字节数
+//        data[12] = 12;
+//        //型号
+////        data[13] = 0x01;
+//        data[13] = 1;
+//        data[14] = 0;
+//        data[15] = 0;
+//        data[16] = 0;
+//        data[17] = 0;
+//        //时间
+//        data[18] = 2;
+//        data[19] = 0;
+//        data[20] = 0;
+//        data[21] = 0;
+//        data[22] = 0;
+//
+////        //mac
+////        data[23] = 3;
+////        data[24] = 0;
+////        data[25] = 0;
+////        data[26] = 0;
+////        data[27] = 0;
+//
+//        //交直模式
+//        data[23] = 6;
 //        data[24] = 0;
-//        data[25] = 0;
+////        //电量
+////        data[28] = 5;
+////        data[29] = 0;
+//        //联动时长
+//        data[25] = 7;
 //        data[26] = 0;
-//        data[27] = 0;
-
-        //交直模式
-        data[23] = 6;
-        data[24] = 0;
-//        //电量
-//        data[28] = 5;
-//        data[29] = 0;
-        //联动时长
-        data[25] = 7;
-        data[26] = 0;
-        //黑白光切换
-        data[27] = 8;
-        data[28] = 0;
-        //点动联动切换
-        data[29] = 9;
-        data[30] = 0;
+//        //黑白光切换
+//        data[27] = 8;
+//        data[28] = 0;
+//        //点动联动切换
+//        data[29] = 9;
+//        data[30] = 0;
         return data;
     }
 

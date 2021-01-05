@@ -1,12 +1,11 @@
 package com.example.luke_imagevideo_send.main.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -47,7 +46,8 @@ public class PermissionActivity extends BaseActivity {
                     @Override
                     public void onFinish() {
                         Log.e("TAG", "close0");
-                        Intent intent = new Intent(PermissionActivity.this,CaptureActivity.class);
+//                        Intent intent = new Intent(PermissionActivity.this,CaptureActivity.class);
+                        Intent intent = new Intent(PermissionActivity.this,DefinedActivity.class);
                         startActivity(intent);
                         finish();
                     }

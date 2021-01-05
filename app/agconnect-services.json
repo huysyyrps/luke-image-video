@@ -1,0 +1,14 @@
+{
+	"client":{
+		"appType":"1",
+		"cp_id":"41010474",
+		"product_id":"736430079244768488",
+		"client_id":"532960679452225920",
+		"client_secret":"B7C85CAA544837714312DD64CCCDBC07DFFE6BF70D68C745C7C6A472A93A39B7",
+		"project_id":"736430079244768488",
+		"app_id":"103613957",
+		"api_key":"CgB6e3x9m/gMq15TS98zzd9GlPpLeEPUYgG3ywcH4D6epCTJxck6qhZ4NZ2QraCKFKURYmR3v2p+5L53pQgcjVwb",
+		"package_name":"com.example.luke_imagevideo_send"
+	},
+	"configuration_version":"1.0"
+}

@@ -1,8 +1,10 @@
 package com.example.luke_imagevideo_send.main.activity;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +14,12 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.core.app.ActivityCompat;
+
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.main.zxing.android.BeepManager;
 import com.example.luke_imagevideo_send.main.zxing.android.CaptureActivityHandler;
@@ -91,6 +96,9 @@ public final class CaptureActivity extends BaseActivity implements
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
+
+        //CAMERA_REQ_CODE为用户自定义，用于接收权限校验结果
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, Constant.TAG_ONE);
     }
 
     @Override
@@ -106,6 +114,15 @@ public final class CaptureActivity extends BaseActivity implements
     @Override
     protected void rightClient() {
 
+    }
+
+    //实现“onRequestPermissionsResult”函数接收校验权限结果
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        //判断“requestCode”是否为申请权限时设置请求码CAMERA_REQ_CODE，然后校验权限开启状态
+        if (requestCode == Constant.TAG_ONE && grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            //调用扫码接口，构建扫码能力，需您实现
+        }
     }
 
     @Override

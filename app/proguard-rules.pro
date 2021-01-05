@@ -24,18 +24,12 @@
 -dontwarn com.xuhao.didi.socket.server.**
 -dontwarn com.xuhao.didi.core.**
 
--keep class com.xuhao.didi.socket.client.** { *; }
--keep class com.xuhao.didi.socket.common.** { *; }
--keep class com.xuhao.didi.socket.server.** { *; }
--keep class com.xuhao.didi.core.** { *; }
-
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
--keep class com.xuhao.didi.socket.client.sdk.client.OkSocketOptions$* {
-    *;
-}
--keep class com.xuhao.didi.socket.server.impl.OkServerOptions$* {
-    *;
-}
+-ignorewarnings
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes SourceFile,LineNumberTable
+-keep class com.huawei.hianalytics.**{*;}
+-keep class com.huawei.updatesdk.**{*;}
+-keep class com.huawei.hms.**{*;}

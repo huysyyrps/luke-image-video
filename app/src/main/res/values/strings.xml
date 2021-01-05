@@ -16,6 +16,7 @@
     <string name="stop">Stop</string>
     <string name="button_ok">OK</string>
     <string name="viewfinderview_status_text1">将二维码/条码放入取景框内</string>
+    <string name="QR_code">二维码扫描</string>
     <string name="viewfinderview_status_text2">即可自动扫描</string>
     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 
@@ -48,4 +49,6 @@
     <string name="register_success">注册成功</string>
     <string name="agree1">"用户协议"</string>
     <string name="agree2">"隐私政策"</string>
+    <string name="scan_tip">Place the code within the frame</string>
+    <string name="title">Scan</string>
 </resources>

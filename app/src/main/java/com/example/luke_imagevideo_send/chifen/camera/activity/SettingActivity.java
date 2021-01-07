@@ -1,6 +1,7 @@
-package com.example.luke_imagevideo_send.chifen.magnetic.activity;
+package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -43,6 +44,7 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         setOnCheckedChangeListener();
     }
@@ -145,9 +147,9 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.btnSure)
     public void onClick() {
-//        intent = new Intent();
-//        intent.putExtra("data",setting);
-//        setResult(Constant.TAG_ONE, intent);
-        finish();
+        intent = new Intent();
+        intent.putExtra("data",setting);
+        setResult(Constant.TAG_ONE, intent);
+//        finish();
     }
 }

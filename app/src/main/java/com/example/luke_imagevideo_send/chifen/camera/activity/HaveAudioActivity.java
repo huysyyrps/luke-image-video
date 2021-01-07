@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -8,10 +9,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,7 +25,6 @@ import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
-import com.jwenfeng.library.pulltorefresh.view.FooterView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,10 +58,11 @@ public class HaveAudioActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         header.setTvTitle("有声视频");
         mSVProgressHUD = new SVProgressHUD(this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(HaveAudioActivity.this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(HaveAudioActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<File>(HaveAudioActivity.this, R.layout.album_item, imagePaths) {
             @Override

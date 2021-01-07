@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,10 +27,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -55,11 +54,13 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.HaveAudioActivity;
 import com.example.luke_imagevideo_send.chifen.camera.activity.NoAudioActivity;
 import com.example.luke_imagevideo_send.chifen.camera.activity.PhotoActivity;
+import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -77,6 +78,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -90,7 +92,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.media.MediaFormat.MIMETYPE_AUDIO_AAC;
 import static android.media.MediaFormat.MIMETYPE_VIDEO_AVC;
 import static android.os.Build.VERSION_CODES.M;
-import static com.example.luke_imagevideo_send.ApiAddress.api;
 
 public class MainActivity extends BaseActivity {
 
@@ -163,6 +164,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy( builder.build() );
@@ -202,8 +204,14 @@ public class MainActivity extends BaseActivity {
 
         webView.setBackgroundColor(Color.BLACK);
         webView.getSettings().setJavaScriptEnabled(true);
-        //访问网页
-        webView.loadUrl(api + "?action=stream");
+        String address = "";
+        try {
+            ArrayList<String> connectIpList = new getIp().getConnectIp();
+            address = "http://"+connectIpList.get(0)+":8080";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        webView.loadUrl(address + "?action=stream");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -825,7 +833,6 @@ public class MainActivity extends BaseActivity {
             public void onStop(Throwable error) {
                 runOnUiThread(() -> stopRecorder());
                 if (error != null) {
-                    toast("Recorder error ! See logcat for more details");
                     error.printStackTrace();
                     output.delete();
                 } else {
@@ -885,8 +892,9 @@ public class MainActivity extends BaseActivity {
         // video size
 //        int width = 570;
 //        int height = 350;
-        int width = 1080;
-        int height = 1920;
+        Display display = getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();;
+        int height = display.getHeight();;
         int framerate = 15;
         int iframe = 1;
         int bitrate = 600000;
@@ -946,50 +954,19 @@ public class MainActivity extends BaseActivity {
     private boolean hasPermissions() {
         PackageManager pm = getPackageManager();
         String packageName = getPackageName();
-//        int granted = pm.checkPermission(RECORD_AUDIO, packageName);
         int granted = (haveAudio.equals("noAudio") ? pm.checkPermission(RECORD_AUDIO, packageName) : PackageManager.PERMISSION_GRANTED)
                 | pm.checkPermission(WRITE_EXTERNAL_STORAGE, packageName);
         return granted == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void toast(String message, Object... args) {
-
-        int length_toast = Locale.getDefault().getCountry().equals("BR") ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-        // In Brazilian Portuguese this may take longer to read
-
-        Toast toast = Toast.makeText(this,
-                (args.length == 0) ? message : String.format(Locale.US, message, args),
-                length_toast);
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            runOnUiThread(toast::show);
-        } else {
-            toast.show();
-        }
-    }
-
     private void stopRecordingAndOpenFile(Context context) {
         File file = new File(mRecorder.getSavedPath());
         stopRecorder();
-//        Toast.makeText(context, "Using your mic to record audio and your sd card to save video file", Toast.LENGTH_SHORT).show();
         StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
         try {
-            // disable detecting FileUriExposure on public file
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
-//            viewResult(file);
         } finally {
             StrictMode.setVmPolicy(vmPolicy);
-        }
-    }
-
-    private void viewResult(File file) {
-        Intent view = new Intent(Intent.ACTION_VIEW);
-        view.addCategory(Intent.CATEGORY_DEFAULT);
-        view.setDataAndType(Uri.fromFile(file), VIDEO_AVC);
-        view.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            startActivity(view);
-        } catch (ActivityNotFoundException e) {
-            // no activity can open this video
         }
     }
 

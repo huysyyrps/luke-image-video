@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,14 +11,12 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
-import com.example.luke_imagevideo_send.AllApi;
 import com.example.luke_imagevideo_send.ApiAddress;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -61,9 +60,10 @@ public class PhotoActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         mSVProgressHUD = new SVProgressHUD(this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoActivity.this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<String>(PhotoActivity.this, R.layout.album_item, imagePaths) {
             @Override

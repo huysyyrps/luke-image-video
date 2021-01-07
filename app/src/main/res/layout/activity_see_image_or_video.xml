@@ -27,11 +27,11 @@
 
     <LinearLayout
         android:id="@+id/paint_bar"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_gravity="bottom"
-        android:background="@color/dark"
-        android:orientation="horizontal">
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/tmgray"
+        android:orientation="vertical">
 
 
         <ImageButton

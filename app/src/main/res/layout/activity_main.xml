@@ -32,41 +32,41 @@
 
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:orientation="horizontal"
+        android:layout_width="55dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_marginLeft="6dp"
-        android:layout_gravity="bottom|center">
+        android:layout_gravity="right">
 
         <RadioButton
             android:id="@+id/rbCamera"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbcamera" />
 
         <RadioButton
             android:id="@+id/rbSound"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_sound"/>
 
         <RadioButton
             android:id="@+id/rbSuspend"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:visibility="gone"
             android:drawableLeft="@drawable/ic_suspend"/>
 
         <RadioButton
             android:id="@+id/rbVideo"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_nosound"/>
 
         <RadioButton
             android:id="@+id/rbAlbum"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbalbum"/>
 
         <RadioButton
             android:id="@+id/rbSetting"
-            style="@style/RadionButton"
+            style="@style/MainRadionButton"
             android:drawableLeft="@drawable/rbsetting"/>
 
     </RadioGroup>

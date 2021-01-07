@@ -13,6 +13,7 @@
     <color name="blue_user">#47aaed</color><!--主色蓝 -->
     <color name="blue_touch_user">#B3B3B3</color><!--主色 按住蓝 -->
     <color name="dark">#FF222222</color>
+    <color name="tmgray">#40808080</color>
     <color name="light">#47aaed</color>
     <color name="pink">#EBEBF1</color>
     <color name="editbg">#47aaed</color>

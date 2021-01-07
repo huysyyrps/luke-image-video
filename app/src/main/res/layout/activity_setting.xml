@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.luke_imagevideo_send.chifen.magnetic.activity.SettingActivity">
+    android:orientation="vertical">
 
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
@@ -13,99 +12,162 @@
         app:header_title="设置"
         app:header_is_left_iv_visiable="true">
     </com.example.luke_imagevideo_send.http.views.Header>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="交流模式" />
-        <Switch
-            android:id="@+id/switchJL"
-            style="@style/TextView" />
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="直流模式"/>
-        <Switch
-            android:id="@+id/switchZL"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="黑光模式"/>
-        <Switch
-            android:id="@+id/switchHG"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="紫光模式"/>
-        <Switch
-            android:id="@+id/switchBG"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="点动模式"/>
-        <Switch
-            android:id="@+id/switchDD"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="联动模式"/>
-        <Switch
-            android:id="@+id/switchLD"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal">
-        <TextView
-            style="@style/TextView"
-            android:text="联动开关"/>
-        <Switch
-            android:id="@+id/switchKG"
-            style="@style/TextView"/>
-    </LinearLayout>
-    <View style="@style/Line"/>
 
-    <Button
-        android:id="@+id/btnSure"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="40dp"
-        android:background="@color/color_bg_selected"
-        android:text="确定"
-        android:textSize="17dp"
-        android:textColor="@color/white"/>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_jl"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="交流模式"
+                    android:layout_width="wrap_content"/>
+                <Switch
+                    android:id="@+id/switchJL"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_zl"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="直流模式"/>
+                <Switch
+                    android:id="@+id/switchZL"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_hg"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="黑光模式"/>
+                <Switch
+                    android:id="@+id/switchHG"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_zg"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="紫光模式"/>
+                <Switch
+                    android:id="@+id/switchBG"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_dd"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="点动模式"/>
+                <Switch
+                    android:id="@+id/switchDD"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_ld"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="联动模式"/>
+                <Switch
+                    android:id="@+id/switchLD"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_kg"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    style="@style/WrapTextView"
+                    android:text="联动开关"/>
+                <Switch
+                    android:id="@+id/switchKG"
+                    style="@style/TextView"
+                    android:layout_marginRight="20dp"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+
+            <Button
+                android:id="@+id/btnSure"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginRight="180dp"
+                android:layout_marginLeft="180dp"
+                android:background="@drawable/linelayout_color_radion"
+                android:text="确定"
+                android:textSize="17dp"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+    </ScrollView>
+    
 </LinearLayout>

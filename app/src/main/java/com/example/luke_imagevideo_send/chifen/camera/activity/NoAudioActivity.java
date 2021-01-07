@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -58,10 +58,11 @@ public class NoAudioActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         header.setTvTitle("无声视频");
         mSVProgressHUD = new SVProgressHUD(this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(NoAudioActivity.this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(NoAudioActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         baseRecyclerAdapter = new BaseRecyclerAdapter<File>(NoAudioActivity.this, R.layout.album_item, imagePaths) {
             @Override

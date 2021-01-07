@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
@@ -76,7 +75,6 @@ public class DefinedActivity extends BaseActivity {
                 if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(result[0].getOriginalValue())) {
                     Intent intent = new Intent(DefinedActivity.this, SendSelectActivity.class);
                     startActivity(intent);
-                    Toast.makeText(DefinedActivity.this, result[0].originalValue.toString(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }

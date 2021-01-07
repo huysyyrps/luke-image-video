@@ -53,14 +53,12 @@
             android:value="93b27c040d3bd4eac391152e2fc1423a" />
 
         <activity android:name=".main.activity.AgreeActivity" />
-        <activity android:name=".main.activity.LoginActivity"></activity>
+        <activity android:name=".main.activity.LoginActivity"/>
         <activity android:name=".main.activity.RegisterActivity" />
         <activity android:name=".main.activity.CheckPassWordActivity" />
         <activity android:name=".cehouyi.MainCHYActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
-        <activity android:name=".chifen.magnetic.activity.SettingActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
@@ -70,12 +68,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
-        <activity android:name=".chifen.magnetic.activity.MainActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".bluetooth.BluetoothListActivity" />
-        <activity android:name=".chifen.camera.activity.PhotoActivity" />
-        <activity android:name=".chifen.camera.activity.HaveAudioActivity" />
-        <activity android:name=".chifen.camera.activity.NoAudioActivity" />
+        <activity android:name=".chifen.magnetic.activity.MainActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".chifen.camera.activity.PhotoActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".chifen.camera.activity.HaveAudioActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".chifen.camera.activity.NoAudioActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".chifen.camera.activity.SettingActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

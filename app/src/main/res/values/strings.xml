@@ -51,4 +51,7 @@
     <string name="agree2">"隐私政策"</string>
     <string name="scan_tip">Place the code within the frame</string>
     <string name="title">Scan</string>
+    <string name="thickness_gauge">测厚仪</string>
+    <string name="menu">菜单</string>
+    <string name="action_settings">Settings</string>
 </resources>

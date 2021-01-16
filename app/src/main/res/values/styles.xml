@@ -51,6 +51,31 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <!--radiobutton-->
+    <style name="RadionButton1">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:paddingTop">3dip</item>
+        <item name="android:textSize">13dip</item>
+        <item name="android:paddingBottom">6dip</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/radionbutton_select</item>
+    </style>
+
+
+    <!--radiobutton-->
+    <style name="MainTextView">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1.2</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <!-- 加载滚动条样式 -->
     <style name="loading">
         <item name="android:indeterminate">true</item>
@@ -139,10 +164,9 @@
     </style>
     <style name="VLine">
         <item name="android:layout_width">1dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">20dp</item>
         <item name="android:background">@color/shouye</item>
-        <item name="android:layout_marginTop">5dp</item>
-        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <!--自定义EditText-->
@@ -243,6 +267,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">bottom</item>
         <item name="android:background">@color/white</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:textSize">16dp</item>
     </style>
 
     <!--ImageView-->

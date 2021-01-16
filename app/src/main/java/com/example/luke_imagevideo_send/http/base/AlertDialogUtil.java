@@ -3,23 +3,19 @@ package com.example.luke_imagevideo_send.http.base;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.media.ImageReader;
-import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.luke_imagevideo_send.MyApplication;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.bean.DictUnit;
 
-import java.io.File;
+import java.util.List;
 
 
 public class AlertDialogUtil {
@@ -57,6 +53,53 @@ public class AlertDialogUtil {
                     alertDialogCallBack.confirm("");
                 }
             });
+            dialog.getWindow().setContentView(view);
+        }
+    }
+
+    public void showListDialog(String description, String change, List<DictUnit> list3, final MenuAlertDialogCallBack alertDialogCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new AlertDialog.Builder(context).create();
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_list, null, false);
+            RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(manager);
+            BaseRecyclerAdapter mAdapter = new BaseRecyclerAdapter<DictUnit>(context, R.layout.down, list3) {
+                @Override
+                public void convert(BaseViewHolder holder, DictUnit dictUnit) {
+                    if (change.equals("change")){
+                        holder.setGoneText(R.id.contentTextView);
+                        holder.setVisLinearLayout(R.id.llEditText);
+                    }else {
+                        holder.setVisText(R.id.contentTextView);
+                        holder.setGoneLinearLayout(R.id.llEditText);
+                    }
+                    holder.setText(R.id.contentTextView, dictUnit.name);
+                    holder.setOnClickListener(R.id.contentTextView, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            alertDialogCallBack.confirm(dictUnit.field,dictUnit.name);
+                        }
+                    });
+                    holder.setOnClickListener(R.id.tvSure, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            EditText editText = holder.getView(R.id.contentEditText);
+                            alertDialogCallBack.confirm(dictUnit.field,editText.getText().toString()+"mm");
+                        }
+                    });
+                }
+            };
+            recyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
             dialog.getWindow().setContentView(view);
         }
     }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="fill_parent"
+	android:layout_height="52dp"
+	android:orientation="vertical">
+	<TextView
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/contentTextView"
+		style="?android:attr/dropDownItemStyle"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:ellipsize="marquee"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceLargeInverse"
+		android:textSize="16sp"
+		android:background="@color/white"
+		android:gravity="center_vertical"
+		android:layout_marginLeft="20dp"
+		android:textColor="@color/black" >
+	</TextView>
+
+	<LinearLayout
+		android:id="@+id/llEditText"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:orientation="horizontal">
+		<EditText
+			android:id="@+id/contentEditText"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="50dp"
+			android:textSize="16sp"
+			android:background="@color/white"
+			android:gravity="center_vertical"
+			android:layout_marginLeft="20dp"
+			android:hint="500.00mm"
+			android:phoneNumber="true"
+			android:textColor="@color/black">
+		</EditText>
+
+		<TextView
+			android:id="@+id/tvSure"
+			android:layout_width="60dp"
+			android:layout_height="50dp"
+			android:text="确定"
+			android:textSize="16dp"
+			android:textColor="@color/color_bg_selected"
+			android:gravity="center"/>
+	</LinearLayout>
+
+	<View style="@style/HourLine"/>
+</LinearLayout>

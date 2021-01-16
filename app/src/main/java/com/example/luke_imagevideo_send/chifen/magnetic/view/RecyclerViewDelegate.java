@@ -51,9 +51,7 @@ public class RecyclerViewDelegate extends Delegate {
 
     @Override
     protected View createView() {
-
         View rootView = LayoutInflater.from(mParentVG.getContext()).inflate(R.layout.layout_rv_sweet, null, false);
-
         mSweetView = (SweetView) rootView.findViewById(R.id.sv);
         mFreeGrowUpParentRelativeLayout = (FreeGrowUpParentRelativeLayout) rootView.findViewById(R.id.freeGrowUpParentF);
         mRV = (RecyclerView) rootView.findViewById(R.id.rv);
@@ -63,7 +61,6 @@ public class RecyclerViewDelegate extends Delegate {
         if(mContentViewHeight > 0){
             mFreeGrowUpParentRelativeLayout.setContentHeight(mContentViewHeight);
         }
-
         return rootView;
     }
 

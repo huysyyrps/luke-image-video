@@ -822,8 +822,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private ScreenRecorder newRecorder(MediaProjection mediaProjection, VideoEncodeConfig video,
-                                       AudioEncodeConfig audio, File output) {
+    private ScreenRecorder newRecorder(MediaProjection mediaProjection, VideoEncodeConfig video, AudioEncodeConfig audio, File output) {
         final VirtualDisplay display = getOrCreateVirtualDisplay(mediaProjection, video);
         ScreenRecorder r = new ScreenRecorder(video, audio, display, output.getAbsolutePath());
         r.setCallback(new ScreenRecorder.Callback() {
@@ -1083,5 +1082,4 @@ public class MainActivity extends BaseActivity {
             decorView.setSystemUiVisibility(1);
         }
     }
-
 }

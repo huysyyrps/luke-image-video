@@ -111,15 +111,16 @@
                             android:background="@drawable/ic_electric"
                             android:layout_gravity="center"
                             android:gravity="center"/>
+
                         <TextView
                             android:id="@+id/ivElectric"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="50%"
-                            android:textSize="14dp"
-                            android:textColor="#d4237a"
                             android:layout_gravity="center"
-                            android:gravity="center"/>
+                            android:gravity="center"
+                            android:text="50%"
+                            android:textColor="#d4237a"
+                            android:textSize="14dp" />
                     </FrameLayout>
                     <LinearLayout
                         android:layout_width="0dp"

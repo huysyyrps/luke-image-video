@@ -1,4 +1,4 @@
-package com.example.luke_imagevideo_send.cehouyi;
+package com.example.luke_imagevideo_send.cehouyi.activity;
 
 import android.os.Bundle;
 import android.util.Log;

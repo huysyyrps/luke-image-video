@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -125,12 +127,40 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public BaseViewHolder setGoneLinearLayout(int viewId) {
+        LinearLayout ll = getView(viewId);
+        ll.setVisibility(View.GONE);
+        return this;
+    }
+    public BaseViewHolder setVisLinearLayout(int viewId) {
+        LinearLayout ll = getView(viewId);
+        ll.setVisibility(View.VISIBLE);
+        return this;
+    }
+
+
     /**
      * 给Radionbutton设置隐藏控件方法
      */
     public BaseViewHolder setGoneText(int viewId) {
         TextView rb = getView(viewId);
         rb.setVisibility(View.GONE);
+        return this;
+    }
+    public BaseViewHolder setVisText(int viewId) {
+        TextView rb = getView(viewId);
+        rb.setVisibility(View.VISIBLE);
+        return this;
+    }
+
+    public BaseViewHolder setGoneEdit(int viewId) {
+        EditText rb = getView(viewId);
+        rb.setVisibility(View.GONE);
+        return this;
+    }
+    public BaseViewHolder setVisEdit(int viewId) {
+        EditText rb = getView(viewId);
+        rb.setVisibility(View.VISIBLE);
         return this;
     }
 

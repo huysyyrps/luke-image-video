@@ -1,12 +1,9 @@
 package com.example.luke_imagevideo_send;
 
-import com.example.luke_imagevideo_send.cehouyi.bean.Test;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
 import com.example.luke_imagevideo_send.main.bean.Login;
 import com.example.luke_imagevideo_send.main.bean.Register;
-
-import java.util.List;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -51,13 +48,6 @@ public interface AllApi {
     @FormUrlEncoded
     @POST(ApiAddress.checkpassword)
     Observable<CheckPassWord> getCheckPassWord(@Field("account") String account, @Field("newPwd") String newPwd);
-
-
-    /**
-     * 测试
-     */
-    @GET(ApiAddress.test)
-    Observable<List<Test>> getTset();
 
     /**
      * 测试01

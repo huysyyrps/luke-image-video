@@ -212,6 +212,7 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         webView.loadUrl(address + "?action=stream");
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

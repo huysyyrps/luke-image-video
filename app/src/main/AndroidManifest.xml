@@ -58,7 +58,7 @@
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
-        <activity android:name=".main.activity.WelcomeActivity"/>
+        <activity android:name=".main.activity.WelcomeActivity" />
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".bluetooth.BluetoothListActivity" />
@@ -82,13 +82,17 @@
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".cehouyi.activity.MainOutCHYActivity">
+
+        </activity>
+        <activity android:name=".cehouyi.activity.MenuActivity" />
+
+        <activity android:name=".cehouyi.activity.JSCHActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".cehouyi.activity.MenuActivity"/>
     </application>
 
 </manifest>

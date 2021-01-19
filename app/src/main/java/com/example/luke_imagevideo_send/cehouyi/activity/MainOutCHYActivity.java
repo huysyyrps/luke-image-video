@@ -18,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.bean.Data;
+import com.example.luke_imagevideo_send.cehouyi.bean.DataBean;
+import com.example.luke_imagevideo_send.cehouyi.bean.ItemDataBean;
 import com.example.luke_imagevideo_send.cehouyi.util.NumberPickerDivider;
 import com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -131,10 +134,19 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     EditText etXY;
     String tag = "SS";
     int i = 0;
-    int Max = 0,Min = 0;
+    int Max = 0, Min = 0;
     Handler handler;
+    List<Data> myDataList = new ArrayList<>();
+    List<DataBean> myDataBeanList = new ArrayList<>();
+    List<ItemDataBean> myItemDataBeanList = new ArrayList<>();
     List<Entry> entries = new ArrayList<>();
     List<String> dataList = new ArrayList<>();
+    Data myData = new Data();
+    DataBean dataBean = new DataBean();
+    ItemDataBean itemDataBean = new ItemDataBean();
+    int j = 0,l = 0;
+    int k = 0,m = 0;
+    int a = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +209,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         lineChartData.setOnChartValueSelectedListener(new OnChartValueSelectedListener() { // 值选择监听器
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                Toast.makeText(MainOutCHYActivity.this, h.getY()+"", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -390,24 +401,97 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     }
 
     public void showChart(int f) {
-        tvThickness.setText(f+"mm");
+        tvThickness.setText(f + "mm");
         entries.add(new Entry(i, f));
-
-
+        if (i < 30) {
+            myData.setDataName("f00"+i);
+            if (i < 3) {
+                dataBean.setDataItem(j);
+                if (itemDataBean.getA() == null || itemDataBean.getA().equals("")) {
+                    itemDataBean.setA(f + "mm");
+                    myItemDataBeanList.add(itemDataBean);
+                    dataBean.setItemData(myItemDataBeanList);
+                    myDataBeanList.add(dataBean);
+                    myData.setData(myDataBeanList);
+                    myDataList.add(myData);
+                } else if (itemDataBean.getB() == null || itemDataBean.getB().equals("")) {
+                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")) {
+                        itemDataBean.setB(f + "mm");
+                        myItemDataBeanList.set(j, itemDataBean);
+                        dataBean.setItemData(myItemDataBeanList);
+                        myDataBeanList.set(k, dataBean);
+                        myData.setData(myDataBeanList);
+                        myDataList.set(0, myData);
+                    }
+                } else if (itemDataBean.getC() == null || itemDataBean.getC().equals("")) {
+                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")
+                            && itemDataBean.getB() != null && !itemDataBean.getB().equals("")) {
+                        itemDataBean.setC(f + "mm");
+                        myItemDataBeanList.set(j, itemDataBean);
+                        dataBean.setItemData(myItemDataBeanList);
+                        myDataBeanList.set(k, dataBean);
+                        myData.setData(myDataBeanList);
+                        myDataList.set(0, myData);
+                        dataBean = new DataBean();
+                        itemDataBean = new ItemDataBean();
+                    }
+                }
+            } else {
+                if (i % 3 == 0) {
+                    if (j % 10 == 0) {
+                        k++;
+                    }
+                    j++;
+                }
+                dataBean.setDataItem(j);
+                if (itemDataBean.getA() == null || itemDataBean.getA().equals("")) {
+                    itemDataBean.setA(f + "mm");
+                    myItemDataBeanList.add(itemDataBean);
+                    dataBean.setItemData(myItemDataBeanList);
+                    myDataBeanList.add(dataBean);
+                    myData.setData(myDataBeanList);
+                    myDataList.add(myData);
+                } else if (itemDataBean.getB() == null || itemDataBean.getB().equals("")) {
+                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")) {
+                        itemDataBean.setB(f + "mm");
+                        myItemDataBeanList.set(j, itemDataBean);
+                        dataBean.setItemData(myItemDataBeanList);
+                        myDataBeanList.set(k, dataBean);
+                        myData.setData(myDataBeanList);
+                        myDataList.set(0, myData);
+                    }
+                } else if (itemDataBean.getC() == null || itemDataBean.getC().equals("")) {
+                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")
+                            && itemDataBean.getB() != null && !itemDataBean.getB().equals("")) {
+                        itemDataBean.setC(f + "mm");
+                        myItemDataBeanList.set(j, itemDataBean);
+                        dataBean.setItemData(myItemDataBeanList);
+                        myDataBeanList.set(k, dataBean);
+                        myData.setData(myDataBeanList);
+                        myDataList.set(0, myData);
+                        dataBean = new DataBean();
+                        itemDataBean = new ItemDataBean();
+                    }
+                }
+            }
+            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "数据集合已满，请及时清理", Toast.LENGTH_SHORT).show();
+        }
 
         i++;
-        if (tvMax.getText().toString().equals("最大值")){
-            tvMax.setText(f+"mm");
+        if (tvMax.getText().toString().equals("最大值")) {
+            tvMax.setText(f + "mm");
             Max = f;
-        }else if (f>Max){
-            tvMax.setText(f+"mm");
+        } else if (f > Max) {
+            tvMax.setText(f + "mm");
             Max = f;
         }
-        if (tvMin.getText().toString().equals("最小值")){
-            tvMin.setText(f+"mm");
+        if (tvMin.getText().toString().equals("最小值")) {
+            tvMin.setText(f + "mm");
             Min = f;
-        }else if (f<Min){
-            tvMin.setText(f+"mm");
+        } else if (f < Min) {
+            tvMin.setText(f + "mm");
             Min = f;
         }
         LineDataSet dataSet = new LineDataSet(entries, "Label1");
@@ -484,7 +568,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 }
             }
         }
-//        Toast.makeText(this, dataList.size()+"", Toast.LENGTH_SHORT).show();
     }
 
     @Override

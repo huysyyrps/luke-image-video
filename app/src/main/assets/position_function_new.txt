@@ -23,7 +23,6 @@
 000704,负半波,070,unchange,boXing;
 000705,正半波,070,unchange,boXing;
 080,存储,0010,unchange,"";
-000801,存储设定,080,unchange,cunChuMC;
 000802,存储读取,080,unchange,"";
 000803,删除所有文件,080,unchange,"";
 000804,删除单个文件,080,unchange,"";

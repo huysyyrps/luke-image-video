@@ -112,4 +112,6 @@ dependencies {
     //华为二维码扫描
 //    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
     implementation 'com.huawei.hms:scan:1.3.0.300'
+    //图标
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }

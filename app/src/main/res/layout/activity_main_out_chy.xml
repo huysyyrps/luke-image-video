@@ -48,11 +48,11 @@
                         android:layout_gravity="center"
                         android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="40dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="声速:"
@@ -70,13 +70,12 @@
                         android:id="@+id/llTD"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.2"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
                             android:gravity="left|center"
                             android:text="通道:"
                             android:textColor="@color/red" />
@@ -128,11 +127,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="40dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="45dp"
                             android:gravity="center"
                             android:text="时间:"
@@ -148,13 +147,12 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.2"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
                             android:gravity="left|center"
                             android:text="厚度:"
                             android:textColor="@color/red" />
@@ -162,7 +160,6 @@
                         <TextView
                             android:id="@+id/tvThickness"
                             style="@style/TextView"
-                            android:layout_width="55dp"
                             android:layout_height="wrap_content"
                             android:gravity="left|center"
                             android:text="4.00"
@@ -225,7 +222,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="40dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="存储:"
@@ -267,6 +264,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
+
                 <TextView
                     android:id="@+id/tvData"
                     android:layout_width="match_parent"
@@ -275,12 +273,28 @@
                     android:background="@color/white"
                     android:gravity="center"
                     android:minHeight="380dp"
-                    android:text="512"
+                    android:text="512MM"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginBottom="50dp"
                     android:textColor="@color/black"
                     android:textSize="60dp" />
 
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChartData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:minHeight="380dp"
+                    android:layout_marginRight="60dp"
+                    android:layout_marginBottom="50dp"
+                    android:textColor="@color/black"
+                    android:textSize="60dp"
+                    android:visibility="gone"/>
+
                 <LinearLayout
-                    android:layout_width="80dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_gravity="right"

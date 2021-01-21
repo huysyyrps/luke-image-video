@@ -16,13 +16,13 @@ import java.util.List;
  * 普通类型的适配器
  */
 
-public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
+public abstract class BaseRecyclerPositionAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
     private Context mContext;
     private int mLayoutId;
     private List<T> mData;
 
 
-    public BaseRecyclerAdapter(Context mContext, int mLayoutId, List<T> mData) {
+    public BaseRecyclerPositionAdapter(Context mContext, int mLayoutId, List<T> mData) {
         this.mContext = mContext;
         this.mLayoutId = mLayoutId;
         this.mData = mData;
@@ -36,9 +36,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseVi
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        convert(holder, mData.get(position));
+        convert(holder, mData.get(position), position);
     }
-
 
     @Override
     public int getItemCount() {
@@ -48,7 +47,6 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseVi
     /**
      * 对外提供的方法
      */
-    public abstract void convert(BaseViewHolder holder, T t);
-
+    public abstract void convert(BaseViewHolder holder, T t, int position);
 
 }

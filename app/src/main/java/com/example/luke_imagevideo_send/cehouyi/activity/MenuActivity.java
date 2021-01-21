@@ -38,12 +38,15 @@ public class MenuActivity extends BaseActivity {
     private List<View> views = new ArrayList<View>();
     private AlertDialog alertDialog;
     Intent intent;
+    List<Integer> valueList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         mContext = this;
+        Intent intent = getIntent();
+        valueList = intent.getIntegerArrayListExtra("data");
         initViews();
     }
 
@@ -104,6 +107,12 @@ public class MenuActivity extends BaseActivity {
                     mListView2Adapter.setSelectedBackground(R.drawable.ic_select_gray);
                 }
                 DictUnit dictUnit = (DictUnit) parent.getItemAtPosition(position);
+                if (dictUnit.name.equals("存储读取")){
+                    intent = new Intent(MenuActivity.this,ValueActivity.class);
+                    intent.putIntegerArrayListExtra("data", (ArrayList<Integer>) valueList);
+                    startActivity(intent);
+                    finish();
+                }
                 List<DictUnit> list3 = mDictDataManager.getTripleColumnData(mContext, dictUnit.id);
                 if (list3==null){
                     intent = new Intent();

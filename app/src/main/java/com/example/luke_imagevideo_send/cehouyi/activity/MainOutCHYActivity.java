@@ -18,9 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.cehouyi.bean.Data;
-import com.example.luke_imagevideo_send.cehouyi.bean.DataBean;
-import com.example.luke_imagevideo_send.cehouyi.bean.ItemDataBean;
 import com.example.luke_imagevideo_send.cehouyi.util.NumberPickerDivider;
 import com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -38,6 +35,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -135,18 +134,12 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     String tag = "SS";
     int i = 0;
     int Max = 0, Min = 0;
+    boolean exit = false;
     Handler handler;
-    List<Data> myDataList = new ArrayList<>();
-    List<DataBean> myDataBeanList = new ArrayList<>();
-    List<ItemDataBean> myItemDataBeanList = new ArrayList<>();
     List<Entry> entries = new ArrayList<>();
     List<String> dataList = new ArrayList<>();
-    Data myData = new Data();
-    DataBean dataBean = new DataBean();
-    ItemDataBean itemDataBean = new ItemDataBean();
-    int j = 0,l = 0;
-    int k = 0,m = 0;
-    int a = 1;
+    List<Integer> valueList = new ArrayList<>();
+    Threads thread = new Threads();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,7 +375,9 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 }
                 break;
             case R.id.tvMenu:
+                exit = true;
                 Intent intent = new Intent(this, MenuActivity.class);
+                EventBus.getDefault().postSticky(valueList);
                 startActivityForResult(intent, Constant.TAG_ONE);
                 break;
             case R.id.rbA:
@@ -403,83 +398,13 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     public void showChart(int f) {
         tvThickness.setText(f + "mm");
         entries.add(new Entry(i, f));
-        if (i < 30) {
-            myData.setDataName("f00"+i);
-            if (i < 3) {
-                dataBean.setDataItem(j);
-                if (itemDataBean.getA() == null || itemDataBean.getA().equals("")) {
-                    itemDataBean.setA(f + "mm");
-                    myItemDataBeanList.add(itemDataBean);
-                    dataBean.setItemData(myItemDataBeanList);
-                    myDataBeanList.add(dataBean);
-                    myData.setData(myDataBeanList);
-                    myDataList.add(myData);
-                } else if (itemDataBean.getB() == null || itemDataBean.getB().equals("")) {
-                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")) {
-                        itemDataBean.setB(f + "mm");
-                        myItemDataBeanList.set(j, itemDataBean);
-                        dataBean.setItemData(myItemDataBeanList);
-                        myDataBeanList.set(k, dataBean);
-                        myData.setData(myDataBeanList);
-                        myDataList.set(0, myData);
-                    }
-                } else if (itemDataBean.getC() == null || itemDataBean.getC().equals("")) {
-                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")
-                            && itemDataBean.getB() != null && !itemDataBean.getB().equals("")) {
-                        itemDataBean.setC(f + "mm");
-                        myItemDataBeanList.set(j, itemDataBean);
-                        dataBean.setItemData(myItemDataBeanList);
-                        myDataBeanList.set(k, dataBean);
-                        myData.setData(myDataBeanList);
-                        myDataList.set(0, myData);
-                        dataBean = new DataBean();
-                        itemDataBean = new ItemDataBean();
-                    }
-                }
-            } else {
-                if (i % 3 == 0) {
-                    if (j % 10 == 0) {
-                        k++;
-                    }
-                    j++;
-                }
-                dataBean.setDataItem(j);
-                if (itemDataBean.getA() == null || itemDataBean.getA().equals("")) {
-                    itemDataBean.setA(f + "mm");
-                    myItemDataBeanList.add(itemDataBean);
-                    dataBean.setItemData(myItemDataBeanList);
-                    myDataBeanList.add(dataBean);
-                    myData.setData(myDataBeanList);
-                    myDataList.add(myData);
-                } else if (itemDataBean.getB() == null || itemDataBean.getB().equals("")) {
-                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")) {
-                        itemDataBean.setB(f + "mm");
-                        myItemDataBeanList.set(j, itemDataBean);
-                        dataBean.setItemData(myItemDataBeanList);
-                        myDataBeanList.set(k, dataBean);
-                        myData.setData(myDataBeanList);
-                        myDataList.set(0, myData);
-                    }
-                } else if (itemDataBean.getC() == null || itemDataBean.getC().equals("")) {
-                    if (itemDataBean.getA() != null && !itemDataBean.getA().equals("")
-                            && itemDataBean.getB() != null && !itemDataBean.getB().equals("")) {
-                        itemDataBean.setC(f + "mm");
-                        myItemDataBeanList.set(j, itemDataBean);
-                        dataBean.setItemData(myItemDataBeanList);
-                        myDataBeanList.set(k, dataBean);
-                        myData.setData(myDataBeanList);
-                        myDataList.set(0, myData);
-                        dataBean = new DataBean();
-                        itemDataBean = new ItemDataBean();
-                    }
-                }
-            }
-            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "数据集合已满，请及时清理", Toast.LENGTH_SHORT).show();
+        if (valueList.size()<3000){
+            valueList.add(f);
+        }else {
+            Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
         }
-
         i++;
+
         if (tvMax.getText().toString().equals("最大值")) {
             tvMax.setText(f + "mm");
             Max = f;
@@ -499,11 +424,9 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         lineChartData.setData(lineData);
         // 像ListView那样的通知数据更新
         lineChartData.notifyDataSetChanged();
-
         // 当前统计图表中最多在x轴坐标线上显示的总量
         lineChartData.setVisibleXRangeMaximum(5);
         lineChartData.moveViewToX(i);
-
     }
 
     /**
@@ -535,7 +458,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 showChart(f);
             }
         };
-        Threads thread = new Threads();
         thread.start();
     }
 
@@ -543,7 +465,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         @Override
         public void run() {
             try {
-                while (true) {
+                while (!exit) {
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                     String str = sdf.format(new Date());
                     handler.sendMessage(handler.obtainMessage(100, str));
@@ -553,6 +475,13 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 e.printStackTrace();
             }
         }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

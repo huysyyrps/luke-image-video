@@ -139,6 +139,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     List<Entry> entries = new ArrayList<>();
     List<String> dataList = new ArrayList<>();
     List<Integer> valueList = new ArrayList<>();
+    List<List<Integer>> myValueList = new ArrayList<>();
     Threads thread = new Threads();
 
     @Override
@@ -398,6 +399,9 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     public void showChart(int f) {
         tvThickness.setText(f + "mm");
         entries.add(new Entry(i, f));
+        if (valueList.size()<30){
+            valueList.add(f);
+        }
         if (valueList.size()<3000){
             valueList.add(f);
         }else {

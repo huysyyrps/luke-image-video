@@ -11,10 +11,35 @@
         android:id="@+id/header"
         style="@style/Header"
         app:header_title="@string/setting_value"/>
+
+    <LinearLayout
+        android:id="@+id/llSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="2dp">
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:text="组名"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="16dp"/>
+        <View style="@style/VLine"/>
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <View
+        style="@style/HourLine"
+        android:layout_gravity="center"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="2dp">
         <LinearLayout
             android:layout_width="60dp"
             android:layout_height="match_parent"

@@ -9,8 +9,6 @@ import com.example.luke_imagevideo_send.cehouyi.module.DataContract;
 import com.example.luke_imagevideo_send.http.base.BaseObserverNoEntry1;
 import com.example.luke_imagevideo_send.http.utils.RetrofitUtil;
 
-import java.util.Map;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -36,6 +34,19 @@ public class DataPresenter implements DataContract.presenter {
      */
     @Override
     public void getSaveData(SaveData saveData) {
+        RetrofitUtil.getInstance().initRetrofitMainNoSSL().sendDataSave(saveData).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserverNoEntry1<SaveDataBack>(context, context.getResources().getString(R.string.handler_data)) {
+                    @Override
+                    protected void onSuccees(SaveDataBack t) throws Exception {
+                        view.setSaveData(t);
+                    }
+                    @Override
+                    protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
+                        view.setSaveDataMessage(""+ e.getMessage());
+                    }
+                });
+
         RetrofitUtil.getInstance().initRetrofitMainNoSSL().sendDataSave(saveData).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseObserverNoEntry1<SaveDataBack>(context, context.getResources().getString(R.string.handler_data)) {

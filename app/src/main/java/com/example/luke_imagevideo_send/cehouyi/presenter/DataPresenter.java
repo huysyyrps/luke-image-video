@@ -46,18 +46,5 @@ public class DataPresenter implements DataContract.presenter {
                         view.setSaveDataMessage(""+ e.getMessage());
                     }
                 });
-
-        RetrofitUtil.getInstance().initRetrofitMainNoSSL().sendDataSave(saveData).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserverNoEntry1<SaveDataBack>(context, context.getResources().getString(R.string.handler_data)) {
-                    @Override
-                    protected void onSuccees(SaveDataBack t) throws Exception {
-                        view.setSaveData(t);
-                    }
-                    @Override
-                    protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
-                        view.setSaveDataMessage(""+ e.getMessage());
-                    }
-                });
     }
 }

@@ -19,6 +19,5 @@ public interface DataContract {
     interface presenter extends BasePresenter {
         //线路回调
         void getSaveData(SaveData saveData);
-//        void getSaveData(String data);
     }
 }

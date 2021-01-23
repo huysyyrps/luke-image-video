@@ -39,10 +39,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONStringer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -399,12 +397,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 if (valueList.size()!=0){
                     myValueList.add(valueList);
                 }
-//                data.put("time",tvTime.getText().toString());
-//                data.put("soundVelocity",tvSS.getText().toString());
-//                String value  = myValueList.toString();
-//                data.put("data",value);
-//                Gson gson=new Gson();
-//                String jsonImgList = gson.toJson(data).toString();
                 SaveData saveData = new SaveData();
                 saveData.setTime(tvTime.getText().toString());
                 saveData.setSoundVelocity(tvSS.getText().toString());

@@ -1,10 +1,10 @@
 package com.example.luke_imagevideo_send.cehouyi.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ValueActivity extends BaseActivity {
     @BindView(R.id.header)
@@ -59,11 +60,16 @@ public class ValueActivity extends BaseActivity {
     Spinner spinner;
     @BindView(R.id.llSpinner)
     LinearLayout llSpinner;
+    @BindView(R.id.btnSave)
+    Button btnSave;
+    @BindView(R.id.btnCancle)
+    Button btnCancle;
     List<Integer> valueList = new ArrayList<>();
-    List<Integer> valueNewList = new ArrayList<>();
+    List<List<Integer>> myValueList = new ArrayList<>();
     List<String> spinnerList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     private ArrayAdapter<String> arr_adapter;
+    int positionNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,7 @@ public class ValueActivity extends BaseActivity {
         ButterKnife.bind(this);
         // 注册订阅者
         EventBus.getDefault().register(this);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         initMyView();
     }
 
@@ -90,144 +97,24 @@ public class ValueActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onGetStickyEvent(List<Integer> valueList) {
-        this.valueList = valueList;
+    public void onGetStickyEvent(List<List<Integer>> myValueList) {
+        this.myValueList = myValueList;
     }
 
     private void initMyView() {
-        if (valueList.size() < 30) {
-            valueNewList = valueList;
+        valueList = myValueList.get(0);
+        if (myValueList.size() == 0) {
+            llSpinner.setVisibility(View.GONE);
         } else {
-            for (int i = 0; i < 30; i++) {
-                valueNewList.add(valueList.get(i));
-            }
-            if (valueList.size()<30){
-                llSpinner.setVisibility(View.GONE);
-            }else {
-                setSpinnerData();
-            }
+            setSpinnerData();
         }
-        setTVGV();
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        baseRecyclerAdapter = new BaseRecyclerPositionAdapter<Integer>(this, R.layout.swiperrecycler_item, valueNewList) {
-            @Override
-            public void convert(BaseViewHolder holder, final Integer o, int position) {
-                holder.setText(R.id.tv, o + "");
-                holder.setOnClickListener(R.id.llItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (position + 1 <= 3) {
-                            new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第1组数据吗", new DialogCallBack() {
-                                @Override
-                                public void confirm(String name) {
-                                    if (valueNewList.size() == 1) {
-                                        valueNewList.remove(0);
-                                    }
-                                    if (valueNewList.size() == 2) {
-                                        valueNewList.remove(0);
-                                        valueNewList.remove(0);
-                                    }
-                                    if (valueNewList.size() >= 3) {
-                                        valueNewList.remove(0);
-                                        valueNewList.remove(0);
-                                        valueNewList.remove(0);
-                                    }
-                                    setTVGV();
-                                    baseRecyclerAdapter.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void cancel() {
-
-                                }
-
-                            });
-                        } else {
-                            if ((position + 1) % 3 == 0) {
-                                int num = (position + 1) % 3;
-                                new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
-                                    @Override
-                                    public void confirm(String name) {
-                                        valueNewList.remove(position - 2);
-                                        valueNewList.remove(position - 2);
-                                        valueNewList.remove(position - 2);
-                                        setTVGV();
-                                        baseRecyclerAdapter.notifyDataSetChanged();
-                                    }
-
-                                    @Override
-                                    public void cancel() {
-
-                                    }
-                                });
-                            } else {
-                                if ((position + 1) % 3 == 1) {
-                                    int num = (position + 1) / 3 + 1;
-                                    new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
-                                        @Override
-                                        public void confirm(String name) {
-                                            if (valueNewList.size() - position >= 3) {
-                                                valueNewList.remove(position);
-                                                valueNewList.remove(position);
-                                                valueNewList.remove(position);
-                                            } else {
-                                                valueNewList.remove(position);
-                                            }
-                                            setTVGV();
-                                            baseRecyclerAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void cancel() {
-
-                                        }
-                                    });
-                                }
-                                if ((position + 1) % 3 == 2) {
-                                    int num = (position + 1) / 3 + 1;
-                                    new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
-                                        @Override
-                                        public void confirm(String name) {
-                                            if (valueNewList.size() - position == 1) {
-                                                valueNewList.remove(position - 1);
-                                                valueNewList.remove(position - 1);
-                                            }
-                                            if (valueNewList.size() - position == 2) {
-                                                valueNewList.remove(position - 1);
-                                                valueNewList.remove(position - 1);
-                                                valueNewList.remove(position - 1);
-                                            }
-                                            if (valueNewList.size() - position >= 3) {
-                                                valueNewList.remove(position - 1);
-                                                valueNewList.remove(position - 1);
-                                                valueNewList.remove(position - 1);
-                                            }
-                                            setTVGV();
-                                            baseRecyclerAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void cancel() {
-
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        ;
-        recyclerView.setAdapter(baseRecyclerAdapter);
-        baseRecyclerAdapter.notifyDataSetChanged();
     }
 
     //设置序号textView是否显示
     public void setTVGV() {
-        if (valueNewList.size() % 3 == 0) {
-            if (valueNewList.size() / 3 == 1) {
+        if (valueList.size() % 3 == 0) {
+            if (valueList.size() / 3 == 1) {
+                tv1.setVisibility(View.VISIBLE);
                 tv2.setVisibility(View.GONE);
                 tv3.setVisibility(View.GONE);
                 tv4.setVisibility(View.GONE);
@@ -238,7 +125,9 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 2) {
+            if (valueList.size() / 3 == 2) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
                 tv3.setVisibility(View.GONE);
                 tv4.setVisibility(View.GONE);
                 tv5.setVisibility(View.GONE);
@@ -248,7 +137,10 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 3) {
+            if (valueList.size() / 3 == 3) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
                 tv4.setVisibility(View.GONE);
                 tv5.setVisibility(View.GONE);
                 tv6.setVisibility(View.GONE);
@@ -257,7 +149,11 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 4) {
+            if (valueList.size() / 3 == 4) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
                 tv5.setVisibility(View.GONE);
                 tv6.setVisibility(View.GONE);
                 tv7.setVisibility(View.GONE);
@@ -265,33 +161,82 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 5) {
+            if (valueList.size() / 3 == 5) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
                 tv6.setVisibility(View.GONE);
                 tv7.setVisibility(View.GONE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 6) {
+            if (valueList.size() / 3 == 6) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
                 tv7.setVisibility(View.GONE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 7) {
+            if (valueList.size() / 3 == 7) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 8) {
+            if (valueList.size() / 3 == 8) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 9) {
+            if (valueList.size() / 3 == 9) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
+                tv9.setVisibility(View.VISIBLE);
                 tv10.setVisibility(View.GONE);
+            }
+            if (valueList.size() / 3 == 10) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
+                tv9.setVisibility(View.VISIBLE);
+                tv10.setVisibility(View.VISIBLE);
             }
         } else {
-            if (valueNewList.size() / 3 == 1) {
+            if (valueList.size() < 3) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.GONE);
                 tv3.setVisibility(View.GONE);
                 tv4.setVisibility(View.GONE);
                 tv5.setVisibility(View.GONE);
@@ -301,7 +246,10 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 2) {
+            if (valueList.size() / 3 == 1) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.GONE);
                 tv4.setVisibility(View.GONE);
                 tv5.setVisibility(View.GONE);
                 tv6.setVisibility(View.GONE);
@@ -310,7 +258,11 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 3) {
+            if (valueList.size() / 3 == 2) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.GONE);
                 tv5.setVisibility(View.GONE);
                 tv6.setVisibility(View.GONE);
                 tv7.setVisibility(View.GONE);
@@ -318,42 +270,99 @@ public class ValueActivity extends BaseActivity {
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 4) {
+            if (valueList.size() / 3 == 3) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.GONE);
                 tv6.setVisibility(View.GONE);
                 tv7.setVisibility(View.GONE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 5) {
+            if (valueList.size() / 3 == 4) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.GONE);
                 tv7.setVisibility(View.GONE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 6) {
+            if (valueList.size() / 3 == 5) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.GONE);
                 tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 7) {
+            if (valueList.size() / 3 == 6) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.GONE);
                 tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
             }
-            if (valueNewList.size() / 3 == 8) {
+            if (valueList.size() / 3 == 7) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
+                tv9.setVisibility(View.GONE);
                 tv10.setVisibility(View.GONE);
+            }
+            if (valueList.size() / 3 == 8) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
+                tv9.setVisibility(View.VISIBLE);
+                tv10.setVisibility(View.GONE);
+            }
+            if (valueList.size() / 3 == 9) {
+                tv1.setVisibility(View.VISIBLE);
+                tv2.setVisibility(View.VISIBLE);
+                tv3.setVisibility(View.VISIBLE);
+                tv4.setVisibility(View.VISIBLE);
+                tv5.setVisibility(View.VISIBLE);
+                tv6.setVisibility(View.VISIBLE);
+                tv7.setVisibility(View.VISIBLE);
+                tv8.setVisibility(View.VISIBLE);
+                tv9.setVisibility(View.VISIBLE);
+                tv10.setVisibility(View.VISIBLE);
             }
         }
     }
 
     //设置spinner数据
     public void setSpinnerData() {
-        spinnerList.add("f001");
-        for (int i=30;i<valueList.size();i++){
-            if (i%30==0&&i<valueList.size()){
-                int num = i/30+1;
-                spinnerList.add("f00"+num);
-            }
+        int size = myValueList.size();
+        for (int i = 0; i < size; i++) {
+            int num = i + 1;
+            spinnerList.add("f00" + num);
         }
         arr_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
         //设置默认样式 android.R.layout.simple_spinner_dropdown_item
@@ -371,8 +380,120 @@ public class ValueActivity extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //点击事件对应的epostion
-                Log.e("XXX", "onItemSelected: " + position);
+                positionNum = position;
+                valueList = myValueList.get(position);
+                baseRecyclerAdapter = new BaseRecyclerPositionAdapter<Integer>(ValueActivity.this, R.layout.swiperrecycler_item, valueList) {
+                    @Override
+                    public void convert(BaseViewHolder holder, final Integer o, int position) {
+                        holder.setText(R.id.tv, o + "");
+                        holder.setOnClickListener(R.id.llItem, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (position + 1 <= 3) {
+                                    new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第1组数据吗", new DialogCallBack() {
+                                        @Override
+                                        public void confirm(String name) {
+                                            if (valueList.size() == 1) {
+                                                valueList.remove(0);
+                                            }
+                                            if (valueList.size() == 2) {
+                                                valueList.remove(0);
+                                                valueList.remove(0);
+                                            }
+                                            if (valueList.size() >= 3) {
+                                                valueList.remove(0);
+                                                valueList.remove(0);
+                                                valueList.remove(0);
+                                            }
+                                            setTVGV();
+                                            baseRecyclerAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void cancel() {
+
+                                        }
+
+                                    });
+                                } else {
+                                    if ((position + 1) % 3 == 0) {
+                                        int num = (position + 1) / 3;
+                                        new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
+                                            @Override
+                                            public void confirm(String name) {
+                                                valueList.remove(position - 2);
+                                                valueList.remove(position - 2);
+                                                valueList.remove(position - 2);
+                                                setTVGV();
+                                                baseRecyclerAdapter.notifyDataSetChanged();
+                                            }
+
+                                            @Override
+                                            public void cancel() {
+
+                                            }
+                                        });
+                                    } else {
+                                        if ((position + 1) % 3 == 1) {
+                                            int num = (position + 1) / 3 + 1;
+                                            new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
+                                                @Override
+                                                public void confirm(String name) {
+                                                    if (valueList.size() - position >= 3) {
+                                                        valueList.remove(position);
+                                                        valueList.remove(position);
+                                                        valueList.remove(position);
+                                                    } else {
+                                                        valueList.remove(position);
+                                                    }
+                                                    setTVGV();
+                                                    baseRecyclerAdapter.notifyDataSetChanged();
+                                                }
+
+                                                @Override
+                                                public void cancel() {
+
+                                                }
+                                            });
+                                        }
+                                        if ((position + 1) % 3 == 2) {
+                                            int num = (position + 1) / 3 + 1;
+                                            new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
+                                                @Override
+                                                public void confirm(String name) {
+                                                    if (valueList.size() - position == 1) {
+                                                        valueList.remove(position - 1);
+                                                        valueList.remove(position - 1);
+                                                    }
+                                                    if (valueList.size() - position == 2) {
+                                                        valueList.remove(position - 1);
+                                                        valueList.remove(position - 1);
+                                                        valueList.remove(position - 1);
+                                                    }
+                                                    if (valueList.size() - position >= 3) {
+                                                        valueList.remove(position - 1);
+                                                        valueList.remove(position - 1);
+                                                        valueList.remove(position - 1);
+                                                    }
+                                                    setTVGV();
+                                                    baseRecyclerAdapter.notifyDataSetChanged();
+                                                }
+
+                                                @Override
+                                                public void cancel() {
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                };
+                recyclerView.setAdapter(baseRecyclerAdapter);
+                baseRecyclerAdapter.notifyDataSetChanged();
+                setTVGV();
             }
 
             @Override
@@ -387,5 +508,17 @@ public class ValueActivity extends BaseActivity {
         super.onDestroy();
         // 注销订阅者
         EventBus.getDefault().unregister(this);
+    }
+
+    @OnClick({R.id.btnSave, R.id.btnCancle})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btnSave:
+                myValueList.set(positionNum,valueList);
+                break;
+            case R.id.btnCancle:
+                finish();
+                break;
+        }
     }
 }

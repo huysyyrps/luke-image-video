@@ -18,6 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.bean.SaveData;
+import com.example.luke_imagevideo_send.cehouyi.bean.SaveDataBack;
+import com.example.luke_imagevideo_send.cehouyi.module.DataContract;
+import com.example.luke_imagevideo_send.cehouyi.presenter.DataPresenter;
 import com.example.luke_imagevideo_send.cehouyi.util.NumberPickerDivider;
 import com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -35,19 +39,23 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONStringer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainOutCHYActivity extends BaseActivity implements NumberPicker.Formatter {
+public class MainOutCHYActivity extends BaseActivity implements NumberPicker.Formatter , DataContract.View{
 
     @BindView(R.id.header)
     Header header;
@@ -101,12 +109,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     QNumberPicker EPPicker;
     @BindView(R.id.TTPicker)
     QNumberPicker TTPicker;
-    @BindView(R.id.llA)
-    LinearLayout llA;
-    @BindView(R.id.llSave)
-    LinearLayout llSave;
-    @BindView(R.id.llB)
-    LinearLayout llB;
     @BindView(R.id.tvMax)
     RadioButton tvMax;
     @BindView(R.id.llMax)
@@ -141,6 +143,8 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     List<Integer> valueList = new ArrayList<>();
     List<List<Integer>> myValueList = new ArrayList<>();
     Threads thread = new Threads();
+    DataPresenter dataPresenter;
+    Map<String,Object> data = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +178,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         new NumberPickerDivider().setNumberPickerDivider(TDPicker);
         new NumberPickerDivider().setNumberPickerDivider(EPPicker);
         new NumberPickerDivider().setNumberPickerDivider(TTPicker);
+        dataPresenter = new DataPresenter(this,this);
     }
 
     private void setlineDataChar() {
@@ -290,7 +295,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     }
 
     @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.llTD, R.id.tvEP, R.id.tvTT, R.id.ivState, R.id.tvCancle,
-            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.llSave, R.id.rbB})
+            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ivBluetooth:
@@ -378,7 +383,10 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
             case R.id.tvMenu:
                 exit = true;
                 Intent intent = new Intent(this, MenuActivity.class);
-                EventBus.getDefault().postSticky(valueList);
+                if (valueList.size()!=0){
+                    myValueList.add(valueList);
+                }
+                EventBus.getDefault().postSticky(myValueList);
                 startActivityForResult(intent, Constant.TAG_ONE);
                 break;
             case R.id.rbA:
@@ -387,7 +395,21 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 tvData.setVisibility(View.GONE);
                 lineChartData.setVisibility(View.VISIBLE);
                 break;
-            case R.id.llSave:
+            case R.id.rbSave:
+                if (valueList.size()!=0){
+                    myValueList.add(valueList);
+                }
+//                data.put("time",tvTime.getText().toString());
+//                data.put("soundVelocity",tvSS.getText().toString());
+//                String value  = myValueList.toString();
+//                data.put("data",value);
+//                Gson gson=new Gson();
+//                String jsonImgList = gson.toJson(data).toString();
+                SaveData saveData = new SaveData();
+                saveData.setTime(tvTime.getText().toString());
+                saveData.setSoundVelocity(tvSS.getText().toString());
+                saveData.setData(myValueList.toString());
+                dataPresenter.getSaveData(saveData);
                 break;
             case R.id.rbB:
                 llMax.setVisibility(View.VISIBLE);
@@ -401,10 +423,11 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         entries.add(new Entry(i, f));
         if (valueList.size()<30){
             valueList.add(f);
-        }
-        if (valueList.size()<3000){
-            valueList.add(f);
         }else {
+            myValueList.add(valueList);
+            valueList = new ArrayList<>();
+        }
+        if (myValueList.size()>=100){
             Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
         }
         i++;
@@ -501,6 +524,17 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 }
             }
         }
+    }
+
+    //数据上传回调
+    @Override
+    public void setSaveData(SaveDataBack saveDataBack) {
+        Toast.makeText(this, "111", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setSaveDataMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

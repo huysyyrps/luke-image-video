@@ -8,10 +8,8 @@ package com.example.luke_imagevideo_send;
 
 public class ApiAddress {
 
-    public final static String scoreUrl = "http://www.188bifen.com/";
-
     //生成环境
-    public final static String api = "https://172.16.18.73:5001";
+    public final static String api = "https://172.16.18.73:5001/api/";
 
 
     /***********************首页*******************************/
@@ -43,6 +41,8 @@ public class ApiAddress {
     public final static String checkpassword = "app_change_password";
     //注册
     public final static String register = "mobile_phone/save";
+    //测厚数据上传
+    public final static String cedatasend = "Post/PostNine";
 
 
 

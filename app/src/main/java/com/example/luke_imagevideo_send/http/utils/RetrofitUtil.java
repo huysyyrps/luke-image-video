@@ -4,6 +4,7 @@ import com.example.luke_imagevideo_send.AllApi;
 import com.example.luke_imagevideo_send.ApiAddress;
 import com.example.luke_imagevideo_send.http.network.CookieReadInterceptor;
 import com.example.luke_imagevideo_send.http.network.CookiesSaveInterceptor;
+import com.example.luke_imagevideo_send.http.okhttp.SSLSocketClient;
 import com.example.luke_imagevideo_send.http.utils.network.NoCookieReadInterceptor;
 import com.example.luke_imagevideo_send.http.utils.network.NoCookiesSaveInterceptor;
 import com.google.gson.Gson;
@@ -57,6 +58,26 @@ public class RetrofitUtil {
         if (allApi == null) {
             Retrofit mRetrofit = new Retrofit.Builder()
                     .client(initOKHttp())
+                    // 设置请求的域名
+                    .baseUrl(ApiAddress.api)
+                    // 设置解析转换工厂，用自己定义的
+                    .addConverterFactory(GsonConverterFactory.create())
+//                    .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            allApi = mRetrofit.create(AllApi.class);
+        }
+        return allApi;
+    }
+
+    /**
+     * 屏蔽SSl证书
+     * @return
+     */
+    public AllApi initRetrofitMainNoSSL() {
+        if (allApi == null) {
+            Retrofit mRetrofit = new Retrofit.Builder()
+                    .client(initOKHttpNOSSL())
                     // 设置请求的域名
                     .baseUrl(ApiAddress.api)
                     // 设置解析转换工厂，用自己定义的
@@ -135,6 +156,21 @@ public class RetrofitUtil {
                 //cookie
                 .addInterceptor(new CookieReadInterceptor())
                 .addInterceptor(new CookiesSaveInterceptor())
+                .build();
+        return mOkHttpClient;
+    }
+
+    public static OkHttpClient initOKHttpNOSSL() {
+        mOkHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)//设置写入超时时间
+                .addInterceptor(InterceptorUtil.LogInterceptor())//添加日志拦截器
+                //cookie
+                .addInterceptor(new CookieReadInterceptor())
+                .addInterceptor(new CookiesSaveInterceptor())
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())//配置
                 .build();
         return mOkHttpClient;
     }

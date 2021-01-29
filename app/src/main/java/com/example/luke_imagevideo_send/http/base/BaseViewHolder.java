@@ -244,7 +244,8 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         Glide.with(context)
                 .load(path)
                 .placeholder(R.color.app_color_f6)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(iv);
         return this;
     }

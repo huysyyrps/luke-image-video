@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -65,6 +66,7 @@ import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
@@ -294,7 +296,6 @@ public class MainActivity extends BaseActivity {
         ModbusManager.get().init(param, new ModbusCallback<ModbusMaster>() {
             @Override
             public void onSuccess(ModbusMaster modbusMaster) {
-                Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
                 ModbusManager.get().writeRegisters(1, 0, getData(), new ModbusCallback<WriteRegistersResponse>() {
                     @Override
                     public void onSuccess(WriteRegistersResponse writeRegistersResponse) {
@@ -316,7 +317,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onFailure(Throwable tr) {
-                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
 //                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
 //                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
 //                    @Override
@@ -344,8 +345,6 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onFinally() {
-                Log.e("XXX", "111");
-                Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
                 // todo updateDeviceSwitchButton();
             }
         });
@@ -557,9 +556,6 @@ public class MainActivity extends BaseActivity {
                 view.buildDrawingCache();
                 mBitmap = view.getDrawingCache();
                 if (mBitmap != null) {
-//                    webView.setVisibility(View.GONE);
-//                    imageView.setVisibility(View.VISIBLE);
-//                    imageView.setImageBitmap(mBitmap);
                     alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
 
                         @Override
@@ -567,13 +563,11 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".png";
                             }
-                            saveImg(mBitmap, name, MainActivity.this);
+                            saveImg(name, MainActivity.this);
                         }
 
                         @Override
                         public void cancel() {
-//                            webView.setVisibility(View.VISIBLE);
-//                            imageView.setVisibility(View.GONE);
                             radioGroup.setVisibility(View.VISIBLE);
                         }
 
@@ -582,7 +576,7 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".png";
                             }
-                            saveImg(mBitmap, name, MainActivity.this);
+                            saveImg(name, MainActivity.this);
                         }
 
                         @Override
@@ -590,7 +584,7 @@ public class MainActivity extends BaseActivity {
                             if (!name1.equals("")) {
                                 name = name1 + ".png";
                             }
-                            saveImg(mBitmap, name, MainActivity.this);
+                            saveImg(name, MainActivity.this);
                         }
                     });
                 } else {
@@ -615,7 +609,6 @@ public class MainActivity extends BaseActivity {
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
                         startCapturing(mMediaProjection);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
@@ -642,7 +635,6 @@ public class MainActivity extends BaseActivity {
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
                         startCapturing(mMediaProjection);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
@@ -667,7 +659,6 @@ public class MainActivity extends BaseActivity {
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-//                        Toast.makeText(mNotifications, "开始录制", Toast.LENGTH_SHORT).show();
                         startCapturing(mMediaProjection);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
@@ -677,9 +668,6 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbAlbum:
-//                intent = new Intent(this, AlbumActivity.class);
-//                intent = new Intent(this, PhotoActivity.class);
-//                startActivity(intent);
                 showPopupMenu(rbAlbum);
                 break;
             case R.id.rbSetting:
@@ -704,12 +692,6 @@ public class MainActivity extends BaseActivity {
                 }else if (item.getTitle().equals("有声视频")){
                     intent = new Intent(MainActivity.this, HaveAudioActivity.class);
                     startActivity(intent);
-//                    Uri uri = Uri.parse("content://com.android.externalstorage.documents/document/primary:LUKEVideo");
-//                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-//                    intent.setType("video/*");
-//                    intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
-//                    startActivity(intent);
                 }else if (item.getTitle().equals("无声视频")){
                     intent = new Intent(MainActivity.this, NoAudioActivity.class);
                     startActivity(intent);
@@ -738,35 +720,29 @@ public class MainActivity extends BaseActivity {
     /**
      * 保存图片方法
      */
-    public boolean saveImg(Bitmap bitmap, String name, Context context) {
+    public boolean saveImg(String name, Context context) {
         try {
-//            String sdcardPath = System.getenv("EXTERNAL_STORAGE");      //获得sd卡路径
             String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/";//图片保存的文件夹名
-//            File file = new File(dir);
             File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/");
             //如果不存在  就mkdirs()创建此文件夹
             if (!file.exists()) {
                 file.mkdirs();
             }
-            Log.i("SaveImg", "file uri==>" + dir);
             //将要保存的图片文件
             File mFile = new File(dir + name);
             if (mFile.exists()) {
-                Toast.makeText(context, "该图片已存在!", Toast.LENGTH_SHORT).show();
-                mFile.delete();
+                selectDialog(mFile,name);
                 return false;
             }
 
             FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
             Uri uri = Uri.fromFile(mFile);                                  //获得图片的uri
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
             outputStream.flush();
             outputStream.close();
             //隐藏image显示webview
             Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
-//            imageView.setVisibility(View.GONE);
-//            webView.setVisibility(View.VISIBLE);
             radioGroup.setVisibility(View.VISIBLE);
             return true;
         } catch (FileNotFoundException e) {
@@ -777,6 +753,31 @@ public class MainActivity extends BaseActivity {
             radioGroup.setVisibility(View.VISIBLE);
         }
         return false;
+    }
+
+    private void selectDialog(File mFile,String name){
+        alertDialogUtil.showImageNameSelect(new DialogCallBack() {
+
+            @Override
+            public void confirm(String name1,Dialog dialog) {
+                if (name1.equals("")){
+                    Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (name.equals(name1+ ".png")){
+                        Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
+                    }else {
+                        saveImg(name1+ ".png", MainActivity.this);
+                        dialog.dismiss();
+                    }
+                }
+            }
+
+            @Override
+            public void cancel() {
+                mFile.delete();
+                saveImg(name, MainActivity.this);
+            }
+        });
     }
 
     private void requestMediaProjection() {
@@ -889,9 +890,6 @@ public class MainActivity extends BaseActivity {
 
     private VideoEncodeConfig createVideoConfig() {
         final String codec = "OMX.hisi.video.encoder.avc";
-        // video size
-//        int width = 570;
-//        int height = 350;
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();;
         int height = display.getHeight();;
@@ -1004,30 +1002,30 @@ public class MainActivity extends BaseActivity {
                     diandong = setting.getDiandong();
                     liandong = setting.getLiandong();
                     kaiguan = setting.getKaiguan();
-                    if (jiaoliu.equals("yes")) {
-                        data[24] = 0;
-                    }
-                    if (zhiliu.equals("yes")) {
-                        data[24] = 0;
-                    }
-
-                    if (kaiguan.equals("yes")) {
-                        data[26] = 0;
-                    }
-
-                    if (heiguang.equals("yes")) {
-                        data[28] = 0;
-                    }
-                    if (baiguang.equals("yes")) {
-                        data[28] = 0;
-                    }
-
-                    if (diandong.equals("yes")) {
-                        data[30] = 0;
-                    }
-                    if (liandong.equals("yes")) {
-                        data[30] = 0;
-                    }
+//                    if (jiaoliu.equals("yes")) {
+//                        data[24] = 0;
+//                    }
+//                    if (zhiliu.equals("yes")) {
+//                        data[24] = 0;
+//                    }
+//
+//                    if (kaiguan.equals("yes")) {
+//                        data[26] = 0;
+//                    }
+//
+//                    if (heiguang.equals("yes")) {
+//                        data[28] = 0;
+//                    }
+//                    if (baiguang.equals("yes")) {
+//                        data[28] = 0;
+//                    }
+//
+//                    if (diandong.equals("yes")) {
+//                        data[30] = 0;
+//                    }
+//                    if (liandong.equals("yes")) {
+//                        data[30] = 0;
+//                    }
                     ModbusManager.get().release();
                     makeConnection();
                 }
@@ -1048,9 +1046,6 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         ModbusManager.get().release();
-        // 关闭监听
-//        locationManager.removeUpdates(locationListeners);
-//        locationListeners = null;
     }
 
     /**

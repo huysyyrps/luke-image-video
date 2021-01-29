@@ -81,7 +81,7 @@ public class AlertDialogUtil {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    alertDialogCallBack.confirm("");
+                    alertDialogCallBack.confirm("",dialog);
                 }
             });
             dialog.getWindow().setContentView(view);
@@ -213,6 +213,36 @@ public class AlertDialogUtil {
                     alertDialogCallBack.save(editText.getText().toString());
                 }
             });
+            dialog.getWindow().setContentView(view);
+        }
+    }
+
+    public void showImageNameSelect(final DialogCallBack alertDialogCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new Dialog(context);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_imagename, null, false);
+            EditText editText = (EditText) view.findViewById(R.id.edittext);
+            TextView tvYes = (TextView) view.findViewById(R.id.yes);
+            TextView tvCover = (TextView) view.findViewById(R.id.cover);
+            tvYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialogCallBack.confirm(editText.getText().toString(),dialog);
+                }
+            });
+
+            tvCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    alertDialogCallBack.cancel();
+                }
+            });
+
             dialog.getWindow().setContentView(view);
         }
     }

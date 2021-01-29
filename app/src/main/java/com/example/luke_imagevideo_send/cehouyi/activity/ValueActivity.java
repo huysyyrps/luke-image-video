@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.cehouyi.activity;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -392,7 +393,7 @@ public class ValueActivity extends BaseActivity {
                                 if (position + 1 <= 3) {
                                     new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第1组数据吗", new DialogCallBack() {
                                         @Override
-                                        public void confirm(String name) {
+                                        public void confirm(String name, Dialog dialog) {
                                             if (valueList.size() == 1) {
                                                 valueList.remove(0);
                                             }
@@ -420,7 +421,7 @@ public class ValueActivity extends BaseActivity {
                                         int num = (position + 1) / 3;
                                         new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
                                             @Override
-                                            public void confirm(String name) {
+                                            public void confirm(String name,Dialog dialog) {
                                                 valueList.remove(position - 2);
                                                 valueList.remove(position - 2);
                                                 valueList.remove(position - 2);
@@ -438,7 +439,7 @@ public class ValueActivity extends BaseActivity {
                                             int num = (position + 1) / 3 + 1;
                                             new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
                                                 @Override
-                                                public void confirm(String name) {
+                                                public void confirm(String name,Dialog dialog) {
                                                     if (valueList.size() - position >= 3) {
                                                         valueList.remove(position);
                                                         valueList.remove(position);
@@ -460,7 +461,7 @@ public class ValueActivity extends BaseActivity {
                                             int num = (position + 1) / 3 + 1;
                                             new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除第" + num + "组数据吗", new DialogCallBack() {
                                                 @Override
-                                                public void confirm(String name) {
+                                                public void confirm(String name,Dialog dialog) {
                                                     if (valueList.size() - position == 1) {
                                                         valueList.remove(position - 1);
                                                         valueList.remove(position - 1);

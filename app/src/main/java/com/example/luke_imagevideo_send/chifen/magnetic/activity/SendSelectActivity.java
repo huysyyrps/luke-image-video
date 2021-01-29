@@ -15,12 +15,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.activity.MainOutCHYActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
-import com.example.luke_imagevideo_send.yingduji.activity.MainYDJActivity;
+import com.example.luke_imagevideo_send.main.activity.DefinedActivity;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
  */
 public class SendSelectActivity extends AppCompatActivity {
     private RelativeLayout relativeLayout;
-    private ImageView ivBack;
+    private ImageView ivRight;
     private TextView tvHeader;
     private EditText etCompName, etWorkName, etWorkCode;
     //富有动感的Sheet弹窗
@@ -104,19 +105,23 @@ public class SendSelectActivity extends AppCompatActivity {
         sharePreferencesUtils = new SharePreferencesUtils();
         new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         relativeLayout = findViewById(R.id.relativeLayout);
-        ivBack = findViewById(R.id.iv_left);
         tvHeader = findViewById(R.id.tv_tittle);
         etCompName = findViewById(R.id.etCompName);
         etWorkName = findViewById(R.id.etWorkName);
         etWorkCode = findViewById(R.id.etWorkCode);
-        ivBack.setOnClickListener(new View.OnClickListener() {
+        etWorkCode = findViewById(R.id.etWorkCode);
+        ivRight = findViewById(R.id.ivRight);
+        ivRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(SendSelectActivity.this, DefinedActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
         initData();
     }
+
     //设置SweetSheet上的数据
     public void initData() {
 
@@ -131,7 +136,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
         MenuEntity bean3 = new MenuEntity();
         bean3.iconId = R.drawable.ic_shishi;
-        bean3.title = "实时上传（点击进入硬度计界面）";
+        bean3.title = "实时上传（测厚仪）";
 
         list.add(bean1);
         list.add(bean2);
@@ -158,17 +163,17 @@ public class SendSelectActivity extends AppCompatActivity {
                 if (menuEntity.title.equals("本地存储")) {
                     sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                     intent = new Intent(SendSelectActivity.this, MainActivity.class);
-                    intent.putExtra("etCompName",etCompName.getText().toString());
-                    intent.putExtra("etWorkName",etWorkName.getText().toString());
-                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
+                    intent.putExtra("etCompName", etCompName.getText().toString());
+                    intent.putExtra("etWorkName", etWorkName.getText().toString());
+                    intent.putExtra("etWorkCode", etWorkCode.getText().toString());
                     startActivity(intent);
-                } else if (menuEntity.title.equals("实时上传（点击进入硬度计界面）")) {
+                } else if (menuEntity.title.equals("实时上传（测厚仪）")) {
 //                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
 //                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
 //                    intent.putExtra("etCompName",etCompName.getText().toString());
 //                    intent.putExtra("etWorkName",etWorkName.getText().toString());
 //                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
-                    intent = new Intent(SendSelectActivity.this, MainYDJActivity.class);
+                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
                     startActivity(intent);
                 }
                 return false;
@@ -176,5 +181,4 @@ public class SendSelectActivity extends AppCompatActivity {
         });
         sheet.toggle();
     }
-
 }

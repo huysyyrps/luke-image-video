@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class PermissionActivity extends BaseActivity {
                     public void onFinish() {
                         Log.e("TAG", "close0");
 //                        Intent intent = new Intent(PermissionActivity.this,CaptureActivity.class);
-                        Intent intent = new Intent(PermissionActivity.this,DefinedActivity.class);
+                        Intent intent = new Intent(PermissionActivity.this, SendSelectActivity.class);
                         startActivity(intent);
                         finish();
                     }

@@ -24,13 +24,13 @@ public class JSCHActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SSHExcuteCommandHelper.main(address, "root", "root", 22, new SSHCallBack() {
+                    SSHExcuteCommandHelper.main(address, new SSHCallBack() {
                         @Override
                         public void confirm(List<List<String>> parseResult) {
                             for (List<String> l : parseResult) {
                                 System.out.println(l);
                             }
-                            new SSHExcuteCommandHelper(address, "root", "root", 22).disconnect();
+                            new SSHExcuteCommandHelper(address).disconnect();
                         }
                     });
                 }

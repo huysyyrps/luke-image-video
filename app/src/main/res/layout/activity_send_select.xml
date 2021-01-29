@@ -19,13 +19,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <ImageView
-            android:id="@+id/iv_left"
+            android:id="@+id/ivRight"
             android:scaleType="centerInside"
-            android:src="@drawable/icon_back"
-            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_qr"
+            android:layout_alignParentRight="true"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:padding="5dp"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 
     <RelativeLayout

@@ -22,19 +22,19 @@ public class SSHExcuteCommandHelper {
     ChannelExec openChannel = null;
     /**
      * @param host  主机ip
-     * @param user 用户名
-     * @param pwd 密码
-     * @param port ssh端口
+//     * @param user 用户名
+//     * @param pwd 密码
+//     * @param port ssh端口
      */
-    public SSHExcuteCommandHelper(String host, String user, String pwd, int port) {
+    public SSHExcuteCommandHelper(String host) {
         JSch jsch = new JSch();
         try {
-            session = jsch.getSession(user, host, port);
+            session = jsch.getSession("root", host, 22);
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setTimeout(6000);
             session.setConfig(config);
-            session.setPassword(pwd);
+            session.setPassword("root");
         } catch (JSchException e) {
             e.printStackTrace();
         }
@@ -125,8 +125,8 @@ public class SSHExcuteCommandHelper {
         return parseResult;
     }
 
-    public static void main(String address, String name, String root, int port, final SSHCallBack SSHCallBack) {
-        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address, name, root, port);
+    public static void main(String address, final SSHCallBack SSHCallBack) {
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
         System.out.println("是否连接成功"+execute.canConnection());
         String s = execute.execCommand("uci show system.id");
@@ -134,9 +134,6 @@ public class SSHExcuteCommandHelper {
         System.out.println(s);
         System.out.println("解析后");
         List<List<String>> parseResult = execute.parseResult(s);
-//        for (List<String> l : parseResult) {
-//            System.out.println(l);
-//        }
         SSHCallBack.confirm(parseResult);
     }
 }

@@ -164,6 +164,7 @@ public class PhotoActivity extends BaseActivity {
                         Bitmap bitmap = null;
                         bitmap = BitmapFactory.decodeFile(files[i].getPath());
                         if (bitmap != null) {
+                            Log.e("XXX",files[i].getPath());
                             imagePaths.add(files[i].getPath());
                         }
                     }

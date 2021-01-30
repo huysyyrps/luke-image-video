@@ -236,6 +236,28 @@
                             android:text="f001" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:gravity="left|center"
+                            android:text="温补:"
+                            android:textColor="@color/red" />
+
+                        <TextView
+                            android:id="@+id/tvWB"
+                            style="@style/TextView"
+                            android:layout_height="wrap_content"
+                            android:gravity="left|center"
+                            android:text="100-300℃"
+                            android:textColor="@color/red" />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/tvMenu"
                         android:layout_width="0dp"
@@ -248,13 +270,6 @@
                         android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
                         android:layout_marginTop="10dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="0.7"
-                        android:orientation="horizontal">
-                    </LinearLayout>
                 </LinearLayout>
 
                 <View style="@style/Line" />
@@ -294,13 +309,16 @@
                     android:visibility="gone"/>
 
                 <LinearLayout
-                    android:layout_width="40dp"
+                    android:id="@+id/llRight"
+                    android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_gravity="right"
                     android:layout_marginBottom="50dp"
+                    android:visibility="gone"
                     android:background="@drawable/linelayout_no_radion">
                     <LinearLayout
+                        android:id="@+id/llZY"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -309,8 +327,8 @@
                             style="@style/MainTextView"
                             android:text="增益"
                             android:gravity="center|bottom"/>
-                        <EditText
-                            android:id="@+id/etZY"
+                        <TextView
+                            android:id="@+id/tvZY"
                             style="@style/MainTextView"
                             android:text="26"
                             android:textColor="@color/red"
@@ -319,6 +337,7 @@
                     <View style="@style/HourLine"/>
 
                     <LinearLayout
+                        android:id="@+id/llFW"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -327,8 +346,8 @@
                             style="@style/MainTextView"
                             android:text="范围"
                             android:gravity="center|bottom"/>
-                        <EditText
-                            android:id="@+id/etFW"
+                        <TextView
+                            android:id="@+id/tvFW"
                             style="@style/MainTextView"
                             android:text="50"
                             android:textColor="@color/red"
@@ -337,6 +356,7 @@
                     <View style="@style/HourLine"/>
 
                     <LinearLayout
+                        android:id="@+id/llPY"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -345,8 +365,8 @@
                             style="@style/MainTextView"
                             android:text="平移"
                             android:gravity="center|bottom"/>
-                        <EditText
-                            android:id="@+id/etPY"
+                        <TextView
+                            android:id="@+id/tvPY"
                             style="@style/MainTextView"
                             android:text="0"
                             android:textColor="@color/red"
@@ -355,6 +375,7 @@
                     <View style="@style/HourLine"/>
 
                     <LinearLayout
+                        android:id="@+id/llZM"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -363,8 +384,8 @@
                             style="@style/MainTextView"
                             android:text="闸门"
                             android:gravity="center|bottom"/>
-                        <EditText
-                            android:id="@+id/etZM"
+                        <TextView
+                            android:id="@+id/tvZM"
                             style="@style/MainTextView"
                             android:text="22"
                             android:textColor="@color/red"
@@ -373,6 +394,7 @@
                     <View style="@style/HourLine"/>
 
                     <LinearLayout
+                        android:id="@+id/llXY"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -381,10 +403,10 @@
                             style="@style/MainTextView"
                             android:text="消隐"
                             android:gravity="center|bottom"/>
-                        <EditText
-                            android:id="@+id/etXY"
+                        <TextView
+                            android:id="@+id/tvXY"
                             style="@style/MainTextView"
-                            android:text="0.0"
+                            android:text="0"
                             android:textColor="@color/red"
                             android:gravity="center|top"/>
                     </LinearLayout>
@@ -401,6 +423,19 @@
             android:background="@drawable/linelayout_radion"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/llMeasure"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <RadioButton
+                    android:id="@+id/rbMeasure"
+                    style="@style/RadionButton"
+                    android:text="测量" />
+                <View style="@style/VLine" />
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/llA"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -412,20 +447,6 @@
                     android:text="A扫" />
                 <View style="@style/VLine" />
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llSave"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/rbSave"
-                    style="@style/RadionButton"
-                    android:text="存储" />
-                <View style="@style/VLine" />
-            </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/llB"
                 android:layout_width="0dp"
@@ -438,7 +459,20 @@
                     android:text="B扫" />
                 <View style="@style/VLine" />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llSave"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
+                <RadioButton
+                    android:id="@+id/rbSave"
+                    style="@style/RadionButton"
+                    android:layout_width="68dp"
+                    android:text="存储" />
+                <View style="@style/VLine" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/llMax"
                 android:layout_width="0dp"
@@ -451,7 +485,6 @@
                     android:text="最大值" />
                 <View style="@style/VLine" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/llMin"
                 android:layout_width="0dp"
@@ -464,7 +497,6 @@
                     android:text="最小值" />
                 <View style="@style/VLine" />
             </LinearLayout>
-
         </LinearLayout>
 
         <RelativeLayout
@@ -540,6 +572,29 @@
                         style="@style/NumberPicker" />
                     <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
                         android:id="@+id/TTPicker"
+                        style="@style/NumberPicker" />
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/WBPicker"
+                        style="@style/NumberPicker" />
+
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/ZYPicker"
+                        style="@style/NumberPicker" />
+
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/FWPicker"
+                        style="@style/NumberPicker" />
+
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/PYPicker"
+                        style="@style/NumberPicker" />
+
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/ZMPicker"
+                        style="@style/NumberPicker" />
+
+                    <com.example.luke_imagevideo_send.cehouyi.view.QNumberPicker
+                        android:id="@+id/XYPicker"
                         style="@style/NumberPicker" />
                 </LinearLayout>
             </LinearLayout>

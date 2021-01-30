@@ -25,7 +25,6 @@ allprojects {
         maven {url 'https://developer.huawei.com/repo/'}
     }
 }
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

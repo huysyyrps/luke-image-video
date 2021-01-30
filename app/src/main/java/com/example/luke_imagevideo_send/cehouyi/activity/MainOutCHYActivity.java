@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -45,15 +44,13 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainOutCHYActivity extends BaseActivity implements NumberPicker.Formatter , DataContract.View{
+public class MainOutCHYActivity extends BaseActivity implements NumberPicker.Formatter, DataContract.View {
 
     @BindView(R.id.header)
     Header header;
@@ -69,8 +66,8 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     TextView tvElectric;
     @BindView(R.id.tvTime)
     TextView tvTime;
-    @BindView(R.id.etZY)
-    EditText etZY;
+    @BindView(R.id.tvZY)
+    TextView tvZY;
     @BindView(R.id.tvTT)
     TextView tvTT;
     @BindView(R.id.ivState)
@@ -123,14 +120,51 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     RadioButton rbB;
     @BindView(R.id.lineChartData)
     LineChart lineChartData;
-    @BindView(R.id.etFW)
-    EditText etFW;
-    @BindView(R.id.etPY)
-    EditText etPY;
-    @BindView(R.id.etZM)
-    EditText etZM;
-    @BindView(R.id.etXY)
-    EditText etXY;
+    @BindView(R.id.tvFW)
+    TextView tvFW;
+    @BindView(R.id.tvPY)
+    TextView tvPY;
+    @BindView(R.id.tvZM)
+    TextView tvZM;
+    @BindView(R.id.tvXY)
+    TextView tvXY;
+    @BindView(R.id.rbMeasure)
+    RadioButton rbMeasure;
+    @BindView(R.id.llMeasure)
+    LinearLayout llMeasure;
+    @BindView(R.id.llRight)
+    LinearLayout llRight;
+    @BindView(R.id.llA)
+    LinearLayout llA;
+    @BindView(R.id.llSave)
+    LinearLayout llSave;
+    @BindView(R.id.llB)
+    LinearLayout llB;
+    @BindView(R.id.tvWB)
+    TextView tvWB;
+    @BindView(R.id.WBPicker)
+    QNumberPicker WBPicker;
+    @BindView(R.id.llZY)
+    LinearLayout llZY;
+    @BindView(R.id.llFW)
+    LinearLayout llFW;
+    @BindView(R.id.llPY)
+    LinearLayout llPY;
+    @BindView(R.id.llZM)
+    LinearLayout llZM;
+    @BindView(R.id.llXY)
+    LinearLayout llXY;
+    @BindView(R.id.ZYPicker)
+    QNumberPicker ZYPicker;
+    @BindView(R.id.FWPicker)
+    QNumberPicker FWPicker;
+    @BindView(R.id.PYPicker)
+    QNumberPicker PYPicker;
+    @BindView(R.id.ZMPicker)
+    QNumberPicker ZMPicker;
+    @BindView(R.id.XYPicker)
+    QNumberPicker XYPicker;
+
     String tag = "SS";
     int i = 0;
     int Max = 0, Min = 0;
@@ -142,7 +176,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     List<List<Integer>> myValueList = new ArrayList<>();
     Threads thread = new Threads();
     DataPresenter dataPresenter;
-    Map<String,Object> data = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +209,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         new NumberPickerDivider().setNumberPickerDivider(TDPicker);
         new NumberPickerDivider().setNumberPickerDivider(EPPicker);
         new NumberPickerDivider().setNumberPickerDivider(TTPicker);
-        dataPresenter = new DataPresenter(this,this);
+        dataPresenter = new DataPresenter(this, this);
     }
 
     private void setlineDataChar() {
@@ -292,8 +325,8 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         lineChartData.notifyDataSetChanged();
     }
 
-    @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.llTD, R.id.tvEP, R.id.tvTT, R.id.ivState, R.id.tvCancle,
-            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB})
+    @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.llTD, R.id.tvEP, R.id.tvTT, R.id.tvWB, R.id.ivState, R.id.tvCancle,
+            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB, R.id.rbMeasure,R.id.llZY, R.id.llFW, R.id.llPY, R.id.llZM, R.id.llXY})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ivBluetooth:
@@ -314,6 +347,12 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 TDPicker.setVisibility(View.GONE);
                 EPPicker.setVisibility(View.GONE);
                 TTPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().init(onePicker, tenPicker, hundredPicker, thousandPicker, this, this, this, "SS");
                 break;
             case R.id.llTD:
@@ -326,6 +365,12 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 TDPicker.setVisibility(View.VISIBLE);
                 EPPicker.setVisibility(View.GONE);
                 TTPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().initTD(TDPicker, this, this, this, "TD");
                 break;
             case R.id.tvEP:
@@ -338,6 +383,12 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 TDPicker.setVisibility(View.GONE);
                 EPPicker.setVisibility(View.VISIBLE);
                 TTPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().initEP(EPPicker, this, this, this, "EP");
                 break;
             case R.id.tvTT:
@@ -350,7 +401,122 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 TDPicker.setVisibility(View.GONE);
                 EPPicker.setVisibility(View.GONE);
                 TTPicker.setVisibility(View.VISIBLE);
+                WBPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().initTT(TTPicker, this, this, this, "TT");
+                break;
+
+            case R.id.tvWB:
+                tag = "WB";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.VISIBLE);
+                new NumberPickerDivider().initWB(WBPicker, this, this, this, "WB");
+                break;
+            case R.id.llZY:
+                tag = "ZY";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.VISIBLE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                new NumberPickerDivider().initZY(ZYPicker, this, this, this, "ZY");
+                break;
+            case R.id.llFW:
+                tag = "FW";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.VISIBLE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                new NumberPickerDivider().initFW(FWPicker, this, this, this, "FW");
+                break;
+            case R.id.llPY:
+                tag = "PY";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.VISIBLE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                new NumberPickerDivider().initPY(PYPicker, this, this, this, "PY");
+                break;
+            case R.id.llZM:
+                tag = "ZM";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.VISIBLE);
+                XYPicker.setVisibility(View.GONE);
+                WBPicker.setVisibility(View.GONE);
+                new NumberPickerDivider().initZM(ZMPicker, this, this, this, "ZM");
+                break;
+            case R.id.llXY:
+                tag = "XY";
+                linearLayout.setVisibility(View.VISIBLE);
+                onePicker.setVisibility(View.GONE);
+                tenPicker.setVisibility(View.GONE);
+                hundredPicker.setVisibility(View.GONE);
+                thousandPicker.setVisibility(View.GONE);
+                TDPicker.setVisibility(View.GONE);
+                EPPicker.setVisibility(View.GONE);
+                TTPicker.setVisibility(View.GONE);
+                ZYPicker.setVisibility(View.GONE);
+                FWPicker.setVisibility(View.GONE);
+                PYPicker.setVisibility(View.GONE);
+                ZMPicker.setVisibility(View.GONE);
+                XYPicker.setVisibility(View.VISIBLE);
+                WBPicker.setVisibility(View.GONE);
+                new NumberPickerDivider().initXY(XYPicker, this, this, this, "XY");
                 break;
             case R.id.ivState:
                 //蓝牙
@@ -376,25 +542,39 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                     tvEP.setText(NumberPickerDivider.EP[EPPicker.getValue()]);
                 } else if (tag.equals("TT")) {
                     tvTT.setText(NumberPickerDivider.TT[TTPicker.getValue()]);
+                } else if (tag.equals("WB")) {
+                    tvWB.setText(NumberPickerDivider.WB[WBPicker.getValue()]);
+                } else if (tag.equals("ZY")) {
+                    tvZY.setText(NumberPickerDivider.ZY[ZYPicker.getValue()]);
+                }else if (tag.equals("FW")) {
+                    tvFW.setText(NumberPickerDivider.ZY[FWPicker.getValue()]);
+                }else if (tag.equals("PY")) {
+                    tvPY.setText(NumberPickerDivider.ZY[PYPicker.getValue()]);
+                }else if (tag.equals("ZM")) {
+                    tvZM.setText(NumberPickerDivider.ZY[ZMPicker.getValue()]);
+                }else if (tag.equals("XY")) {
+                    tvXY.setText(NumberPickerDivider.ZY[XYPicker.getValue()]);
                 }
                 break;
             case R.id.tvMenu:
                 exit = true;
                 Intent intent = new Intent(this, MenuActivity.class);
-                if (valueList.size()!=0){
+                if (valueList.size() != 0) {
                     myValueList.add(valueList);
                 }
                 EventBus.getDefault().postSticky(myValueList);
                 startActivityForResult(intent, Constant.TAG_ONE);
                 break;
             case R.id.rbA:
-                llMax.setVisibility(View.VISIBLE);
-                llMin.setVisibility(View.VISIBLE);
                 tvData.setVisibility(View.GONE);
+                llRight.setVisibility(View.VISIBLE);
                 lineChartData.setVisibility(View.VISIBLE);
+                llA.setVisibility(View.GONE);
+                llB.setVisibility(View.VISIBLE);
+                llMeasure.setVisibility(View.VISIBLE);
                 break;
             case R.id.rbSave:
-                if (valueList.size()!=0){
+                if (valueList.size() != 0) {
                     myValueList.add(valueList);
                 }
                 SaveData saveData = new SaveData();
@@ -404,8 +584,20 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 dataPresenter.getSaveData(saveData);
                 break;
             case R.id.rbB:
-                llMax.setVisibility(View.VISIBLE);
-                llMin.setVisibility(View.VISIBLE);
+                tvData.setVisibility(View.GONE);
+                llRight.setVisibility(View.VISIBLE);
+                lineChartData.setVisibility(View.VISIBLE);
+                llA.setVisibility(View.VISIBLE);
+                llB.setVisibility(View.GONE);
+                llMeasure.setVisibility(View.VISIBLE);
+                break;
+            case R.id.rbMeasure:
+                tvData.setVisibility(View.VISIBLE);
+                llRight.setVisibility(View.GONE);
+                lineChartData.setVisibility(View.GONE);
+                llA.setVisibility(View.VISIBLE);
+                llB.setVisibility(View.VISIBLE);
+                llMeasure.setVisibility(View.GONE);
                 break;
         }
     }
@@ -413,13 +605,13 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     public void showChart(int f) {
         tvThickness.setText(f + "mm");
         entries.add(new Entry(i, f));
-        if (valueList.size()<30){
+        if (valueList.size() < 30) {
             valueList.add(f);
-        }else {
+        } else {
             myValueList.add(valueList);
             valueList = new ArrayList<>();
         }
-        if (myValueList.size()>=100){
+        if (myValueList.size() >= 100) {
             Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
         }
         i++;

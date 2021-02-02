@@ -23,6 +23,8 @@ public class CustomerVideoView extends VideoView {
         // 处理
         int width = getDefaultSize(0, widthMeasureSpec);
         int height = getDefaultSize(0, heightMeasureSpec);
+        width = width-100;
+        height = height-30;
         setMeasuredDimension(width, height);
     }
 }

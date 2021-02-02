@@ -34,7 +34,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
@@ -83,7 +82,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,8 +109,6 @@ public class MainActivity extends BaseActivity {
     RadioGroup radioGroup;
     @BindView(R.id.webView)
     WebView webView;
-//    @BindView(R.id.imageView)
-//    ImageView imageView;
     @BindView(R.id.tvTime)
     TextView tvTime;
     @BindView(R.id.tvGPS)
@@ -148,15 +144,12 @@ public class MainActivity extends BaseActivity {
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private Intent intent;
-    Window window;
     private LocationManager locationManager;
-    private static boolean isExit = false;
     private String haveAudio = "noAudio";
     //磁粉
     short[] data = new short[31];
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
-    private AtomicBoolean mQuit = new AtomicBoolean(false);
     String zhiliu = "", jiaoliu = "", heiguang = "", baiguang = "", diandong = "", liandong = "", kaiguan = "";
     private String compName = "", workName = "", workCode = "";
     boolean rbVideoV = true;
@@ -810,11 +803,10 @@ public class MainActivity extends BaseActivity {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
         File file = null;
         if (haveAudio.equals("Audio")) {
-            file = new File(dir, "LUKEVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
+            file = new File(dir, "LUKEVideo-" + format.format(new Date()) + ".mp4");
         } else if (haveAudio.equals("noAudio")) {
-            file = new File(dir, "LUKENOVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
+            file = new File(dir, "LUKENOVideo-" + format.format(new Date()) + ".mp4");
         }
-//        final File file = new File(dir, "LUKEVideo-" + format.format(new Date()) + "-" + video.width + "x" + video.height + ".mp4");
         Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
         mRecorder = newRecorder(mediaProjection, video, audio, file);
         if (hasPermissions()) {
@@ -891,8 +883,10 @@ public class MainActivity extends BaseActivity {
     private VideoEncodeConfig createVideoConfig() {
         final String codec = "OMX.hisi.video.encoder.avc";
         Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();;
-        int height = display.getHeight();;
+//        int width = display.getWidth()-100;
+//        int height = display.getHeight()-100;
+        int height = 562;
+        int width = 1000;
         int framerate = 15;
         int iframe = 1;
         int bitrate = 600000;

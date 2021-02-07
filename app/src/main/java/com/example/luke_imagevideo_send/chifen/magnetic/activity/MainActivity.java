@@ -202,7 +202,15 @@ public class MainActivity extends BaseActivity {
         String address = "";
         try {
             ArrayList<String> connectIpList = new getIp().getConnectIp();
-            address = "http://"+connectIpList.get(0)+":8080";
+            for (int i=0;i<connectIpList.size();i++){
+                String ip = connectIpList.get(i);
+                ip = ip.replace(".",",");
+                String[] all=ip.split(",");
+                if (all[2].equals("43"));
+                address = connectIpList.get(i);
+                break;
+            }
+            address = "http://"+address+":8080";
         } catch (Exception e) {
             e.printStackTrace();
         }

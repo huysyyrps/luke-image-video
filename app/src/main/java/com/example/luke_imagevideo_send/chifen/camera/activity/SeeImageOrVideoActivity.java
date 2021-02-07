@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -154,19 +153,6 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         }
     }
 
-    public static Bitmap getViewBitmap(View view) {
-        Bitmap bitmap;
-        if (view.getWidth() > 0 && view.getHeight() > 0)
-            bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        else if (view.getMeasuredWidth() > 0 && view.getMeasuredHeight() > 0)
-            bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        else
-            bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
-
     private void setupVideo() {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -226,5 +212,4 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
             e.printStackTrace();
         }
     }
-
 }

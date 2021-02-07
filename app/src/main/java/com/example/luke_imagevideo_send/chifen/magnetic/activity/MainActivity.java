@@ -781,6 +781,84 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void startRecorder() {
+        if (mRecorder == null) return;
+        mRecorder.start();
+        registerReceiver(mStopActionReceiver, new IntentFilter(ACTION_STOP));
+    }
+
+    private void stopRecorder() {
+        mNotifications.clear();
+        if (mRecorder != null) {
+            mRecorder.quit();
+        }
+        mRecorder = null;
+        try {
+            unregisterReceiver(mStopActionReceiver);
+        } catch (Exception e) {
+            //ignored
+        }
+    }
+
+    private void cancelRecorder() {
+        if (mRecorder == null) return;
+        Toast.makeText(this, "Permission denied! Screen recorder is cancel", Toast.LENGTH_SHORT).show();
+        stopRecorder();
+    }
+
+    @TargetApi(M)
+    private void requestPermissions() {
+        String[] permissions = haveAudio.equals("Audio")
+                ? new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}
+                : new String[]{WRITE_EXTERNAL_STORAGE};
+        boolean showRationale = false;
+        for (String perm : permissions) {
+            showRationale |= shouldShowRequestPermissionRationale(perm);
+        }
+        if (!showRationale) {
+            requestPermissions(permissions, REQUEST_PERMISSIONS);
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setMessage("Using your mic to record audio and your sd card to save video file")
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                        requestPermissions(permissions, REQUEST_PERMISSIONS))
+                .setNegativeButton(android.R.string.cancel, null)
+                .create()
+                .show();
+    }
+
+    private boolean hasPermissions() {
+        PackageManager pm = getPackageManager();
+        String packageName = getPackageName();
+        int granted = (haveAudio.equals("Audio") ? pm.checkPermission(RECORD_AUDIO, packageName) : PackageManager.PERMISSION_GRANTED)
+                | pm.checkPermission(WRITE_EXTERNAL_STORAGE, packageName);
+        return granted == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void stopRecordingAndOpenFile(Context context) {
+        stopRecorder();
+        StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
+        try {
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
+        } finally {
+            StrictMode.setVmPolicy(vmPolicy);
+        }
+    }
+
+    public static final String ACTION_STOP = BuildConfig.APPLICATION_ID + ".action.STOP";
+
+    private BroadcastReceiver mStopActionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_STOP.equals(intent.getAction())) {
+                stopRecordingAndOpenFile(context);
+            }
+        }
+    };
+
+
     private void requestMediaProjection() {
         Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(captureIntent, REQUEST_MEDIA_PROJECTION);
@@ -795,13 +873,13 @@ public class MainActivity extends BaseActivity {
         }
         File dir = null;
         if (haveAudio.equals("Audio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKEVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
             }
         } else if (haveAudio.equals("noAudio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/");
+            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKENOVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
@@ -811,9 +889,9 @@ public class MainActivity extends BaseActivity {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
         File file = null;
         if (haveAudio.equals("Audio")) {
-            file = new File(dir, "LUKEVideo-" + format.format(new Date()) + ".mp4");
+            file = new File(dir, format.format(new Date()) + ".mp4");
         } else if (haveAudio.equals("noAudio")) {
-            file = new File(dir, "LUKENOVideo-" + format.format(new Date()) + ".mp4");
+            file = new File(dir, format.format(new Date()) + ".mp4");
         }
         Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
         mRecorder = newRecorder(mediaProjection, video, audio, file);
@@ -879,7 +957,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private AudioEncodeConfig createAudioConfig() {
-        if (!haveAudio.equals("Audio")) return null;
+        if (haveAudio.equals("noAudio")) return null;
         String codec = "c2.android.aac.encoder";
         int bitrate = 80000;
         int samplerate = 44100;
@@ -889,97 +967,20 @@ public class MainActivity extends BaseActivity {
     }
 
     private VideoEncodeConfig createVideoConfig() {
-        final String codec = "OMX.hisi.video.encoder.avc";
+        final String codec = "c2.android.avc.encoder";
         Display display = getWindowManager().getDefaultDisplay();
 //        int width = display.getWidth()-100;
 //        int height = display.getHeight()-100;
-        int height = 562;
-        int width = 1000;
+//        int height = 562;
+//        int width = 1000;
+        int height = 1080;
+        int width = 1920;
         int framerate = 15;
         int iframe = 1;
-        int bitrate = 600000;
+        int bitrate = 800000;
         MediaCodecInfo.CodecProfileLevel profileLevel = null;
         return new VideoEncodeConfig(width, height, bitrate, framerate, iframe, codec, VIDEO_AVC, profileLevel);
     }
-
-    private void startRecorder() {
-        if (mRecorder == null) return;
-        mRecorder.start();
-        registerReceiver(mStopActionReceiver, new IntentFilter(ACTION_STOP));
-    }
-
-    private void stopRecorder() {
-        mNotifications.clear();
-        if (mRecorder != null) {
-            mRecorder.quit();
-        }
-        mRecorder = null;
-        try {
-            unregisterReceiver(mStopActionReceiver);
-        } catch (Exception e) {
-            //ignored
-        }
-    }
-
-    private void cancelRecorder() {
-        if (mRecorder == null) return;
-        Toast.makeText(mNotifications, "Permission denied! Screen recorder is cancel", Toast.LENGTH_SHORT).show();
-        stopRecorder();
-    }
-
-    @TargetApi(M)
-    private void requestPermissions() {
-//        String[] permissions = new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO};
-        String[] permissions = haveAudio.equals("noAudio")
-                ? new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}
-                : new String[]{WRITE_EXTERNAL_STORAGE};
-        boolean showRationale = false;
-        for (String perm : permissions) {
-            showRationale |= shouldShowRequestPermissionRationale(perm);
-        }
-        if (!showRationale) {
-            requestPermissions(permissions, REQUEST_PERMISSIONS);
-            return;
-        }
-        new AlertDialog.Builder(this)
-                .setMessage("Using your mic to record audio and your sd card to save video file")
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, (dialog, which) ->
-                        requestPermissions(permissions, REQUEST_PERMISSIONS))
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-                .show();
-    }
-
-    private boolean hasPermissions() {
-        PackageManager pm = getPackageManager();
-        String packageName = getPackageName();
-        int granted = (haveAudio.equals("noAudio") ? pm.checkPermission(RECORD_AUDIO, packageName) : PackageManager.PERMISSION_GRANTED)
-                | pm.checkPermission(WRITE_EXTERNAL_STORAGE, packageName);
-        return granted == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void stopRecordingAndOpenFile(Context context) {
-        File file = new File(mRecorder.getSavedPath());
-        stopRecorder();
-        StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
-        try {
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
-        } finally {
-            StrictMode.setVmPolicy(vmPolicy);
-        }
-    }
-
-    public static final String ACTION_STOP = BuildConfig.APPLICATION_ID + ".action.STOP";
-
-    private BroadcastReceiver mStopActionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (ACTION_STOP.equals(intent.getAction())) {
-                stopRecordingAndOpenFile(context);
-            }
-        }
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
@@ -1045,9 +1046,34 @@ public class MainActivity extends BaseActivity {
     };
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            int granted = PackageManager.PERMISSION_GRANTED;
+            for (int r : grantResults) {
+                granted |= r;
+            }
+            if (granted == PackageManager.PERMISSION_GRANTED) {
+                requestMediaProjection();
+            } else {
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         ModbusManager.get().release();
+        stopRecorder();
+        if (mVirtualDisplay != null) {
+            mVirtualDisplay.setSurface(null);
+            mVirtualDisplay.release();
+            mVirtualDisplay = null;
+        }
+        if (mMediaProjection != null) {
+            mMediaProjection.unregisterCallback(mProjectionCallback);
+            mMediaProjection.stop();
+            mMediaProjection = null;
+        }
     }
 
     /**

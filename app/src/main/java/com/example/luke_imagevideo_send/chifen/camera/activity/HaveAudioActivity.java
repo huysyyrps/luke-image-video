@@ -118,7 +118,8 @@ public class HaveAudioActivity extends BaseActivity {
 
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
-        File file = new File(path);
+//        File file = new File(path);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKEVideo/");
         files = file.listFiles();
         if (files!=null){
             allNum = files.length;

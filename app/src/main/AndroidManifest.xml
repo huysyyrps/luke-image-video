@@ -72,19 +72,22 @@
         <activity android:name=".main.activity.DefinedActivity" />
         <activity
             android:name=".chifen.magnetic.activity.MainActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
+<!--        android:screenOrientation="landscape"-->
         <activity
             android:name=".chifen.camera.activity.PhotoActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
+        <!--        android:screenOrientation="landscape"-->
         <activity
             android:name=".chifen.camera.activity.HaveAudioActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
+        <!--        android:screenOrientation="landscape"-->
         <activity
             android:name=".chifen.camera.activity.NoAudioActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".chifen.camera.activity.SettingActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />

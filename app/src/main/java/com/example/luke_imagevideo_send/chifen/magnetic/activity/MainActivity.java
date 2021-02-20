@@ -49,7 +49,6 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
-import com.example.luke_imagevideo_send.BuildConfig;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.activity.HaveAudioActivity;
 import com.example.luke_imagevideo_send.chifen.camera.activity.NoAudioActivity;
@@ -69,6 +68,7 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
+import com.licheedev.modbus4android.BuildConfig;
 import com.licheedev.modbus4android.param.TcpParam;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.msg.WriteRegistersResponse;

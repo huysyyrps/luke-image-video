@@ -43,7 +43,13 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="Mob-AppKey"
@@ -60,11 +66,7 @@
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".chifen.camera.activity.AlbumActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />

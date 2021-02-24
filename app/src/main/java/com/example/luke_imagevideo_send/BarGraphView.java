@@ -26,7 +26,6 @@ public class BarGraphView extends View {
     private float mItemWidth; //item 的宽度
     private float mItemHeight; //item 的高度
     private float mItemNum; // item 的数量
-    private float mBottomLine; //底线上的Y坐标值
     private float mMaxValue;
 
     public BarGraphView(Context context) {
@@ -82,7 +81,6 @@ public class BarGraphView extends View {
         mWPadding = getWidth()/20; //宽度内边距
         mHPadding = getHeight()/10; //高度内边距
         mItemWidth = 80;  //圆柱体的宽度
-        mBottomLine = getHeight()-mHPadding*2; //底部横线坐标
     }
 
     /**
@@ -133,7 +131,10 @@ public class BarGraphView extends View {
                 mSrc = new Path();//画单个圆柱
                 mSrc.addRect(rectF, Path.Direction.CW);
                 mPath.addPath(mSrc);//将单个圆柱添加到mPath中
-                canvas.drawPath(mPath, mPaint);//一次性添加全部圆柱
+                while (mWPadding + mItemWidth * i>getWidth()){
+                    canvas.translate(80,0);
+                }
+                canvas.drawPath(mPath, mPaint);
             }
         }else {
             mPaintTiemText.setTextSize(getWidth()/20);

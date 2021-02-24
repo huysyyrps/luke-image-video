@@ -27,12 +27,16 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -164,6 +168,8 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     QNumberPicker ZMPicker;
     @BindView(R.id.XYPicker)
     QNumberPicker XYPicker;
+    @BindView(R.id.mBarChart)
+    BarChart mBarChart;
 
     String tag = "SS";
     int i = 0;
@@ -171,6 +177,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     boolean exit = false;
     Handler handler;
     List<Entry> entries = new ArrayList<>();
+    List<BarEntry> barEntries = new ArrayList<>(); //定义一个数据容器
     List<String> dataList = new ArrayList<>();
     List<Integer> valueList = new ArrayList<>();
     List<List<Integer>> myValueList = new ArrayList<>();
@@ -213,7 +220,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     }
 
     private void setlineDataChar() {
-        // **************************图表本身一般样式**************************** //
+        // **************************折线图图表本身一般样式**************************** //
         lineChartData.setBackgroundColor(Color.WHITE); // 整个图标的背景色
         Description description = new Description();  // 这部分是深度定制描述文本，颜色，字体等
         description.setText("厚度值表");
@@ -323,10 +330,43 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         lineChartData.setKeepPositionOnRotation(false); // 设置当屏幕方向变化时，是否保留之前的缩放与滚动位置，默认：false
         // 像ListView那样的通知数据更新
         lineChartData.notifyDataSetChanged();
+
+        // **************************柱状图图表本身一般样式**************************** //
+
+        mBarChart.setDrawBarShadow(false); // 设置每条柱子的阴影不显示
+        mBarChart.setDrawValueAboveBar(true); // 设置每条柱子的数值显示
+        mBarChart.setNoDataText("暂无数据");   // 没有数据时样式
+        XAxis xAxisZ = mBarChart.getXAxis(); // 获取柱状图的x轴
+        YAxis yAxisLeft = mBarChart.getAxisLeft(); // 获取柱状图左侧的y轴
+        YAxis yAxisRight = mBarChart.getAxisRight(); // 获取柱状图右侧的y轴
+        setAxis(xAxisZ, yAxisLeft, yAxisRight); //调用方法设置柱状图的轴线
+
+    }
+
+    public void setAxis(XAxis xAxis, YAxis leftAxis, YAxis rightAxis) {
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // 这里设置x轴在柱状图底部显示
+        xAxis.setAxisLineWidth(1); //设置x轴宽度
+        xAxis.setAxisMinimum(0); //设置x轴从0开始绘画
+        xAxis.setDrawAxisLine(true); //设置x轴的轴线显示
+        xAxis.setDrawGridLines(false);//设置x轴的表格线不显示
+        xAxis.setEnabled(true); // 设置x轴显示
+
+        leftAxis.setAxisMinimum(0); //设置y轴从0刻度开始
+        leftAxis.setDrawGridLines(false); // 这里设置左侧y轴不显示表格线
+        leftAxis.setDrawAxisLine(true); // 这里设置左侧y轴显示轴线
+        leftAxis.setAxisLineWidth(1); //设置y轴宽度
+        leftAxis.setEnabled(true); //设置左侧的y轴显示
+
+        rightAxis.setAxisMinimum(0); //设置y轴从0刻度开始
+        rightAxis.setDrawGridLines(false);// 这里设置右侧y轴不显示表格线
+        rightAxis.setDrawAxisLine(true); // 这里设置右侧y轴显示轴线
+        rightAxis.setAxisLineWidth(1); //设置右侧y轴宽度
+        rightAxis.setEnabled(false); //设置右侧的y轴显示
+
     }
 
     @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.llTD, R.id.tvEP, R.id.tvTT, R.id.tvWB, R.id.ivState, R.id.tvCancle,
-            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB, R.id.rbMeasure,R.id.llZY, R.id.llFW, R.id.llPY, R.id.llZM, R.id.llXY})
+            R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB, R.id.rbMeasure, R.id.llZY, R.id.llFW, R.id.llPY, R.id.llZM, R.id.llXY})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ivBluetooth:
@@ -546,13 +586,13 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                     tvWB.setText(NumberPickerDivider.WB[WBPicker.getValue()]);
                 } else if (tag.equals("ZY")) {
                     tvZY.setText(NumberPickerDivider.ZY[ZYPicker.getValue()]);
-                }else if (tag.equals("FW")) {
+                } else if (tag.equals("FW")) {
                     tvFW.setText(NumberPickerDivider.ZY[FWPicker.getValue()]);
-                }else if (tag.equals("PY")) {
+                } else if (tag.equals("PY")) {
                     tvPY.setText(NumberPickerDivider.ZY[PYPicker.getValue()]);
-                }else if (tag.equals("ZM")) {
+                } else if (tag.equals("ZM")) {
                     tvZM.setText(NumberPickerDivider.ZY[ZMPicker.getValue()]);
-                }else if (tag.equals("XY")) {
+                } else if (tag.equals("XY")) {
                     tvXY.setText(NumberPickerDivider.ZY[XYPicker.getValue()]);
                 }
                 break;
@@ -569,6 +609,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 tvData.setVisibility(View.GONE);
                 llRight.setVisibility(View.VISIBLE);
                 lineChartData.setVisibility(View.VISIBLE);
+                mBarChart.setVisibility(View.GONE);
                 llA.setVisibility(View.GONE);
                 llB.setVisibility(View.VISIBLE);
                 llMeasure.setVisibility(View.VISIBLE);
@@ -586,7 +627,8 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
             case R.id.rbB:
                 tvData.setVisibility(View.GONE);
                 llRight.setVisibility(View.VISIBLE);
-                lineChartData.setVisibility(View.VISIBLE);
+                lineChartData.setVisibility(View.GONE);
+                mBarChart.setVisibility(View.VISIBLE);
                 llA.setVisibility(View.VISIBLE);
                 llB.setVisibility(View.GONE);
                 llMeasure.setVisibility(View.VISIBLE);
@@ -605,6 +647,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     public void showChart(int f) {
         tvThickness.setText(f + "mm");
         entries.add(new Entry(i, f));
+        barEntries.add(new BarEntry(i, f));
         if (valueList.size() < 30) {
             valueList.add(f);
         } else {
@@ -638,6 +681,16 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
         // 当前统计图表中最多在x轴坐标线上显示的总量
         lineChartData.setVisibleXRangeMaximum(5);
         lineChartData.moveViewToX(i);
+
+
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Label1");
+        BarData barData = new BarData(barDataSet);
+        mBarChart.setData(barData); //给柱状图添加数据
+        barData.setBarWidth(1.2f);
+        mBarChart.setVisibleXRangeMaximum(20);
+        mBarChart.setVisibleXRangeMinimum(20);
+        mBarChart.invalidate(); //让柱状图填充数据后刷新
+        mBarChart.moveViewToX(i);
     }
 
     /**

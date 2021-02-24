@@ -14,9 +14,6 @@ public class TestActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test2);
         barGraphView = findViewById(R.id.barGraphView);
-        Item item = new Item(i+"",i);
-        barGraphView.addData(item);
-
         Threads thread = new Threads();
         thread.start();
 //        handler = new Handler() {

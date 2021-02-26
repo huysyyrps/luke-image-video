@@ -637,6 +637,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 tvData.setVisibility(View.VISIBLE);
                 llRight.setVisibility(View.GONE);
                 lineChartData.setVisibility(View.GONE);
+                mBarChart.setVisibility(View.GONE);
                 llA.setVisibility(View.VISIBLE);
                 llB.setVisibility(View.VISIBLE);
                 llMeasure.setVisibility(View.GONE);

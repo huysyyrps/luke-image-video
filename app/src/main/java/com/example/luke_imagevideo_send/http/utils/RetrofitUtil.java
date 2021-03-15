@@ -55,38 +55,55 @@ public class RetrofitUtil {
      * 初始化Retrofit(其他)
      */
     public AllApi initRetrofitMain() {
-        if (allApi == null) {
-            Retrofit mRetrofit = new Retrofit.Builder()
-                    .client(initOKHttp())
-                    // 设置请求的域名
-                    .baseUrl(ApiAddress.api)
-                    // 设置解析转换工厂，用自己定义的
-                    .addConverterFactory(GsonConverterFactory.create())
+//        if (allApi == null) {
+        Retrofit mRetrofit = new Retrofit.Builder()
+                .client(initOKHttp())
+                // 设置请求的域名
+                .baseUrl(ApiAddress.api)
+                // 设置解析转换工厂，用自己定义的
+                .addConverterFactory(GsonConverterFactory.create())
 //                    .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .build();
-            allApi = mRetrofit.create(AllApi.class);
-        }
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        allApi = mRetrofit.create(AllApi.class);
+//        }
         return allApi;
     }
 
     /**
      * 屏蔽SSl证书
+     *
      * @return
      */
     public AllApi initRetrofitMainNoSSL() {
-        if (allApi == null) {
-            Retrofit mRetrofit = new Retrofit.Builder()
-                    .client(initOKHttpNOSSL())
-                    // 设置请求的域名
-                    .baseUrl(ApiAddress.api)
-                    // 设置解析转换工厂，用自己定义的
-                    .addConverterFactory(GsonConverterFactory.create())
+//        if (allApi == null) {
+        Retrofit mRetrofit = new Retrofit.Builder()
+                .client(initOKHttpNOSSL())
+                // 设置请求的域名
+                .baseUrl(ApiAddress.api)
+                // 设置解析转换工厂，用自己定义的
+                .addConverterFactory(GsonConverterFactory.create())
 //                    .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .build();
-            allApi = mRetrofit.create(AllApi.class);
-        }
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        allApi = mRetrofit.create(AllApi.class);
+//        }
+        return allApi;
+    }
+
+    public AllApi initLoginRetrofitMainNoSSL() {
+//        if (allApi == null) {
+        Retrofit mRetrofit = new Retrofit.Builder()
+                .client(initLoginOKHttpNOSSL())
+                // 设置请求的域名
+                .baseUrl(ApiAddress.api)
+                // 设置解析转换工厂，用自己定义的
+                .addConverterFactory(GsonConverterFactory.create())
+//                    .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        allApi = mRetrofit.create(AllApi.class);
+//        }
         return allApi;
     }
 
@@ -156,6 +173,18 @@ public class RetrofitUtil {
                 //cookie
                 .addInterceptor(new CookieReadInterceptor())
                 .addInterceptor(new CookiesSaveInterceptor())
+                .build();
+        return mOkHttpClient;
+    }
+
+    public static OkHttpClient initLoginOKHttpNOSSL() {
+        mOkHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)//设置写入超时时间
+                .addInterceptor(InterceptorUtil.LogInterceptor())//添加日志拦截器
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier())//配置
                 .build();
         return mOkHttpClient;
     }

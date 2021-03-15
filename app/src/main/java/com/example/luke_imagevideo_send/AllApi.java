@@ -6,6 +6,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
 import com.example.luke_imagevideo_send.main.bean.Login;
 import com.example.luke_imagevideo_send.main.bean.Register;
+import com.example.luke_imagevideo_send.main.bean.TokenTest;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -13,8 +14,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 /**
  * @author: Allen.
@@ -33,10 +34,18 @@ public interface AllApi {
 
     /**
      * 登录
+     *  @GET(ApiAddress.login)
      */
-    @GET(ApiAddress.login)
-    Observable<Login> getLogin(@Query("appLoginName") String appLoginName, @Query("appPassword") String appPassword
-            , @Query("type") String type);
+    @FormUrlEncoded
+    @POST(ApiAddress.login)
+    @Headers({"Content-Type:application/x-www-form-urlencoded; charset=UTF-8"})
+    Observable<Login> getLogin(@Field("username") String username, @Field("password") String password);
+
+    /**
+     * 测试token
+     */
+    @GET(ApiAddress.tokenTest)
+    Observable<TokenTest> getTokenTest();
 
     /**
      * 注册
@@ -63,4 +72,7 @@ public interface AllApi {
      */
     @POST(ApiAddress.cedatasend)
     Observable<SaveDataBack> sendDataSave(@Body SaveData saveData);
+
+//    @GET(ApiAddress.LineDetial)
+//    Observable<CustomizedLineDetailBean> sendRequestGetcustomizedLineDetail(@Query("id") int id);
 }

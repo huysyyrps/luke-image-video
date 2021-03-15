@@ -21,6 +21,8 @@ public class CookieReadInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request.Builder builder = chain.request().newBuilder();
         builder.addHeader("Cookie", SharePreferencesUtils.getString(MyApplication.myApp, "cookiess", ""));
+        String s = "Bearer "+SharePreferencesUtils.getString(MyApplication.myApp, "tokenContent", "");
+        builder.addHeader("Authorization", "Bearer "+SharePreferencesUtils.getString(MyApplication.myApp, "tokenContent", ""));
         return chain.proceed(builder.build());
     }
 }

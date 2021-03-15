@@ -15,11 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.magnetic.activity.MainActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.utils.MD5;
 import com.example.luke_imagevideo_send.http.utils.NetworkTest;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -71,7 +69,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-                exit();
+            exit();
             return false;
         }
         return super.onKeyDown(keyCode, event);
@@ -158,20 +156,18 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 mbDisplayFlg = !mbDisplayFlg;
                 break;
             case R.id.btn_login:
-                String mduserPassWord = new MD5().md5(etPassWord.getText().toString());
                 if (etUserName.getText().toString().equals("") || etPassWord.getText().toString().equals("")) {
                     Toast.makeText(this, getResources().getString(R.string.no_name_password), Toast.LENGTH_SHORT).show();
                 } else {
-                    if (mduserPassWord.equals("")) {
-                        Toast.makeText(this, getResources().getString(R.string.md_faile), Toast.LENGTH_SHORT).show();
+                    if ((Boolean) new NetworkTest().goToNetWork(this)) {
+                        loginPresenter.getLogin(etUserName.getText().toString(), etPassWord.getText().toString());
                     } else {
-                        if ((Boolean) new NetworkTest().goToNetWork(this)) {
-                            loginPresenter.getLogin(etUserName.getText().toString(), mduserPassWord, "APP");
-                        } else {
-                            Toast.makeText(this, getResources().getString(R.string.umeng_socialize_network), Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(this, getResources().getString(R.string.umeng_socialize_network), Toast.LENGTH_SHORT).show();
                     }
                 }
+//                intent = new Intent(this, SendSelectActivity.class);
+//                startActivity(intent);
+//                finish();
                 break;
             case R.id.tvForgrtPassword:
                 intent = new Intent(this, CheckPassWordActivity.class);
@@ -183,12 +179,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 break;
             case R.id.tv1:
                 intent = new Intent(this, AgreeActivity.class);
-                intent.putExtra("tag","tv1");
+                intent.putExtra("tag", "tv1");
                 startActivity(intent);
                 break;
             case R.id.tv2:
                 intent = new Intent(this, AgreeActivity.class);
-                intent.putExtra("tag","tv2");
+                intent.putExtra("tag", "tv2");
                 startActivity(intent);
                 break;
         }
@@ -207,18 +203,20 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @Override
     public void setLogin(Login loginBean) {
-        if (loginBean.getCode() == 3) {
-            Toast.makeText(this, loginBean.getMsg(), Toast.LENGTH_SHORT).show();
-        } else if (loginBean.getCode() == 1) {
+        if (loginBean.isSuccess()) {
+            String token = loginBean.getToken().getTokenContent();
+            sharePreferencesUtils.setString(this, "tokenContent", token);
             sharePreferencesUtils.setString(this, "userName", etUserName.getText().toString());
             sharePreferencesUtils.setString(this, "passWord", etPassWord.getText().toString());
 
 
             sharePreferencesUtils.setString(this, "userNamenew", etUserName.getText().toString());
             sharePreferencesUtils.setString(this, "passWordnew", etPassWord.getText().toString());
-            intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, TestActivity.class);
             startActivity(intent);
             finish();
+        }else {
+            Toast.makeText(this, loginBean.getData(), Toast.LENGTH_SHORT).show();
         }
     }
 

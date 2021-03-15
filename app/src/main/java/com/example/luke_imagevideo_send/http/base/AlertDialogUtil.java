@@ -57,6 +57,37 @@ public class AlertDialogUtil {
         }
     }
 
+    public void showLoginDialog(String description, final AlertDialogLoginCallBack alertDialogLoginCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new AlertDialog.Builder(context).create();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_title, null, false);
+            TextView tv_content = (TextView) view.findViewById(R.id.content);
+            TextView tv_yes = (TextView) view.findViewById(R.id.yes);
+            TextView tv_no = (TextView) view.findViewById(R.id.no);
+            tv_content.setText(description);
+            tv_no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    alertDialogLoginCallBack.cancel();
+                }
+            });
+
+            tv_yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    alertDialogLoginCallBack.confirm();
+                }
+            });
+            dialog.getWindow().setContentView(view);
+        }
+    }
+
     public void showSmallDialog(String description, final DialogCallBack alertDialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new AlertDialog.Builder(context).create();

@@ -9,7 +9,7 @@ package com.example.luke_imagevideo_send;
 public class ApiAddress {
 
     //生成环境
-    public final static String api = "https://172.16.18.73:5001/api/";
+    public final static String api = "https://172.16.18.73:5001/";
 
 
     /***********************首页*******************************/
@@ -36,7 +36,9 @@ public class ApiAddress {
 
     public final static String test = "api/111";
     //登录
-    public final static String login = "app_login";
+    public final static String login = "api/LoginAuth/Login";
+    //测试token
+    public final static String tokenTest = "api/Get/Get";
     //修改密码
     public final static String checkpassword = "app_change_password";
     //注册

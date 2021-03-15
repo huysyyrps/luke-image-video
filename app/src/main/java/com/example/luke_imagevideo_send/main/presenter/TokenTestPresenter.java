@@ -5,8 +5,8 @@ import android.content.Context;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.http.base.BaseObserverNoEntry;
 import com.example.luke_imagevideo_send.http.utils.RetrofitUtil;
-import com.example.luke_imagevideo_send.main.bean.Login;
-import com.example.luke_imagevideo_send.main.module.LoginContract;
+import com.example.luke_imagevideo_send.main.bean.TokenTest;
+import com.example.luke_imagevideo_send.main.module.TokenTestContract;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -18,12 +18,12 @@ import io.reactivex.schedulers.Schedulers;
  * @description:
  */
 
-public class LoginPresenter implements LoginContract.presenter {
+public class TokenTestPresenter implements TokenTestContract.presenter {
 
     private Context context;
-    private LoginContract.View view;
+    private TokenTestContract.View view;
 
-    public LoginPresenter(Context context, LoginContract.View view) {
+    public TokenTestPresenter(Context context, TokenTestContract.View view) {
         this.context = context;
         this.view = view;
     }
@@ -32,17 +32,17 @@ public class LoginPresenter implements LoginContract.presenter {
      * 登录
      */
     @Override
-    public void getLogin(String userName, String passWord) {
-        RetrofitUtil.getInstance().initLoginRetrofitMainNoSSL().getLogin(userName,passWord).subscribeOn(Schedulers.io())
+    public void getTokenTest() {
+        RetrofitUtil.getInstance().initRetrofitMainNoSSL().getTokenTest().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserverNoEntry<Login>(context, context.getResources().getString(R.string.handler_data)) {
+                .subscribe(new BaseObserverNoEntry<TokenTest>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
-                    protected void onSuccees(Login t) throws Exception {
-                        view.setLogin(t);
+                    protected void onSuccees(TokenTest t) throws Exception {
+                        view.setTokenTest(t);
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
-                        view.setLoginMessage(""+ e.getMessage());
+                        view.setTokenTestMessage(""+ e.getMessage());
                     }
                 });
     }

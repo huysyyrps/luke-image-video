@@ -4,40 +4,25 @@ import java.io.Serializable;
 
 public class Login implements Serializable {
 
+
     /**
-     * msg : 登陆成功!
-     * code : 1
+     * token : {"tokenContent":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2F
+     * wLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi5Yav5b2p57qiIiwiUm9sZSI6ImFkbWluIiwiZXhw
+     * IjoxNjE1MDA5Mzc1LCJpc3MiOiJtYWd1b3FpIiwiYXVkIjoi5Yav5b2p57qiIn0.fdJXv-g15QwMMHdlbkhQ8Z5V7xk_H4JqroLP43_6v3A","expires":"2021-03-06 13:42:55"}
      * success : true
-     * extraData : null
-     * noticeData : null
-     * data : null
-     * count : null
-     * nextUrl : null
+     * data : 登录成功!
      */
 
-    private String msg;
-    private int code;
+    private TokenBean token;
     private boolean success;
-    private Object extraData;
-    private Object noticeData;
-    private Object data;
-    private Object count;
-    private Object nextUrl;
+    private String data;
 
-    public String getMsg() {
-        return msg;
+    public TokenBean getToken() {
+        return token;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
+    public void setToken(TokenBean token) {
+        this.token = token;
     }
 
     public boolean isSuccess() {
@@ -48,43 +33,37 @@ public class Login implements Serializable {
         this.success = success;
     }
 
-    public Object getExtraData() {
-        return extraData;
-    }
-
-    public void setExtraData(Object extraData) {
-        this.extraData = extraData;
-    }
-
-    public Object getNoticeData() {
-        return noticeData;
-    }
-
-    public void setNoticeData(Object noticeData) {
-        this.noticeData = noticeData;
-    }
-
-    public Object getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(String data) {
         this.data = data;
     }
 
-    public Object getCount() {
-        return count;
-    }
+    public static class TokenBean {
+        /**
+         * tokenContent : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi5Yav5b2p57qiIiwiUm9sZSI6ImFkbWluIiwiZXhwIjoxNjE1MDA5Mzc1LCJpc3MiOiJtYWd1b3FpIiwiYXVkIjoi5Yav5b2p57qiIn0.fdJXv-g15QwMMHdlbkhQ8Z5V7xk_H4JqroLP43_6v3A
+         * expires : 2021-03-06 13:42:55
+         */
 
-    public void setCount(Object count) {
-        this.count = count;
-    }
+        private String tokenContent;
+        private String expires;
 
-    public Object getNextUrl() {
-        return nextUrl;
-    }
+        public String getTokenContent() {
+            return tokenContent;
+        }
 
-    public void setNextUrl(Object nextUrl) {
-        this.nextUrl = nextUrl;
+        public void setTokenContent(String tokenContent) {
+            this.tokenContent = tokenContent;
+        }
+
+        public String getExpires() {
+            return expires;
+        }
+
+        public void setExpires(String expires) {
+            this.expires = expires;
+        }
     }
 }

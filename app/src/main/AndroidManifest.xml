@@ -43,6 +43,7 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
+        <activity android:name=".main.activity.TestActivity"></activity>
 
         <meta-data
             android:name="Mob-AppKey"

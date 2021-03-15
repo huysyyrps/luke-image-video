@@ -136,7 +136,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
         MenuEntity bean3 = new MenuEntity();
         bean3.iconId = R.drawable.ic_shishi;
-        bean3.title = "实时上传（测厚仪）";
+        bean3.title = "实时上传";
 
         list.add(bean1);
         list.add(bean2);

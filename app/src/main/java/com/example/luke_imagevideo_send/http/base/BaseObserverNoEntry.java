@@ -6,12 +6,15 @@ import android.content.Context;
 import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 /**
  * @author: Allen.
@@ -49,6 +52,16 @@ public abstract class BaseObserverNoEntry<T> implements Observer<T> {
     //失败
     @Override
     public void onError(Throwable e) {
+        if (e instanceof HttpException) {
+            ResponseBody responseBody = ((HttpException) e).response().errorBody();
+            if (responseBody!=null){
+                try {
+                    responseBody.string();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
         onRequestEnd();
         try {
             if (e instanceof ConnectException

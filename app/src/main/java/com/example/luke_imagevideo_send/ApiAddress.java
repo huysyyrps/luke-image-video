@@ -38,7 +38,7 @@ public class ApiAddress {
     //登录
     public final static String login = "api/LoginAuth/Login";
     //测试token
-    public final static String tokenTest = "api/Get/Get";
+    public final static String tokenTest = "api/Get/GetTwo";
     //修改密码
     public final static String checkpassword = "app_change_password";
     //注册

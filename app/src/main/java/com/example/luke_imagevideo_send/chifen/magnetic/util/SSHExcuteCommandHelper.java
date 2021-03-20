@@ -1,5 +1,8 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.util;
 
+import android.widget.Toast;
+
+import com.example.luke_imagevideo_send.MyApplication;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -129,11 +132,47 @@ public class SSHExcuteCommandHelper {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
         System.out.println("是否连接成功"+execute.canConnection());
-        String s = execute.execCommand("uci show system.id");
-        System.out.println("解析前");
-        System.out.println(s);
-        System.out.println("解析后");
-        List<List<String>> parseResult = execute.parseResult(s);
-        SSHCallBack.confirm(parseResult);
+        if (execute.canConnection()){
+            //发送指令
+            String s = execute.execCommand("uci show system.id");
+//            System.out.println("解析前");
+//            System.out.println(s);
+//            System.out.println("解析后");
+//            List<List<String>> parseResult = execute.parseResult(s);
+//            SSHCallBack.confirm(parseResult);
+            SSHCallBack.confirm(s);
+        }else {
+            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+        }
+//        String s = execute.execCommand("uci show system.id");
+//        System.out.println("解析前");
+//        System.out.println(s);
+//        System.out.println("解析后");
+//        List<List<String>> parseResult = execute.parseResult(s);
+//        SSHCallBack.confirm(parseResult);
+    }
+
+    public static void read(String address, final SSHCallBack SSHCallBack) {
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
+        boolean ss = execute.canConnection();
+        System.out.println("是否连接成功"+execute.canConnection());
+        if (execute.canConnection()){
+            //发送指令
+            String s = execute.execCommand("read_data");
+//            System.out.println("解析前");
+//            System.out.println(s);
+//            System.out.println("解析后");
+//            List<List<String>> parseResult = execute.parseResult(s);
+//            SSHCallBack.confirm(parseResult);
+            SSHCallBack.confirm(s);
+        }else {
+            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+        }
+//        String s = execute.execCommand("uci show system.id");
+//        System.out.println("解析前");
+//        System.out.println(s);
+//        System.out.println("解析后");
+//        List<List<String>> parseResult = execute.parseResult(s);
+//        SSHCallBack.confirm(parseResult);
     }
 }

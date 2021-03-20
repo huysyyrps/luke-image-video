@@ -73,6 +73,14 @@ public interface AllApi {
     @POST(ApiAddress.cedatasend)
     Observable<SaveDataBack> sendDataSave(@Body SaveData saveData);
 
+//    //图片上传
+//    @Multipart
+//    @POST("face/uploadFile")
+//    Observable<SaveDataBack> uploadFile (@Part List<MultipartBody.Part> partList);
+//    @Multipart
+//    @POST("v1/app/exception")
+//    Observable<ResponseBean<List<String>>> uploadLog(@PartMap Map<String, RequestBody> map);
+
 //    @GET(ApiAddress.LineDetial)
 //    Observable<CustomizedLineDetailBean> sendRequestGetcustomizedLineDetail(@Query("id") int id);
 }

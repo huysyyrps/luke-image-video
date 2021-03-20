@@ -16,12 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.activity.MainOutCHYActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
+import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
 import com.example.luke_imagevideo_send.main.activity.DefinedActivity;
+import com.google.gson.Gson;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
@@ -39,7 +44,7 @@ public class SendSelectActivity extends AppCompatActivity {
     //富有动感的Sheet弹窗
     private SweetSheet sheet;
     Intent intent;
-    private short[] mRegValues;
+    private String address = "";
     private static boolean isExit = false;
     private static AlertDialogUtil alertDialogUtil;
     SharePreferencesUtils sharePreferencesUtils;
@@ -120,6 +125,40 @@ public class SendSelectActivity extends AppCompatActivity {
             }
         });
         initData();
+
+        try {
+            ArrayList<String> connectIpList = new getIp().getConnectIp();
+            address = connectIpList.get(0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SSHExcuteCommandHelper.read(address, new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            Gson gson = new Gson();
+                            Setting setting = gson.fromJson(data,Setting.class);
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "acdc", setting.getData().getAcdc());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "auto", setting.getData().getAuto());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "auto_time", setting.getData().getAuto_time());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "bw", setting.getData().getBw());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "id", setting.getData().getId());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
+                            sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
+                        }
+//                        @Override
+//                        public void confirm(List<List<String>> parseResult) {
+//                            for (List<String> l : parseResult) {
+//                                System.out.println(l);
+//                            }
+//                            new SSHExcuteCommandHelper(address).disconnect();
+//                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //设置SweetSheet上的数据
@@ -155,7 +194,6 @@ public class SendSelectActivity extends AppCompatActivity {
         sheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
             @Override
             public boolean onItemClick(int position, MenuEntity menuEntity) {
-//                Toast.makeText(SendSelectActivity.this, "点击了：" + menuEntity.title, Toast.LENGTH_SHORT).show();
                 //根据返回值, true 会关闭 SweetSheet ,false 则不会
                 sharePreferencesUtils.setString(SendSelectActivity.this, "compName", etCompName.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
@@ -168,11 +206,6 @@ public class SendSelectActivity extends AppCompatActivity {
                     intent.putExtra("etWorkCode", etWorkCode.getText().toString());
                     startActivity(intent);
                 } else if (menuEntity.title.equals("实时上传（测厚仪）")) {
-//                    sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
-//                    intent = new Intent(SendSelectActivity.this, MainActivity.class);
-//                    intent.putExtra("etCompName",etCompName.getText().toString());
-//                    intent.putExtra("etWorkName",etWorkName.getText().toString());
-//                    intent.putExtra("etWorkCode",etWorkCode.getText().toString());
                     intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
                     startActivity(intent);
                 }

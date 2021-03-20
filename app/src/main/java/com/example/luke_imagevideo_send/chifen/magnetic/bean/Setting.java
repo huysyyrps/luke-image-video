@@ -3,67 +3,124 @@ package com.example.luke_imagevideo_send.chifen.magnetic.bean;
 import java.io.Serializable;
 
 public class Setting implements Serializable {
-    public String jiaoliu;
-    public String zhiliu;
-    public String heiguang;
-    public String baiguang;
-    public String diandong;
-    public String liandong;
-    public String kaiguan;
 
-    public String getJiaoliu() {
-        return jiaoliu;
+    /**
+     * data : {"id":"xxxxxxxx","date":"Fri Jan  8 03:23:55 CST 2021","mac":"xx xx xx xx xx","power":"","acdc":"0","mode":"0","b/w":"0","auto":"0","auto_time":"xx","ip":"113.104.182.107"}
+     */
+
+    private DataBean data;
+
+    public DataBean getData() {
+        return data;
     }
 
-    public void setJiaoliu(String jiaoliu) {
-        this.jiaoliu = jiaoliu;
+    public void setData(DataBean data) {
+        this.data = data;
     }
 
-    public String getZhiliu() {
-        return zhiliu;
-    }
+    public static class DataBean implements Serializable{
+        /**
+         * id : xxxxxxxx
+         * date : Fri Jan  8 03:23:55 CST 2021
+         * mac : xx xx xx xx xx
+         * power :
+         * acdc : 0
+         * mode : 0
+         * b/w : 0
+         * auto : 0
+         * auto_time : xx
+         * ip : 113.104.182.107
+         */
 
-    public void setZhiliu(String zhiliu) {
-        this.zhiliu = zhiliu;
-    }
+        private String id;
+        private String date;
+        private String mac;
+        private String power;
+        private String acdc;
+        private String mode;
+        private String bw; // FIXME check this code
+        private String auto;
+        private String auto_time;
+        private String ip;
 
-    public String getHeiguang() {
-        return heiguang;
-    }
+        public String getId() {
+            return id;
+        }
 
-    public void setHeiguang(String heiguang) {
-        this.heiguang = heiguang;
-    }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-    public String getBaiguang() {
-        return baiguang;
-    }
+        public String getDate() {
+            return date;
+        }
 
-    public void setBaiguang(String baiguang) {
-        this.baiguang = baiguang;
-    }
+        public void setDate(String date) {
+            this.date = date;
+        }
 
-    public String getDiandong() {
-        return diandong;
-    }
+        public String getMac() {
+            return mac;
+        }
 
-    public void setDiandong(String diandong) {
-        this.diandong = diandong;
-    }
+        public void setMac(String mac) {
+            this.mac = mac;
+        }
 
-    public String getLiandong() {
-        return liandong;
-    }
+        public String getPower() {
+            return power;
+        }
 
-    public void setLiandong(String liandong) {
-        this.liandong = liandong;
-    }
+        public void setPower(String power) {
+            this.power = power;
+        }
 
-    public String getKaiguan() {
-        return kaiguan;
-    }
+        public String getAcdc() {
+            return acdc;
+        }
 
-    public void setKaiguan(String kaiguan) {
-        this.kaiguan = kaiguan;
+        public void setAcdc(String acdc) {
+            this.acdc = acdc;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public void setMode(String mode) {
+            this.mode = mode;
+        }
+
+        public String getBw() {
+            return bw;
+        }
+
+        public void setBw(String bw) {
+            this.bw = bw;
+        }
+
+        public String getAuto() {
+            return auto;
+        }
+
+        public void setAuto(String auto) {
+            this.auto = auto;
+        }
+
+        public String getAuto_time() {
+            return auto_time;
+        }
+
+        public void setAuto_time(String auto_time) {
+            this.auto_time = auto_time;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
+        }
     }
 }

@@ -1,16 +1,17 @@
 package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import butterknife.BindView;
@@ -33,20 +34,52 @@ public class SettingActivity extends BaseActivity {
     Switch switchDD;
     @BindView(R.id.switchLD)
     Switch switchLD;
-    @BindView(R.id.switchKG)
-    Switch switchKG;
     @BindView(R.id.btnSure)
     Button btnSure;
+    @BindView(R.id.etTime)
+    EditText etTime;
+
     Intent intent;
     Setting setting = new Setting();
-    String zjliu = "",hbguang = "",dldong = "",kaiguan = "0";
-
+    SharePreferencesUtils sharePreferencesUtils;
+    Setting.DataBean dataBean = new Setting.DataBean();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         setOnCheckedChangeListener();
+        sharePreferencesUtils = new SharePreferencesUtils();
+        String acdc = sharePreferencesUtils.getString(this, "acdc", setting.getData().getAcdc());
+        String auto = sharePreferencesUtils.getString(this, "auto", setting.getData().getAuto());
+        String auto_time = sharePreferencesUtils.getString(this, "auto_time", setting.getData().getAuto_time());
+        String bw = sharePreferencesUtils.getString(this, "bw", setting.getData().getBw());
+        if (acdc.equals("0")){
+            switchJL.setChecked(true);
+            switchZL.setChecked(false);
+        }else if (acdc.equals("1")){
+            switchJL.setChecked(false);
+            switchZL.setChecked(true);
+        }
+
+        if (auto.equals("0")){
+            switchDD.setChecked(true);
+            switchLD.setChecked(false);
+        }else if (acdc.equals("1")){
+            switchDD.setChecked(false);
+            switchLD.setChecked(true);
+        }
+
+        if (bw.equals("0")){
+            switchHG.setChecked(true);
+            switchBG.setChecked(false);
+        }else if (acdc.equals("1")){
+            switchHG.setChecked(false);
+            switchBG.setChecked(true);
+        }
+
+        etTime.setText(auto_time);
+
     }
 
     @Override
@@ -73,9 +106,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchZL.setChecked(false);
-                    setting.setJiaoliu("yes");
-                    setting.setZhiliu("no");
-                    zjliu = "0";
+                    dataBean.setAcdc("0");
                 }
             }
         });
@@ -84,9 +115,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchJL.setChecked(false);
-                    setting.setJiaoliu("no");
-                    setting.setZhiliu("yes");
-                    zjliu = "1";
+                    dataBean.setAcdc("1");
                 }
             }
         });
@@ -95,9 +124,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchBG.setChecked(false);
-                    setting.setHeiguang("yes");
-                    setting.setBaiguang("no");
-                    hbguang = "0";
+                    dataBean.setBw("0");
                 }
             }
         });
@@ -106,9 +133,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchHG.setChecked(false);
-                    setting.setHeiguang("no");
-                    setting.setBaiguang("yes");
-                    hbguang = "1";
+                    dataBean.setBw("1");
                 }
             }
         });
@@ -117,9 +142,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchLD.setChecked(false);
-                    setting.setDiandong("yes");
-                    setting.setLiandong("no");
-                    dldong = "0";
+                    dataBean.setAuto("0");
                 }
             }
         });
@@ -128,18 +151,7 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchDD.setChecked(false);
-                    setting.setDiandong("no");
-                    setting.setLiandong("yes");
-                    dldong = "1";
-                }
-            }
-        });
-        switchKG.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    setting.setKaiguan("yes");
-                    kaiguan = "1";
+                    dataBean.setAuto("1");
                 }
             }
         });
@@ -147,9 +159,12 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.btnSure)
     public void onClick() {
+        String time = etTime.getText().toString();
+        dataBean.setAuto_time(time);
+        setting.setData(dataBean);
         intent = new Intent();
-        intent.putExtra("data",setting);
+        intent.putExtra("data", setting);
         setResult(Constant.TAG_ONE, intent);
-//        finish();
+        finish();
     }
 }

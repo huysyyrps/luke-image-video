@@ -83,12 +83,12 @@
             android:name=".chifen.camera.activity.NoAudioActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".chifen.camera.activity.SettingActivity"
-            android:screenOrientation="landscape" />
+            android:name=".chifen.camera.activity.SettingActivity"/>
+<!--            android:screenOrientation="landscape" />-->
         <activity
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
+        <activity android:name=".cehouyi.activity.MainOutCHYActivity"/>
         <activity android:name=".cehouyi.activity.MenuActivity" />
         <activity android:name=".cehouyi.activity.JSCHActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />

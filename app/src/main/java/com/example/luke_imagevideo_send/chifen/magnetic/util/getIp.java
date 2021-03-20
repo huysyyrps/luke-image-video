@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/**
+ * 连接当前热点的设备的IP
+ */
 public class getIp {
     public ArrayList<String> getConnectIp() throws Exception {
         ArrayList<String> connectIpList = new ArrayList<String>();

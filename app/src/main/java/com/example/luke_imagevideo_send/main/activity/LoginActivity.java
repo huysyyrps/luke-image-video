@@ -15,10 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.utils.NetworkTest;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.main.bean.Login;
@@ -156,18 +156,18 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 mbDisplayFlg = !mbDisplayFlg;
                 break;
             case R.id.btn_login:
-                if (etUserName.getText().toString().equals("") || etPassWord.getText().toString().equals("")) {
-                    Toast.makeText(this, getResources().getString(R.string.no_name_password), Toast.LENGTH_SHORT).show();
-                } else {
-                    if ((Boolean) new NetworkTest().goToNetWork(this)) {
-                        loginPresenter.getLogin(etUserName.getText().toString(), etPassWord.getText().toString());
-                    } else {
-                        Toast.makeText(this, getResources().getString(R.string.umeng_socialize_network), Toast.LENGTH_SHORT).show();
-                    }
-                }
-//                intent = new Intent(this, SendSelectActivity.class);
-//                startActivity(intent);
-//                finish();
+//                if (etUserName.getText().toString().equals("") || etPassWord.getText().toString().equals("")) {
+//                    Toast.makeText(this, getResources().getString(R.string.no_name_password), Toast.LENGTH_SHORT).show();
+//                } else {
+//                    if ((Boolean) new NetworkTest().goToNetWork(this)) {
+//                        loginPresenter.getLogin(etUserName.getText().toString(), etPassWord.getText().toString());
+//                    } else {
+//                        Toast.makeText(this, getResources().getString(R.string.umeng_socialize_network), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+                intent = new Intent(this, SendSelectActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.tvForgrtPassword:
                 intent = new Intent(this, CheckPassWordActivity.class);

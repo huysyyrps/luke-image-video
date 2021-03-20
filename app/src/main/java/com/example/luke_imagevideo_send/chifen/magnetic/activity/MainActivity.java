@@ -68,6 +68,7 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
+import com.google.gson.Gson;
 import com.licheedev.modbus4android.BuildConfig;
 import com.licheedev.modbus4android.param.TcpParam;
 import com.serotonin.modbus4j.ModbusMaster;
@@ -999,13 +1000,8 @@ public class MainActivity extends BaseActivity {
             case Constant.TAG_TWO:
                 if (resultCode == Constant.TAG_ONE) {
                     Setting setting = (Setting) backdata.getSerializableExtra("data");
-                    jiaoliu = setting.getJiaoliu();
-                    zhiliu = setting.getZhiliu();
-                    heiguang = setting.getHeiguang();
-                    baiguang = setting.getBaiguang();
-                    diandong = setting.getDiandong();
-                    liandong = setting.getLiandong();
-                    kaiguan = setting.getKaiguan();
+                    Gson gson = new Gson();
+                    String obj2 = gson.toJson(setting);
 //                    if (jiaoliu.equals("yes")) {
 //                        data[24] = 0;
 //                    }

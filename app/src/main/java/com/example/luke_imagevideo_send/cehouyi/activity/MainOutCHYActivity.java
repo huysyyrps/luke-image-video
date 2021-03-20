@@ -675,6 +675,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
             Min = f;
         }
         LineDataSet dataSet = new LineDataSet(entries, "Label1");
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         LineData lineData = new LineData(dataSet);
         lineChartData.setData(lineData);
         // 像ListView那样的通知数据更新

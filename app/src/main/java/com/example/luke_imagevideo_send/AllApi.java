@@ -2,6 +2,7 @@ package com.example.luke_imagevideo_send;
 
 import com.example.luke_imagevideo_send.cehouyi.bean.SaveData;
 import com.example.luke_imagevideo_send.cehouyi.bean.SaveDataBack;
+import com.example.luke_imagevideo_send.chifen.camera.bean.PhotoUp;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
 import com.example.luke_imagevideo_send.main.bean.Login;
@@ -9,6 +10,7 @@ import com.example.luke_imagevideo_send.main.bean.Register;
 import com.example.luke_imagevideo_send.main.bean.TokenTest;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -40,6 +42,16 @@ public interface AllApi {
     @POST(ApiAddress.login)
     @Headers({"Content-Type:application/x-www-form-urlencoded; charset=UTF-8"})
     Observable<Login> getLogin(@Field("username") String username, @Field("password") String password);
+
+
+    /**
+     * 图片上传
+     *  @GET(ApiAddress.login)
+     */
+    @POST(ApiAddress.photoup)
+    @Headers({"Content-Type:application/json; charset=UTF-8"})
+    /*Observable<PhotoUp> getPhoto(@Field("company") String company, @Field("device") String device, @Field("pic") String pic);*/
+    Observable<PhotoUp> getPhoto(@Body RequestBody body);
 
     /**
      * 测试token

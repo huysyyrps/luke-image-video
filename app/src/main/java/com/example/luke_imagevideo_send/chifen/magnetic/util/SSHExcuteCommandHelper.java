@@ -3,6 +3,8 @@ package com.example.luke_imagevideo_send.chifen.magnetic.util;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.MyApplication;
+import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -32,7 +34,7 @@ public class SSHExcuteCommandHelper {
     public SSHExcuteCommandHelper(String host) {
         JSch jsch = new JSch();
         try {
-            session = jsch.getSession("root", host, 22);
+            session = jsch.getSession("root", "192.168.43.104", 22);
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setTimeout(6000);
@@ -128,21 +130,35 @@ public class SSHExcuteCommandHelper {
         return parseResult;
     }
 
-    public static void main(String address, final SSHCallBack SSHCallBack) {
+    public static void main(String address,String data, final SSHCallBack SSHCallBack) {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
-        System.out.println("是否连接成功"+execute.canConnection());
-        if (execute.canConnection()){
+        if (ss){
             //发送指令
-            String s = execute.execCommand("uci show system.id");
+            String s = execute.execCommand(data);
+            SSHCallBack.confirm(s);
+        }else {
+            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void read(String address, SendSelectActivity sendSelectActivity, final SSHCallBack SSHCallBack) {
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
+        boolean ss = execute.canConnection();
+        if (ss){
+            //发送指令
+            String data = execute.execCommand("cat /date.json");
 //            System.out.println("解析前");
 //            System.out.println(s);
 //            System.out.println("解析后");
 //            List<List<String>> parseResult = execute.parseResult(s);
 //            SSHCallBack.confirm(parseResult);
-            SSHCallBack.confirm(s);
+            SSHCallBack.confirm(data);
         }else {
-            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+            sendSelectActivity.runOnUiThread(() -> {
+                Toast.makeText(sendSelectActivity, "连接失败", Toast.LENGTH_SHORT).show();
+            });
+
         }
 //        String s = execute.execCommand("uci show system.id");
 //        System.out.println("解析前");
@@ -152,21 +168,23 @@ public class SSHExcuteCommandHelper {
 //        SSHCallBack.confirm(parseResult);
     }
 
-    public static void read(String address, final SSHCallBack SSHCallBack) {
+    public static void readAgain(String address, SettingActivity settingActivity, final SSHCallBack SSHCallBack) {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
-        System.out.println("是否连接成功"+execute.canConnection());
-        if (execute.canConnection()){
+        if (ss){
             //发送指令
-            String s = execute.execCommand("read_data");
+            String data = execute.execCommand("cat /date.json");
 //            System.out.println("解析前");
 //            System.out.println(s);
 //            System.out.println("解析后");
 //            List<List<String>> parseResult = execute.parseResult(s);
 //            SSHCallBack.confirm(parseResult);
-            SSHCallBack.confirm(s);
+            SSHCallBack.confirm(data);
         }else {
-            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+            settingActivity.runOnUiThread(() -> {
+                Toast.makeText(settingActivity, "连接失败", Toast.LENGTH_SHORT).show();
+            });
+
         }
 //        String s = execute.execCommand("uci show system.id");
 //        System.out.println("解析前");

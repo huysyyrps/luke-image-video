@@ -43,7 +43,7 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".main.activity.TestActivity"></activity>
+        <activity android:name=".main.activity.TestActivity" />
 
         <meta-data
             android:name="Mob-AppKey"
@@ -82,13 +82,11 @@
         <activity
             android:name=".chifen.camera.activity.NoAudioActivity"
             android:screenOrientation="landscape" />
-        <activity
-            android:name=".chifen.camera.activity.SettingActivity"/>
-<!--            android:screenOrientation="landscape" />-->
+        <activity android:name=".chifen.camera.activity.SettingActivity" /> <!-- android:screenOrientation="landscape" /> -->
         <activity
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".cehouyi.activity.MainOutCHYActivity"/>
+        <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
         <activity android:name=".cehouyi.activity.MenuActivity" />
         <activity android:name=".cehouyi.activity.JSCHActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />

@@ -11,7 +11,6 @@ public class ApiAddress {
     //生成环境
     public final static String api = "https://172.16.18.73:5001/";
 
-
     /***********************首页*******************************/
     //banner
     public final static String getBannerList = "mobile/listSlides.do";
@@ -37,6 +36,8 @@ public class ApiAddress {
     public final static String test = "api/111";
     //登录
     public final static String login = "api/LoginAuth/Login";
+    //图片上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic
+    public final static String photoup = "api/FileProccess/UpLoadPic";
     //测试token
     public final static String tokenTest = "api/Get/GetTwo";
     //修改密码

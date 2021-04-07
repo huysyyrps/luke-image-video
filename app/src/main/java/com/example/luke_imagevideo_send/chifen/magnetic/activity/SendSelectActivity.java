@@ -127,12 +127,11 @@ public class SendSelectActivity extends AppCompatActivity {
         initData();
 
         try {
-            ArrayList<String> connectIpList = new getIp().getConnectIp();
-            address = connectIpList.get(0);
+            address = new getIp().getConnectIp();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SSHExcuteCommandHelper.read(address, new SSHCallBack() {
+                    SSHExcuteCommandHelper.read(address,SendSelectActivity.this, new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
                             Gson gson = new Gson();
@@ -145,14 +144,8 @@ public class SendSelectActivity extends AppCompatActivity {
                             sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
                             sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
                             sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
+                            new SSHExcuteCommandHelper(address).disconnect();
                         }
-//                        @Override
-//                        public void confirm(List<List<String>> parseResult) {
-//                            for (List<String> l : parseResult) {
-//                                System.out.println(l);
-//                            }
-//                            new SSHExcuteCommandHelper(address).disconnect();
-//                        }
                     });
                 }
             }).start();
@@ -205,7 +198,7 @@ public class SendSelectActivity extends AppCompatActivity {
                     intent.putExtra("etWorkName", etWorkName.getText().toString());
                     intent.putExtra("etWorkCode", etWorkCode.getText().toString());
                     startActivity(intent);
-                } else if (menuEntity.title.equals("实时上传（测厚仪）")) {
+                } else if (menuEntity.title.equals("实时上传")) {
                     intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
                     startActivity(intent);
                 }

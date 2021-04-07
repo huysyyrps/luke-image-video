@@ -8,7 +8,8 @@ import java.util.ArrayList;
  * 连接当前热点的设备的IP
  */
 public class getIp {
-    public ArrayList<String> getConnectIp() throws Exception {
+    String address;
+    public String getConnectIp() throws Exception {
         ArrayList<String> connectIpList = new ArrayList<String>();
         Runtime runtime = Runtime.getRuntime();
         Process proc = runtime.exec("ip neigh show");
@@ -27,6 +28,14 @@ public class getIp {
                 }
             }
         }
-        return connectIpList;
+        for (int i=0;i<connectIpList.size();i++){
+            String ip = connectIpList.get(i);
+            ip = ip.replace(".",",");
+            String[] all=ip.split(",");
+            if (all[2].equals("43"));
+            address = connectIpList.get(i);
+            break;
+        }
+        return address;
     }
 }

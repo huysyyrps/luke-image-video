@@ -1,7 +1,5 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,10 +13,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.media.MediaCodecInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
@@ -28,34 +23,34 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.Display;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.camera.activity.HaveAudioActivity;
-import com.example.luke_imagevideo_send.chifen.camera.activity.NoAudioActivity;
-import com.example.luke_imagevideo_send.chifen.camera.activity.PhotoActivity;
+import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
+import com.example.luke_imagevideo_send.cehouyi.util.GetGPS;
+import com.example.luke_imagevideo_send.cehouyi.util.GetGPSCallBack;
+import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
+import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
+import com.example.luke_imagevideo_send.cehouyi.util.ModbusConnection;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.MainUI;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
@@ -66,21 +61,15 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
-import com.example.luke_imagevideo_send.modbus.ModbusCallback;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
 import com.google.gson.Gson;
 import com.licheedev.modbus4android.BuildConfig;
-import com.licheedev.modbus4android.param.TcpParam;
-import com.serotonin.modbus4j.ModbusMaster;
-import com.serotonin.modbus4j.msg.WriteRegistersResponse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -94,7 +83,7 @@ import static android.media.MediaFormat.MIMETYPE_AUDIO_AAC;
 import static android.media.MediaFormat.MIMETYPE_VIDEO_AVC;
 import static android.os.Build.VERSION_CODES.M;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener {
 
     @BindView(R.id.header)
     Header header;
@@ -128,17 +117,26 @@ public class MainActivity extends BaseActivity {
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
+    @BindView(R.id.rbSuspend)
+    RadioButton rbSuspend;
 
     Bitmap mBitmap;
     String name = "";
 
-    Handler handler;
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private static final int REQUEST_PERMISSIONS = 2;
-    @BindView(R.id.rbSuspend)
-    RadioButton rbSuspend;
+    @BindView(R.id.btnTop)
+    Button btnTop;
+    @BindView(R.id.btnLeft)
+    Button btnLeft;
+    @BindView(R.id.btnLight)
+    Button btnLight;
+    @BindView(R.id.btnRight)
+    Button btnRight;
+    @BindView(R.id.btnBotton)
+    Button btnBotton;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
@@ -147,24 +145,33 @@ public class MainActivity extends BaseActivity {
     private Intent intent;
     private LocationManager locationManager;
     private String haveAudio = "noAudio";
-    //磁粉
-    short[] data = new short[31];
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
-    String zhiliu = "", jiaoliu = "", heiguang = "", baiguang = "", diandong = "", liandong = "", kaiguan = "";
     private String compName = "", workName = "", workCode = "";
     boolean rbVideoV = true;
     boolean rbSoundV = true;
+    private int clickNum = 0;
+    String tag = "",log = "";
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        btnTop.setOnLongClickListener(this);
+        btnBotton.setOnLongClickListener(this);
+        btnLeft.setOnLongClickListener(this);
+        btnRight.setOnLongClickListener(this);
+        btnTop.setOnTouchListener(this);
+        btnBotton.setOnTouchListener(this);
+        btnLeft.setOnTouchListener(this);
+        btnRight.setOnTouchListener(this);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy( builder.build() );
+            StrictMode.setVmPolicy(builder.build());
         }
 
         Intent intent = getIntent();
@@ -184,15 +191,12 @@ public class MainActivity extends BaseActivity {
             tvWorkCode.setText(workCode);
         }
         header.setVisibility(View.GONE);
-//        imageView.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         alertDialogUtil = new AlertDialogUtil(this);
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        initGPS();
-        initTime();
-        makeConnection();
+        new ModbusConnection().makeConnection(this);
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
         if (mMediaProjection == null) {
@@ -201,23 +205,14 @@ public class MainActivity extends BaseActivity {
 
         webView.setBackgroundColor(Color.BLACK);
         webView.getSettings().setJavaScriptEnabled(true);
-        String address = "";
+        String address = null;
         try {
-            ArrayList<String> connectIpList = new getIp().getConnectIp();
-            for (int i=0;i<connectIpList.size();i++){
-                String ip = connectIpList.get(i);
-                ip = ip.replace(".",",");
-                String[] all=ip.split(",");
-                if (all[2].equals("43"));
-                address = connectIpList.get(i);
-                break;
-            }
-            address = "http://"+address+":8080";
+            address = new getIp().getConnectIp();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        webView.loadUrl(address + "?action=stream");
 
+        webView.loadUrl(address + "?action=stream");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -261,6 +256,23 @@ public class MainActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
+        //获取当前时间
+        new GetTime().initTime(new GetTimeCallBack() {
+            @Override
+            public void backTime(String time) {
+                tvTime.setText(time);
+            }
+        });
+
+        //获取GPS
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        new GetGPS().initGPS(MainActivity.this, locationManager, alertDialogUtil, new GetGPSCallBack() {
+            @Override
+            public void backGPS(String gps) {
+                tvGPS.setText(gps);
+            }
+        });
     }
 
     @Override
@@ -283,272 +295,8 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    //建立modbus连接
-    private void makeConnection() {
-//        LoadingDialog loadingDialog = new LoadingDialog(this, "连接服务中", R.mipmap.ic_dialog_loading);
-//        loadingDialog.show();
-        // TCP
-        TcpParam param;
-        param = TcpParam.create("172.16.16.128", 502)
-                .setTimeout(1000)
-                .setRetries(0)
-                .setEncapsulated(false)
-                .setKeepAlive(true);
-
-        ModbusManager.get().closeModbusMaster(); // 先关闭一下
-        ModbusManager.get().init(param, new ModbusCallback<ModbusMaster>() {
-            @Override
-            public void onSuccess(ModbusMaster modbusMaster) {
-                ModbusManager.get().writeRegisters(1, 0, getData(), new ModbusCallback<WriteRegistersResponse>() {
-                    @Override
-                    public void onSuccess(WriteRegistersResponse writeRegistersResponse) {
-                        // 发送成功
-                        Toast.makeText(MainActivity.this, "F16写入成功", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable tr) {
-//                        Toast.makeText(MainActivity.this, tr.toString(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFinally() {
-//                        Toast.makeText(MainActivity.this, "tr.toString()", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable tr) {
-//                Toast.makeText(mNotifications, "modbus连接失败，只能使用本地模式.", Toast.LENGTH_SHORT).show();
-//                AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainActivity.this);
-//                alertDialogUtil.showDialog("modbus连接失败，只能使用本地模式，是否继续使用", new AlertDialogCallBack() {
-//                    @Override
-//                    public void confirm(String name) {
-//
-//                    }
-//
-//                    @Override
-//                    public void cancel() {
-////                        finish();
-//                    }
-//
-//                    @Override
-//                    public void save(String name) {
-//
-//                    }
-//
-//                    @Override
-//                    public void checkName(String name) {
-//
-//                    }
-//                });
-//                loadingDialog.dismiss();
-            }
-
-            @Override
-            public void onFinally() {
-                // todo updateDeviceSwitchButton();
-            }
-        });
-    }
-
-    // 初始化时间方法
-    public void initTime() {
-        // 时间变化
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                tvTime.setText((String) msg.obj);
-            }
-        };
-        Threads thread = new Threads();
-        thread.start();
-    }
-
-    class Threads extends Thread {
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String str = sdf.format(new Date());
-                    handler.sendMessage(handler.obtainMessage(100, str));
-                    Thread.sleep(1000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // 初始化GPS方法
-    private void initGPS() {
-        //获取定位管理器
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "请开启GPS模块", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //设置定位信息
-        LocationListener listener = new LocationListener() {
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                // TODO Auto-generated method stub
-                Log.e("XXX", "1");
-                switch (status) {
-                    //GPS状态为可见时
-                    case LocationProvider.AVAILABLE:
-                        Log.i("XXX", "当前GPS状态为可见状态");
-                        break;
-                    //GPS状态为服务区外时
-                    case LocationProvider.OUT_OF_SERVICE:
-                        Log.i("XXX", "当前GPS状态为服务区外状态");
-                        showGPSDialog();
-                        break;
-                    //GPS状态为暂停服务时
-                    case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                        Log.i("XXX", "当前GPS状态为暂停服务状态");
-                        showGPSDialog();
-                        break;
-                }
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                // TODO Auto-generated method stub
-                Log.e("XXX", "11");
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                // TODO Auto-generated method stub
-                Log.e("XXX", "111");
-            }
-
-            //位置改变的时候调用，这个方法用于返回一些位置信息
-            @Override
-            public void onLocationChanged(Location location) {
-                //获取位置变化结果
-                float accuracy = location.getAccuracy();//精确度，以密为单位
-                double altitude = location.getAltitude();//获取海拔高度
-                double longitude = location.getLongitude();//经度
-                double latitude = location.getLatitude();//纬度
-                float speed = location.getSpeed();//速度
-
-                BigDecimal bigDecimal = new BigDecimal(longitude);
-                longitude = bigDecimal.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
-                BigDecimal bigDecimal1 = new BigDecimal(latitude);
-                latitude = bigDecimal1.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
-
-                //显示位置信息
-                tvGPS.setText(longitude + "," + latitude);
-//                tv_show_location.append("latitude:"+latitude+"\n");
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates("gps", 10000, 0, listener);//Register for location updates
-    }
-
-    private void showGPSDialog() {
-        alertDialogUtil.showSmallDialogCli("当前区域无GPS信号", new AlertDialogCallBack() {
-            @Override
-            public void confirm(String name) {
-                finish();
-            }
-
-            @Override
-            public void cancel() {
-
-            }
-
-            @Override
-            public void save(String name) {
-
-            }
-
-            @Override
-            public void checkName(String name) {
-
-            }
-        });
-    }
-
-    /**
-     * 数据组装
-     */
-    private short[] getData() {
-        //传输标识
-        data[0] = 0;
-        data[1] = 0;
-        //协议标识
-        data[2] = 0;
-        data[3] = 0;
-        //字节长度
-        data[4] = 0;
-        data[5] = 5;
-//        //单位标识符
-//        data[6] = 1;
-//        //功能码
-//        data[7] = 10;
-//        //地址码
-//        data[8] = 0;
-//        data[9] = 1;
-//        //寄存器个数
-//        data[10] = 0;
-//        data[11] = 6;
-//        //字节数
-//        data[12] = 12;
-//        //型号
-////        data[13] = 0x01;
-//        data[13] = 1;
-//        data[14] = 0;
-//        data[15] = 0;
-//        data[16] = 0;
-//        data[17] = 0;
-//        //时间
-//        data[18] = 2;
-//        data[19] = 0;
-//        data[20] = 0;
-//        data[21] = 0;
-//        data[22] = 0;
-//
-////        //mac
-////        data[23] = 3;
-////        data[24] = 0;
-////        data[25] = 0;
-////        data[26] = 0;
-////        data[27] = 0;
-//
-//        //交直模式
-//        data[23] = 6;
-//        data[24] = 0;
-////        //电量
-////        data[28] = 5;
-////        data[29] = 0;
-//        //联动时长
-//        data[25] = 7;
-//        data[26] = 0;
-//        //黑白光切换
-//        data[27] = 8;
-//        data[28] = 0;
-//        //点动联动切换
-//        data[29] = 9;
-//        data[30] = 0;
-        return data;
-    }
-
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting,R.id.rbSuspend})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
+                ,R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -602,7 +350,7 @@ public class MainActivity extends BaseActivity {
                     rbSetting.setVisibility(View.INVISIBLE);
                     rbVideo.setVisibility(View.GONE);
                     rbSuspend.setVisibility(View.VISIBLE);
-                    hideBottomUIMenu();
+                    new BottomUI().hideBottomUIMenu(this.getWindow());
                     rbVideoV = false;
                 }
                 haveAudio = "noAudio";
@@ -628,7 +376,7 @@ public class MainActivity extends BaseActivity {
                     rbSetting.setVisibility(View.INVISIBLE);
                     rbVideo.setVisibility(View.GONE);
                     rbSuspend.setVisibility(View.VISIBLE);
-                    hideBottomUIMenu();
+                    new BottomUI().hideBottomUIMenu(this.getWindow());
                     rbSoundV = false;
                 }
                 haveAudio = "Audio";
@@ -647,7 +395,7 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbSuspend:
-                BottomUIMenu();
+                new BottomUI().BottomUIMenu(this.getWindow());
                 rbCamera.setVisibility(View.VISIBLE);
                 rbAlbum.setVisibility(View.VISIBLE);
                 rbSound.setVisibility(View.VISIBLE);
@@ -671,45 +419,106 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbAlbum:
-                showPopupMenu(rbAlbum);
+                new MainUI().showPopupMenu(rbAlbum, this);
                 break;
             case R.id.rbSetting:
                 intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, Constant.TAG_TWO);
                 break;
+            case R.id.btnTop:
+                onBtnClick("向上单击","向上双击");
+                break;
+            case R.id.btnLeft:
+                onBtnClick("向左单击","向左双击");
+                break;
+            case R.id.btnRight:
+                onBtnClick("向右单击","向右双击");
+                break;
+            case R.id.btnBotton:
+                onBtnClick("向下单击","向下双击");
+                break;
+            case R.id.btnLight:
+                Toast.makeText(mNotifications, "灯光单击", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
-    private void showPopupMenu(View view) {
-        // View当前PopupMenu显示的相对View的位置
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        // menu布局
-        popupMenu.getMenuInflater().inflate(R.menu.dialog, popupMenu.getMenu());
-        // menu的item点击事件
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+    /**
+     * 按钮单击按监听
+     * @param
+     * @return
+     */
+    public void onBtnClick(String value1,String value2) {
+        clickNum++;
+        handler.postDelayed(new Runnable() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().equals("图片")){
-                    intent = new Intent(MainActivity.this, PhotoActivity.class);
-                    startActivity(intent);
-                }else if (item.getTitle().equals("有声视频")){
-                    intent = new Intent(MainActivity.this, HaveAudioActivity.class);
-                    startActivity(intent);
-                }else if (item.getTitle().equals("无声视频")){
-                    intent = new Intent(MainActivity.this, NoAudioActivity.class);
-                    startActivity(intent);
+            public void run() {
+                if (clickNum == 1) {
+                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
+                }else if(clickNum==2){
+                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
                 }
-                return false;
+                //防止handler引起的内存泄漏
+                handler.removeCallbacksAndMessages(null);
+                clickNum = 0;
             }
-        });
-        // PopupMenu关闭事件
-        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-            @Override
-            public void onDismiss(PopupMenu menu) {
-            }
-        });
+        },800);
+    }
 
-        popupMenu.show();
+    /**
+     * 按钮长按监听
+     * @param v
+     * @return
+     */
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()){
+            case R.id.btnTop:
+                Toast.makeText(mNotifications, "向上长按", Toast.LENGTH_SHORT).show();
+                tag = "longUp";
+                log = "向上长按松开";
+                break;
+            case R.id.btnBotton:
+                Toast.makeText(mNotifications, "向下长按", Toast.LENGTH_SHORT).show();
+                tag = "longUp";
+                log = "向下长按松开";
+                break;
+            case R.id.btnLeft:
+                Toast.makeText(mNotifications, "向左长按", Toast.LENGTH_SHORT).show();
+                tag = "longUp";
+                log = "向左长按松开";
+                break;
+            case R.id.btnRight:
+                Toast.makeText(mNotifications, "向右长按", Toast.LENGTH_SHORT).show();
+                tag = "longUp";
+                log = "向右长按松开";
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 按钮松开监听
+     * @param v
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        switch (v.getId()){
+            case R.id.btnTop:
+            case R.id.btnBotton:
+            case R.id.btnLeft:
+            case R.id.btnRight:
+                if (action == MotionEvent.ACTION_UP&&tag.equals("longUp")) {
+                    Toast.makeText(mNotifications, log, Toast.LENGTH_SHORT).show();
+                    tag = "";
+                    log = "";
+                }
+                break;
+        }
+        return false;
     }
 
     /**
@@ -734,7 +543,7 @@ public class MainActivity extends BaseActivity {
             //将要保存的图片文件
             File mFile = new File(dir + name);
             if (mFile.exists()) {
-                selectDialog(mFile,name);
+                selectDialog(mFile, name);
                 return false;
             }
 
@@ -758,18 +567,18 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-    private void selectDialog(File mFile,String name){
+    private void selectDialog(File mFile, String name) {
         alertDialogUtil.showImageNameSelect(new DialogCallBack() {
 
             @Override
-            public void confirm(String name1,Dialog dialog) {
-                if (name1.equals("")){
+            public void confirm(String name1, Dialog dialog) {
+                if (name1.equals("")) {
                     Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
-                }else {
-                    if (name.equals(name1+ ".png")){
+                } else {
+                    if (name.equals(name1 + ".png")) {
                         Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
-                    }else {
-                        saveImg(name1+ ".png", MainActivity.this);
+                    } else {
+                        saveImg(name1 + ".png", MainActivity.this);
                         dialog.dismiss();
                     }
                 }
@@ -970,11 +779,6 @@ public class MainActivity extends BaseActivity {
 
     private VideoEncodeConfig createVideoConfig() {
         final String codec = "c2.android.avc.encoder";
-        Display display = getWindowManager().getDefaultDisplay();
-//        int width = display.getWidth()-100;
-//        int height = display.getHeight()-100;
-//        int height = 562;
-//        int width = 1000;
         int height = 1080;
         int width = 1920;
         int framerate = 15;
@@ -1002,32 +806,8 @@ public class MainActivity extends BaseActivity {
                     Setting setting = (Setting) backdata.getSerializableExtra("data");
                     Gson gson = new Gson();
                     String obj2 = gson.toJson(setting);
-//                    if (jiaoliu.equals("yes")) {
-//                        data[24] = 0;
-//                    }
-//                    if (zhiliu.equals("yes")) {
-//                        data[24] = 0;
-//                    }
-//
-//                    if (kaiguan.equals("yes")) {
-//                        data[26] = 0;
-//                    }
-//
-//                    if (heiguang.equals("yes")) {
-//                        data[28] = 0;
-//                    }
-//                    if (baiguang.equals("yes")) {
-//                        data[28] = 0;
-//                    }
-//
-//                    if (diandong.equals("yes")) {
-//                        data[30] = 0;
-//                    }
-//                    if (liandong.equals("yes")) {
-//                        data[30] = 0;
-//                    }
                     ModbusManager.get().release();
-                    makeConnection();
+                    new ModbusConnection().makeConnection(this);
                 }
                 break;
         }
@@ -1073,34 +853,4 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 隐藏虚拟按键，并且全屏
-     */
-    protected void hideBottomUIMenu() {
-        //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
-    }
-
-    /**
-     * 显示虚拟按键，并且全屏
-     */
-    protected void BottomUIMenu() {
-        //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.VISIBLE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(1);
-        }
-    }
 }

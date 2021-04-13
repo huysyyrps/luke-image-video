@@ -15,7 +15,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.cehouyi.activity.MainOutCHYActivity;
+import com.example.luke_imagevideo_send.cehouyi.activity.MainCHYActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
@@ -32,7 +32,6 @@ import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
 
 import java.util.ArrayList;
-
 /**
  * 磁粉检测上传方式选择页
  */
@@ -121,7 +120,6 @@ public class SendSelectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SendSelectActivity.this, DefinedActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
         initData();
@@ -199,7 +197,8 @@ public class SendSelectActivity extends AppCompatActivity {
                     intent.putExtra("etWorkCode", etWorkCode.getText().toString());
                     startActivity(intent);
                 } else if (menuEntity.title.equals("实时上传")) {
-                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
+//                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
+                    intent = new Intent(SendSelectActivity.this, MainCHYActivity.class);
                     startActivity(intent);
                 }
                 return false;

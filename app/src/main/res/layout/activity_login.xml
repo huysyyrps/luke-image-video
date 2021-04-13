@@ -16,6 +16,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/white">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="230dp"
@@ -29,6 +30,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true" />
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,8 +42,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/linelayout_color_bigradion">
 
                 <ImageView
                     style="@style/ImaheView"
@@ -54,15 +60,19 @@
                     android:id="@+id/etUserName"
                     style="@style/EditText"
                     android:hint="@string/login_username"
-                    android:textColor="@color/bg_do_botttom" />
+                    android:textColorHint ="@color/white"
+                    android:textColor="@color/white" />
             </LinearLayout>
-            <View style="@style/HourLine"></View>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/linelayout_color_bigradion">
 
                 <ImageView
                     style="@style/ImaheView"
@@ -74,8 +84,9 @@
                     android:id="@+id/etPassWord"
                     style="@style/EditText"
                     android:hint="@string/login_password"
+                    android:textColorHint ="@color/white"
                     android:inputType="textPassword"
-                    android:textColor="@color/bg_do_botttom" />
+                    android:textColor="@color/white" />
                 <ImageView
                     android:id="@+id/ivSeeNewPw"
                     android:layout_width="45dp"
@@ -83,16 +94,18 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_login_unsee"/>
             </LinearLayout>
-            <View style="@style/HourLine"></View>
 
             <Button
                 android:id="@+id/btn_login"
-                style="@style/Button"
-                android:background="@drawable/linelayout_color_radion"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/linelayout_color_bigradion"
                 android:text="@string/login"
                 android:textColor="@color/white"
                 android:textSize="17dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="20dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -103,9 +116,10 @@
                 <TextView
                     android:id="@+id/tvForgrtPassword"
                     style="@style/TextView"
-                    android:hint="@string/forgrt_password"
+                    android:text="@string/forgrt_password"
                     android:gravity="right"
-                    android:paddingRight="5dp"/>
+                    android:paddingRight="5dp"
+                    android:textColor="@color/color_bg_selected"/>
                 <View
                     android:layout_width="2dp"
                     android:layout_height="10dp"
@@ -115,8 +129,8 @@
                 <TextView
                     android:id="@+id/tvRegister"
                     style="@style/TextView"
-                    android:textColor="@color/bg_do_botttom"
-                    android:hint="@string/login_register"
+                    android:text="@string/login_register"
+                    android:textColor="@color/color_bg_selected"
                     android:gravity="left"/>
             </LinearLayout>
         </LinearLayout>

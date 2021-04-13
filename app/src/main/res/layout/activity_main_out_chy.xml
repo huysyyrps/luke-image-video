@@ -27,21 +27,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@color/white"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ivBluetooth"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="10dp"
-                        android:src="@drawable/ic_bluetooth_off" />
-
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -49,56 +41,142 @@
                         android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
                             android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="声速:"
-                            android:textColor="@color/black" />
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="蓝牙开关:"
+                            android:textColor="@color/white" />
+                        <LinearLayout
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+                            <ImageView
+                                android:id="@+id/ivBluetooth"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:paddingTop="15dp"
+                                android:paddingBottom="10dp"
+                                android:gravity="center"
+                                android:src="@drawable/ic_bluetooth_off" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1.2"
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="仪器电量:"
+                            android:textColor="@color/white" />
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ic_electric"
+                                android:gravity="center" />
+
+                            <TextView
+                                android:id="@+id/tvElectric"
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:gravity="center"
+                                android:text="50"
+                                android:textColor="@color/text_green"
+                                android:textSize="12dp" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <View style="@style/Line" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@color/white"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1.2"
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="材料声速:"
+                            android:textColor="@color/white" />
 
                         <TextView
                             android:id="@+id/tvSS"
                             style="@style/TextView"
                             android:layout_height="match_parent"
-                            android:gravity="left|center"
+                            android:gravity="center"
+                            android:textColor="@color/text_green"
                             android:text="5920m/s" />
                     </LinearLayout>
-
                     <LinearLayout
-                        android:id="@+id/llTD"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:gravity="left|center"
-                            android:text="通道:"
-                            android:textColor="@color/red" />
-
-                        <TextView
-                            android:id="@+id/tvTD"
-                            style="@style/TextView"
-                            android:gravity="left|center"
-                            android:text="1"
-                            android:textColor="@color/red" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvEP"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.7"
-                        android:gravity="left|center"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
-                        android:text="EE"
-                        android:textColor="@color/color_bg_selected" />
-                </LinearLayout>
+                        android:background="@drawable/linelayout_color_bigradion">
 
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="温度补偿:"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tvWB"
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="100-300℃"
+                            android:textColor="@color/text_green" />
+                    </LinearLayout>
+                </LinearLayout>
                 <View style="@style/Line" />
             </LinearLayout>
 
@@ -107,75 +185,68 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@color/white"
-                android:orientation="vertical">
-
+                android:orientation="horizontal">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:id="@+id/ivState"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:src="@drawable/ic_up" />
-
-
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
                         android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="45dp"
-                            android:gravity="center"
-                            android:text="时间:"
-                            android:textColor="@color/black" />
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="材料类型:"
+                            android:textColor="@color/white" />
 
                         <TextView
-                            android:id="@+id/tvTime"
+                            android:id="@+id/tvEP"
                             style="@style/TextView"
-                            android:gravity="left|center"
-                            android:text="11:29:56" />
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="EE"
+                            android:textColor="@color/text_green"/>
                     </LinearLayout>
-
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:gravity="left|center"
-                            android:text="厚度:"
-                            android:textColor="@color/red" />
-
-                        <TextView
-                            android:id="@+id/tvThickness"
-                            style="@style/TextView"
-                            android:layout_height="wrap_content"
-                            android:gravity="left|center"
-                            android:text="4.00"
-                            android:textColor="@color/red" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvTT"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.7"
-                        android:gravity="left|center"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
-                        android:text="BT-08"
-                        android:textColor="@color/color_bg_selected" />
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="探头选择:"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tvTT"
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="BT-08"
+                            android:textColor="@color/text_green" />
+                    </LinearLayout>
                 </LinearLayout>
+                <View style="@style/Line" />
             </LinearLayout>
 
             <LinearLayout
@@ -183,102 +254,140 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@color/white"
-                android:orientation="vertical">
-
+                android:orientation="horizontal">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="40dp"
-                        android:layout_height="45dp">
-
-                        <ImageView
-                            android:layout_width="35dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/ic_electric"
-                            android:gravity="center" />
-
-                        <TextView
-                            android:id="@+id/tvElectric"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center"
-                            android:text="50"
-                            android:textColor="#d4237a"
-                            android:textSize="12dp" />
-                    </FrameLayout>
-
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:layout_marginLeft="8dp"
-                        android:orientation="horizontal">
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
                             android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="存储:"
-                            android:textColor="@color/black" />
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="存储位置:"
+                            android:textColor="@color/white" />
 
                         <TextView
                             android:id="@+id/tvSave"
                             style="@style/TextView"
                             android:layout_height="match_parent"
-                            android:gravity="left|center"
+                            android:gravity="center"
+                            android:textColor="@color/text_green"
                             android:text="f001" />
                     </LinearLayout>
-
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.2"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:gravity="left|center"
-                            android:text="温补:"
-                            android:textColor="@color/red" />
-
-                        <TextView
-                            android:id="@+id/tvWB"
-                            style="@style/TextView"
-                            android:layout_height="wrap_content"
-                            android:gravity="left|center"
-                            android:text="100-300℃"
-                            android:textColor="@color/red" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvMenu"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.7"
-                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
-                        android:text="菜单"
-                        android:background="@drawable/linelayout_color_radion"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"/>
-                </LinearLayout>
+                        android:background="@drawable/linelayout_color_bigradion">
 
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="测量时间:"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tvTime"
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textColor="@color/text_green"
+                            android:text="11:29:56" />
+                    </LinearLayout>
+                </LinearLayout>
                 <View style="@style/Line" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@color/white"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1.2"
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="20dp"
+                            android:text="实测厚度:"
+                            android:textColor="@color/white" />
+                        <TextView
+                            android:id="@+id/tvThickness"
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="0.0"
+                            android:textColor="@color/red" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1.2"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:id="@+id/tvMenu"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.7"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:text="菜  单"
+                            android:background="@drawable/linelayout_color_radion"
+                            android:textColor="@color/white"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="20dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
             <!--显示区-->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginTop="20dp">
 
                 <TextView
                     android:id="@+id/tvData"
@@ -289,7 +398,6 @@
                     android:gravity="center"
                     android:minHeight="380dp"
                     android:text="512MM"
-                    android:layout_marginRight="40dp"
                     android:layout_marginBottom="50dp"
                     android:textColor="@color/black"
                     android:textSize="60dp" />

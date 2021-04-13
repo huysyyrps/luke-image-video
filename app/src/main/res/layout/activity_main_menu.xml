@@ -5,18 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".cehouyi.activity.MainMenuOutActivity">
+    tools:context=".cehouyi.activity.MainMenuActivity">
 
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
         style="@style/Header"
-        app:header_title="@string/menu">
+        app:header_title="菜单">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <com.example.luke_imagevideo_send.cehouyi.view.MyViewPager
-        android:id="@+id/viewpager"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"/>
+        android:layout_height="match_parent">
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

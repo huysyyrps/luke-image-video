@@ -43,6 +43,8 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
+        <activity android:name=".cehouyi.activity.ThresholdActivity"></activity>
+        <activity android:name=".cehouyi.activity.MainMenuActivity" />
         <activity android:name=".main.activity.TestActivity" />
 
         <meta-data
@@ -87,7 +89,8 @@
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
-        <activity android:name=".cehouyi.activity.MenuActivity" />
+        <activity android:name=".cehouyi.activity.MainCHYActivity" />
+        <activity android:name=".cehouyi.activity.MainMenuOutActivity" />
         <activity android:name=".cehouyi.activity.JSCHActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />
     </application>

@@ -43,56 +43,81 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/linelayout_color_bigradion">
+
                 <TextView
                     style="@style/TextView"
                     android:layout_weight="1"
-                    android:text="工程名称:"/>
+                    android:text="工程名称:"
+                    android:textColor="@color/white"
+                    android:textSize="17dp" />
                 <EditText
                     android:id="@+id/etCompName"
                     style="@style/EditText"
                     android:layout_weight="2.5"
-                    android:hint="请填写工程名称"/>
+                    android:hint="请填写工程名称"
+                    android:textColor="@color/white"
+                    android:textColorHint ="@color/white"/>
             </LinearLayout>
-            <View style="@style/Line"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/linelayout_color_bigradion">
                 <TextView
                     style="@style/TextView"
                     android:layout_weight="1"
-                    android:text="工件名称:"/>
+                    android:text="工件名称:"
+                    android:textSize="17dp"
+                    android:textColor="@color/white"/>
                 <EditText
                     android:id="@+id/etWorkName"
                     style="@style/EditText"
                     android:layout_weight="2.5"
-                    android:hint="请填写工件名称"/>
+                    android:hint="请填写工件名称"
+                    android:textColor="@color/white"
+                    android:textColorHint ="@color/white"/>
             </LinearLayout>
-            <View style="@style/Line"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/linelayout_color_bigradion">
                 <TextView
                     style="@style/TextView"
                     android:layout_weight="1"
-                    android:text="工件编号:"/>
+                    android:text="工件编号:"
+                    android:textSize="17dp"
+                    android:textColor="@color/white"/>
                 <EditText
                     android:id="@+id/etWorkCode"
                     style="@style/EditText"
                     android:layout_weight="2.5"
-                    android:hint="请填写工件编号"/>
+                    android:hint="请填写工件编号"
+                    android:textColor="@color/white"
+                    android:textColorHint ="@color/white"/>
             </LinearLayout>
-            <View style="@style/Line"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="15dp">
+                android:padding="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/linelayout_radion">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

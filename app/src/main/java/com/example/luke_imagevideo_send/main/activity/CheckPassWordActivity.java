@@ -49,10 +49,10 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
     EditText etCode;
     @BindView(R.id.tvCode)
     TextView tvCode;
-    @BindView(R.id.etPassWordAgin)
-    EditText etPassWordAgin;
-    @BindView(R.id.ivSeeNewPwAgain)
-    ImageView ivSeeNewPwAgain;
+    @BindView(R.id.etPassWord)
+    EditText etPassWord;
+    @BindView(R.id.ivSeeNewPw)
+    ImageView ivSeeNewPw;
     @BindView(R.id.btnUp)
     Button btnUp;
 
@@ -105,7 +105,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
             etPhone.setText(userName);
         }
         checkPassWordPresenter = new CheckPassWordPresenter(this, this);
-        etPassWordAgin.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        etPassWord.setTransformationMethod(PasswordTransformationMethod.getInstance());
     }
 
     @Override
@@ -123,7 +123,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
 
     }
 
-    @OnClick({R.id.tvCode, R.id.ivSeeNewPwAgain, R.id.btnUp})
+    @OnClick({R.id.tvCode, R.id.ivSeeNewPw, R.id.btnUp})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tvCode:
@@ -151,11 +151,11 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
                     }
                 }
                 break;
-            case R.id.ivSeeNewPwAgain:
+            case R.id.ivSeeNewPw:
                 if (!mbDisplayFlgAgina) {
-                    etPassWordAgin.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    etPassWord.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                 } else {
-                    etPassWordAgin.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    etPassWord.setTransformationMethod(PasswordTransformationMethod.getInstance());
                 }
                 mbDisplayFlgAgina = !mbDisplayFlgAgina;
                 break;
@@ -172,7 +172,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
                     Toast.makeText(this, getResources().getString(R.string.write_code), Toast.LENGTH_SHORT).show();
                     break;
                 }
-                if (etPassWordAgin.getText().toString().equals("")) {
+                if (etPassWord.getText().toString().equals("")) {
                     Toast.makeText(this, getResources().getString(R.string.write_password), Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -204,7 +204,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
                     }
                     break;
                 case Constant.TAG_TWO:
-                    String newPassWord = new MD5().md5(etPassWordAgin.getText().toString());
+                    String newPassWord = new MD5().md5(etPassWord.getText().toString());
 
                     //当前上下文是activity
                     checkPassWordPresenter.getCheckPassWord(etPhone.getText().toString(), newPassWord);
@@ -215,7 +215,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
                         if (jsonObject.getString("code").equals("1")) {
                             Toast.makeText(CheckPassWordActivity.this, getResources().getString(R.string.toast_change_password_success), Toast.LENGTH_SHORT).show();
                             sharePreferencesUtils.setString(CheckPassWordActivity.this, "userName", etPhone.getText().toString());
-                            sharePreferencesUtils.setString(CheckPassWordActivity.this, "passWord", etPassWordAgin.getText().toString());
+                            sharePreferencesUtils.setString(CheckPassWordActivity.this, "passWord", etPassWord.getText().toString());
                             Intent intent = new Intent(CheckPassWordActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
@@ -240,7 +240,7 @@ public class CheckPassWordActivity extends BaseActivity implements CheckPassWord
         } else if (checkPassWord.getCode() == 1) {
             Toast.makeText(this, getResources().getString(R.string.toast_change_password_success), Toast.LENGTH_SHORT).show();
             sharePreferencesUtils.setString(this, "userName", etPhone.getText().toString());
-            sharePreferencesUtils.setString(this, "passWord", etPassWordAgin.getText().toString());
+            sharePreferencesUtils.setString(this, "passWord", etPassWord.getText().toString());
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();

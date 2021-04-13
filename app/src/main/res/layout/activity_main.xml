@@ -33,7 +33,7 @@
         <RadioButton
             android:id="@+id/rbCamera"
             style="@style/MainRadionButton"
-            android:drawableLeft="@drawable/rbcamera" />
+            android:drawableLeft="@drawable/ic_camera" />
 
         <RadioButton
             android:id="@+id/rbSound"
@@ -54,12 +54,12 @@
         <RadioButton
             android:id="@+id/rbAlbum"
             style="@style/MainRadionButton"
-            android:drawableLeft="@drawable/rbalbum"/>
+            android:drawableLeft="@drawable/ic_album"/>
 
         <RadioButton
             android:id="@+id/rbSetting"
             style="@style/MainRadionButton"
-            android:drawableLeft="@drawable/rbsetting"/>
+            android:drawableLeft="@drawable/ic_setting"/>
 
     </RadioGroup>
 

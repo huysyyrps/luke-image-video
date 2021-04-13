@@ -300,4 +300,13 @@
         <item name="android:layout_marginLeft">45dp</item>
         <item name="android:layout_marginRight">45dp</item>
     </style>
+
+    <!--timedialog-->
+    <style name="time_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
 </resources>

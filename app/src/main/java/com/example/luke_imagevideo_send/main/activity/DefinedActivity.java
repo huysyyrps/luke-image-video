@@ -94,7 +94,7 @@ public class DefinedActivity extends BaseActivity {
 
     @Override
     protected boolean isHasHeader() {
-        return false;
+        return true;
     }
 
     @Override

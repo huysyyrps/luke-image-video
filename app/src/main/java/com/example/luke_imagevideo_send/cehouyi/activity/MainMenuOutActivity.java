@@ -28,7 +28,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 
-public class MenuActivity extends BaseActivity {
+public class MainMenuOutActivity extends BaseActivity {
     private Context mContext;
     public DictDataManager mDictDataManager = DictDataManager.getInstance();
     private MyViewPager mViewPager;
@@ -108,7 +108,7 @@ public class MenuActivity extends BaseActivity {
                 }
                 DictUnit dictUnit = (DictUnit) parent.getItemAtPosition(position);
                 if (dictUnit.name.equals("存储读取")){
-                    intent = new Intent(MenuActivity.this,ValueActivity.class);
+                    intent = new Intent(MainMenuOutActivity.this,ValueActivity.class);
                     intent.putIntegerArrayListExtra("data", (ArrayList<Integer>) valueList);
                     startActivity(intent);
                     finish();
@@ -125,7 +125,7 @@ public class MenuActivity extends BaseActivity {
                     finish();
                 }else {
                     if (dictUnit.tag.equals("change")){
-                        new AlertDialogUtil(MenuActivity.this).showListDialog("设置选项","change",list3, new MenuAlertDialogCallBack() {
+                        new AlertDialogUtil(MainMenuOutActivity.this).showListDialog("设置选项","change",list3, new MenuAlertDialogCallBack() {
                             @Override
                             public void confirm(String filed,String name) {
                                 intent = new Intent();
@@ -139,7 +139,7 @@ public class MenuActivity extends BaseActivity {
                             }
                         });
                     }else {
-                        new AlertDialogUtil(MenuActivity.this).showListDialog("设置选项","unchange",list3, new MenuAlertDialogCallBack() {
+                        new AlertDialogUtil(MainMenuOutActivity.this).showListDialog("设置选项","unchange",list3, new MenuAlertDialogCallBack() {
                             @Override
                             public void confirm(String filed,String name) {
                                 intent = new Intent();

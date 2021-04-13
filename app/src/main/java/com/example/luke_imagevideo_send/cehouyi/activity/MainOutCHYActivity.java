@@ -62,8 +62,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     ImageView ivBluetooth;
     @BindView(R.id.tvSS)
     TextView tvSS;
-    @BindView(R.id.tvTD)
-    TextView tvTD;
     @BindView(R.id.tvEP)
     TextView tvEP;
     @BindView(R.id.tvElectric)
@@ -74,8 +72,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     TextView tvZY;
     @BindView(R.id.tvTT)
     TextView tvTT;
-    @BindView(R.id.ivState)
-    ImageView ivState;
     @BindView(R.id.tvSave)
     TextView tvSave;
     @BindView(R.id.tvThickness)
@@ -98,8 +94,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
     LinearLayout llNumberPicker;
     @BindView(R.id.linearLayout)
     RelativeLayout linearLayout;
-    @BindView(R.id.llTD)
-    LinearLayout llTD;
     @BindView(R.id.tvMenu)
     TextView tvMenu;
     @BindView(R.id.TDPicker)
@@ -365,7 +359,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
 
     }
 
-    @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.llTD, R.id.tvEP, R.id.tvTT, R.id.tvWB, R.id.ivState, R.id.tvCancle,
+    @OnClick({R.id.ivBluetooth, R.id.tvSS, R.id.tvEP, R.id.tvTT, R.id.tvWB, R.id.tvCancle,
             R.id.tvSure, R.id.tvMenu, R.id.rbA, R.id.rbSave, R.id.rbB, R.id.rbMeasure, R.id.llZY, R.id.llFW, R.id.llPY, R.id.llZM, R.id.llXY})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -394,24 +388,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 ZMPicker.setVisibility(View.GONE);
                 XYPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().init(onePicker, tenPicker, hundredPicker, thousandPicker, this, this, this, "SS");
-                break;
-            case R.id.llTD:
-                tag = "TD";
-                linearLayout.setVisibility(View.VISIBLE);
-                onePicker.setVisibility(View.GONE);
-                tenPicker.setVisibility(View.GONE);
-                hundredPicker.setVisibility(View.GONE);
-                thousandPicker.setVisibility(View.GONE);
-                TDPicker.setVisibility(View.VISIBLE);
-                EPPicker.setVisibility(View.GONE);
-                TTPicker.setVisibility(View.GONE);
-                WBPicker.setVisibility(View.GONE);
-                ZYPicker.setVisibility(View.GONE);
-                FWPicker.setVisibility(View.GONE);
-                PYPicker.setVisibility(View.GONE);
-                ZMPicker.setVisibility(View.GONE);
-                XYPicker.setVisibility(View.GONE);
-                new NumberPickerDivider().initTD(TDPicker, this, this, this, "TD");
                 break;
             case R.id.tvEP:
                 tag = "EP";
@@ -558,14 +534,6 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 WBPicker.setVisibility(View.GONE);
                 new NumberPickerDivider().initXY(XYPicker, this, this, this, "XY");
                 break;
-            case R.id.ivState:
-                //蓝牙
-                if (ivState.getDrawable().getCurrent().getConstantState().equals(getResources().getDrawable(R.drawable.ic_down).getConstantState())) {
-                    ivState.setImageResource(R.drawable.ic_up);
-                } else {
-                    ivState.setImageResource(R.drawable.ic_down);
-                }
-                break;
             case R.id.tvCancle:
                 linearLayout.setVisibility(View.GONE);
                 break;
@@ -576,9 +544,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                             + String.valueOf(tenPicker.getValue())
                             + String.valueOf(hundredPicker.getValue())
                             + String.valueOf(thousandPicker.getValue()) + "m/s");
-                } else if (tag.equals("TD")) {
-                    tvTD.setText(NumberPickerDivider.TD[TDPicker.getValue()]);
-                } else if (tag.equals("EP")) {
+                }else if (tag.equals("EP")) {
                     tvEP.setText(NumberPickerDivider.EP[EPPicker.getValue()]);
                 } else if (tag.equals("TT")) {
                     tvTT.setText(NumberPickerDivider.TT[TTPicker.getValue()]);
@@ -598,7 +564,7 @@ public class MainOutCHYActivity extends BaseActivity implements NumberPicker.For
                 break;
             case R.id.tvMenu:
                 exit = true;
-                Intent intent = new Intent(this, MenuActivity.class);
+                Intent intent = new Intent(this, MainMenuOutActivity.class);
                 if (valueList.size() != 0) {
                     myValueList.add(valueList);
                 }

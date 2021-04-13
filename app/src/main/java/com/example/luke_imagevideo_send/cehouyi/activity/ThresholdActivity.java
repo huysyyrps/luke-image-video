@@ -43,7 +43,6 @@ public class ThresholdActivity extends BaseActivity {
 
     @Override
     protected void rightClient() {
-
     }
 
     @OnClick(R.id.btnConfim)

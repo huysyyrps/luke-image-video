@@ -211,8 +211,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        webView.loadUrl(address + "?action=stream");
+        address = "http://"+address + ":8080?action=stream";
+        webView.loadUrl(address);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -312,7 +312,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         @Override
                         public void confirm(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".png";
+                                name = name1 + ".jpg";
                             }
                             saveImg(name, MainActivity.this);
                         }
@@ -325,7 +325,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         @Override
                         public void save(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".png";
+                                name = name1 + ".jpg";
                             }
                             saveImg(name, MainActivity.this);
                         }
@@ -333,7 +333,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         @Override
                         public void checkName(String name1) {
                             if (!name1.equals("")) {
-                                name = name1 + ".png";
+                                name = name1 + ".jpg";
                             }
                             saveImg(name, MainActivity.this);
                         }
@@ -526,7 +526,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      */
     private String getNowDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDateFormat.format(new Date()) + ".png";
+        return simpleDateFormat.format(new Date()) + ".jpg";
     }
 
     /**
@@ -575,10 +575,10 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 if (name1.equals("")) {
                     Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (name.equals(name1 + ".png")) {
+                    if (name.equals(name1 + ".jpg")) {
                         Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
                     } else {
-                        saveImg(name1 + ".png", MainActivity.this);
+                        saveImg(name1 + ".jpg", MainActivity.this);
                         dialog.dismiss();
                     }
                 }
@@ -850,6 +850,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             mMediaProjection.unregisterCallback(mProjectionCallback);
             mMediaProjection.stop();
             mMediaProjection = null;
+
         }
     }
 

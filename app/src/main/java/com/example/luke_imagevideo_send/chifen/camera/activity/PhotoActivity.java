@@ -216,7 +216,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         boolean isImageFile = false;
         //获取拓展名
         String fileEnd = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase();
-        if (fileEnd.equals("png")) {
+        if (fileEnd.equals("jpg")) {
             isImageFile = true;
         } else {
             isImageFile = false;
@@ -230,19 +230,27 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         if (selectList.size() == 0) {
             Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
         } else {
+            String base = "";
+//            for (int i = 0; i < selectList.size(); i++) {
+//                fileList.add(new File(selectList.get(i)));
+//            }
+
             for (int i = 0; i < selectList.size(); i++) {
-                fileList.add(new File(selectList.get(i)));
+                if (i==0){
+                    base = new StringBase().bitmapToString(selectList.get(0));
+                }else {
+                    base = base+ "---"+new StringBase().bitmapToString(selectList.get(i));
+                }
             }
 
-            String base = new StringBase().bitmapToString(selectList.get(0));
             try {
                 base = URLEncoder.encode(base,"UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             HashMap<String, String> map = new HashMap<String, String>();
-            map.put("company" , "rujia");
-            map.put("device" , "citanji");
+            map.put("company" , "rujia001");
+            map.put("device" , "citanji001");
             map.put("pic" , base);
 
             Gson gson = new Gson();

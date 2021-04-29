@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".chifen.camera.context.CSContextListItemActivity">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="承压设备用板材边缘或剖口预定线两侧质量分级">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="等级" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="I" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="II" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="III" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="IV" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="V" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="2dp">
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="最大允许单个缺陷指示长度Lmax" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="≤20" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="≤30" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="≤50" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="≤100" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="最大允许单个缺陷指示面积S或当量平底孔直径D" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="双晶直探头检测时：S≤50 \n或单晶探头检测时D≤Ø5+8dB" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="双晶直探头检测时：S≤100 \n或单晶探头检测时D≤Ø5+14dB" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="S≤1000" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="S≤2000" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_weight="1.5"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="25dp"
+                                android:text="在任意1m*1m检测面积内最大允许个数" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="35dp"
+                                android:orientation="horizontal">
+                                <TextView
+                                    style="@style/ContextTextView"
+                                    android:layout_height="35dp"
+                                    android:text="单个缺陷指示长度L或当量平底孔直径评价范围" />
+                                <TextView
+                                    style="@style/ContextTextView"
+                                    android:layout_height="60dp"
+                                    android:text="最大允许个数" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="双晶直探头检测时：10 &lt; S≤20 \n或单晶探头检测时Ø5&lt;D≤Ø5+8dB" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="双晶直探头检测时：15&lt;S≤30 \n或单晶探头检测时Ø5+8dB&lt;D≤Ø5+14dB" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:text="25&lt;S≤50" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:text="50&lt;S≤100" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.3"
+                                    android:orientation="vertical"
+                                    android:layout_marginLeft="2dp">
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="2" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="3" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:text="5" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:text="6" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="超过IV级者" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@color/white"
+                android:layout_marginTop="2dp"
+                android:text="注：使用单晶直探头检测并确定5.3.7.1 b) 所示缺陷的质量分级(I级和II级)时，与双晶直探头要求相同"
+                android:gravity="center"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="无缝钢管超声检测质量分级"></com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginRight="2dp">
+
+                <TextView
+                    style="@style/ContextTextView"
+                    android:layout_height="60dp"
+                    android:text="等级" />
+
+                <TextView
+                    style="@style/ContextTextView"
+                    android:layout_height="60dp"
+                    android:text="I" />
+
+                <TextView
+                    style="@style/ContextTextView"
+                    android:layout_height="60dp"
+                    android:text="II" />
+
+                <TextView
+                    style="@style/ContextTextView"
+                    android:text="III" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/ContextTextView"
+                    android:layout_height="28dp"
+                    android:text="允许缺陷回波幅度" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:text="直接接触法" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_weight="1"
+                        android:text="液浸法" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:layout_height="60dp"
+                            android:text="低于相应的对比试块人工反射体距离-波幅曲线50%,即Hd&lt;50%DAC" />
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:layout_height="60dp"
+                            android:text="低于相应的对比试块人工反射体距离-波幅曲线,即50%DAC≤Hd&lt;DAC" />
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:text="大于等于相应的对比试块人工反射体距离-波幅曲线,即Hd≥DAC" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="2dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:layout_height="60dp"
+                            android:text="低于相应的对比试块内外表面人工反射体所产生的回波幅度50%,即&lt;50%Hr" />
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:layout_height="60dp"
+                            android:text="低于相应的对比试块内外表面人工反射体所产生的回波幅度50%,即50%Hr≤Hd&lt;Hr" />
+
+                        <TextView
+                            style="@style/ContextTextView"
+                            android:text="大于等于相应的对比试块内外表面人工反射体所产生的回波幅度50%,即Hd≥Hr" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_marginTop="2dp"-->
+<!--                android:background="@color/white"-->
+<!--                android:gravity="center"-->
+<!--                android:text="注：使用单晶直探头检测并确定5.3.7.1 b) 所示缺陷的质量分级(I级和II级)时，与双晶直探头要求相同"-->
+<!--                android:textColor="@color/black" />-->
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="斜探头检测的质量分级"></com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="等级" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="缺陷波幅" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="I" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="缺陷波幅低于V形槽试块距离-波幅曲线，此时V形槽深为工件公称壁厚的3%（最大为3mm）" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="II" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="缺陷波幅低于V形槽试块距离-波幅曲线，此时V形槽深为工件公称壁厚的5%（最大为6mm）" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

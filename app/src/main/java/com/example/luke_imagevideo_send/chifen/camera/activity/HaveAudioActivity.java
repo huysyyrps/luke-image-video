@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
+import com.example.luke_imagevideo_send.chifen.camera.module.HaveVideoContract;
+import com.example.luke_imagevideo_send.chifen.camera.presenter.HaveVideoPresenter;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
@@ -33,9 +36,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 
-public class HaveAudioActivity extends BaseActivity {
+public class HaveAudioActivity extends BaseActivity implements HaveVideoContract.View {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -46,13 +52,16 @@ public class HaveAudioActivity extends BaseActivity {
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
     List<File> imagePaths = new ArrayList<>();
-    List<String> selectList = new ArrayList<>();
+    List<File> selectList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
     private SVProgressHUD mSVProgressHUD;
     private int startNum = 0;
     private int lastNum = 12;
     private int allNum;
     File[] files;
+    File[] files1;
+
+    private HaveVideoPresenter haveVideoPresenter;
 
 
     @Override
@@ -61,6 +70,7 @@ public class HaveAudioActivity extends BaseActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         header.setTvTitle("有声视频");
+        haveVideoPresenter = new HaveVideoPresenter(this, this);
         mSVProgressHUD = new SVProgressHUD(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(HaveAudioActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -79,6 +89,21 @@ public class HaveAudioActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 });
+
+                holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (selectList.contains(o)) {
+                            selectList.remove(o);
+                        } else {
+                            if (selectList.size() >= 3) {
+                                Toast.makeText(HaveAudioActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
+                            } else {
+                                selectList.add(o);
+                            }
+                        }
+                    }
+                });
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
@@ -93,14 +118,14 @@ public class HaveAudioActivity extends BaseActivity {
 
             @Override
             public void loadMore() {
-                if (allNum == lastNum){
+                if (allNum == lastNum) {
                     Toast.makeText(HaveAudioActivity.this, "暂无更多数据", Toast.LENGTH_SHORT).show();
                     pullToRefreshLayout.finishLoadMore();
                     pullToRefreshLayout.setCanLoadMore(false);
-                }else if (lastNum < allNum){
+                } else if (lastNum < allNum) {
                     startNum = lastNum;
-                    lastNum+=12;
-                    if (lastNum>=allNum){
+                    lastNum += 12;
+                    if (lastNum >= allNum) {
                         lastNum = allNum;
                     }
                     setData();
@@ -121,15 +146,15 @@ public class HaveAudioActivity extends BaseActivity {
 //        File file = new File(path);
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKEVideo/");
         files = file.listFiles();
-        if (files!=null){
+        if (files != null) {
             allNum = files.length;
             setData();
-        }else {
+        } else {
             handler.sendEmptyMessage(Constant.TAG_TWO);
         }
     }
 
-    private void setData(){
+    private void setData() {
         try {
             if (allNum > 12) {
                 for (int i = startNum; i < lastNum; i++) {
@@ -139,7 +164,7 @@ public class HaveAudioActivity extends BaseActivity {
                     }
                 }
             } else {
-                for (int i = startNum; i < files.length+1; i++) {
+                for (int i = startNum; i < files.length + 1; i++) {
                     Log.e("XXX", getRingDuring(files[i]));
                     if (getRingDuring(files[i]) != null && !getRingDuring(files[i]).equals("null")) {
                         imagePaths.add(files[i]);
@@ -180,12 +205,26 @@ public class HaveAudioActivity extends BaseActivity {
         if (selectList.size() == 0) {
             Toast.makeText(HaveAudioActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(HaveAudioActivity.this, selectList.size() + "", Toast.LENGTH_SHORT).show();
+//            HashMap<String, Object> map = new HashMap<String, Object>();
+//            map.put("video" , selectList);
+//            Gson gson = new Gson();
+//            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), gson.toJson(map));
+//            haveVideoPresenter.getHaveVideo(requestBody);
+            MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+            for (int i=0;i<selectList.size();i++){
+                RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i));
+                builder.addFormDataPart("file"+i,selectList.get(i).getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
+            }
+            builder.addFormDataPart("company","shangjia001");
+            builder.addFormDataPart("device" , "cehouyi001");
+            List<MultipartBody.Part> parts = builder.build().parts();
+            haveVideoPresenter.getHaveVideo(parts);
         }
     }
 
     /**
      * 获取视频时长
+     *
      * @param mUri
      * @return
      */
@@ -259,6 +298,16 @@ public class HaveAudioActivity extends BaseActivity {
     }
 
     @Override
+    public void setHaveVideo(HaveVideoUp HaveVideoUp) {
+
+    }
+
+    @Override
+    public void setHaveVideoMessage(String message) {
+
+    }
+
+    @Override
     protected int provideContentViewId() {
         return R.layout.fragment_photo;
     }
@@ -272,4 +321,5 @@ public class HaveAudioActivity extends BaseActivity {
     protected void rightClient() {
 
     }
+
 }

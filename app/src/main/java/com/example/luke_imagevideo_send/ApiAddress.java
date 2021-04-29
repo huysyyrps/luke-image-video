@@ -38,6 +38,8 @@ public class ApiAddress {
     public final static String login = "api/LoginAuth/Login";
     //图片上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic
     public final static String photoup = "api/FileProccess/UpLoadPic";
+    //视频上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic
+    public final static String havevideoup = "api/UploadVideo/UploadVideo3";
     //测试token
     public final static String tokenTest = "api/Get/GetTwo";
     //修改密码

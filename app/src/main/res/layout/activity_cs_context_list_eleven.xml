@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="承压设备用板材中部检测区域质量分级">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="等级" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="I" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="II" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="III" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_weight="1.5"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="25dp"
+                                android:text="堆焊层内缺陷" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="35dp"
+                                android:orientation="horizontal">
+                                <TextView
+                                    style="@style/ContextTextView"
+                                    android:layout_weight="1.3"
+                                    android:layout_height="35dp"
+                                    android:layout_marginRight="1dp"
+                                    android:text="双晶直探头、直探头" />
+                                <TextView
+                                    style="@style/ContextTextView"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginLeft="1dp"
+                                    android:text="纵波双晶直探头、纵波斜探头" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="当量&lt;Ø3mm" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="当量≥Ø3~Ø3+6dB,且长度≤30mm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.3"
+                                    android:orientation="vertical"
+                                    android:layout_marginLeft="2dp">
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="当量&lt;Ø1.5mm-2dB" />
+
+                                    <TextView
+                                        style="@style/ContextTextView"
+                                        android:layout_height="60dp"
+                                        android:text="当量≥Ø1.5-2dB~Ø1.5+4dB,且长度≤30mm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="缺陷当量或长度超过II级或缺陷性质判为裂纹时" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_weight="0.7"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="堆焊层与基材未结合缺陷" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="缺陷长径小于等于25mm的未结合区域" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:layout_height="60dp"
+                                android:text="缺陷长径小于等于40mm的未结合区域" />
+
+                            <TextView
+                                style="@style/ContextTextView"
+                                android:text="超过II级" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

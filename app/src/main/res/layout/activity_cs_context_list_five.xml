@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="单个缺陷的质量分级">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="等级" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="缺陷当量平底孔直径" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="I" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø2" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="II" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="III" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="IV" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4+6dB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="V" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text=">Ø4+6dB" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

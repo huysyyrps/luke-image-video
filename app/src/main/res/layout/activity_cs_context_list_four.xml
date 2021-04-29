@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        app:header_title="锻件超声检测缺陷质量分级">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="等级" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="单个缺陷当量平底孔直径" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="由缺陷引起的底波降低量BG/BF" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="密集区缺陷当量直径" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="密集区缺陷面积占检测总面积百分比" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="I" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤6dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø2" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="0" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="II" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4+6dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤12dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤Ø3" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤5" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="III" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4+12dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤18dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤Ø4dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤10" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="IV" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤Ø4+18dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="≤24dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤Ø4+4dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text="≤20" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text="V" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text=">Ø4+18dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:layout_height="60dp"
+                        android:text=">24dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text=">Ø4+4dB" />
+
+                    <TextView
+                        style="@style/ContextTextView"
+                        android:text=">20" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="注1：缺陷引起的底波降低量仅适用于声程大于近场区长度的缺陷\n注2：表中不同种类的缺陷分级应独立使用 \n注3：密集区缺陷面积指反射波幅大于等于Ø2当量平底空直径的密集区缺陷"
+                android:gravity="center|left"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

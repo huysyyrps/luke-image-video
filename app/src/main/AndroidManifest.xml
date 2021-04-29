@@ -43,7 +43,9 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".cehouyi.activity.ThresholdActivity"></activity>
+        <activity android:name=".chifen.camera.activity.CSContextListItemActivity"/>
+        <activity android:name=".chifen.camera.activity.ContextActivity"/>
+        <activity android:name=".cehouyi.activity.ThresholdActivity" />
         <activity android:name=".cehouyi.activity.MainMenuActivity" />
         <activity android:name=".main.activity.TestActivity" />
 
@@ -80,7 +82,7 @@
             android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
         <activity
             android:name=".chifen.camera.activity.HaveAudioActivity"
-            android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
+            android:screenOrientation="landscape" />
         <activity
             android:name=".chifen.camera.activity.NoAudioActivity"
             android:screenOrientation="landscape" />

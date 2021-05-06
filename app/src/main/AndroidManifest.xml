@@ -43,8 +43,9 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".chifen.camera.activity.CSContextListItemActivity"/>
-        <activity android:name=".chifen.camera.activity.ContextActivity"/>
+        <activity android:name=".chifen.camera.activity.CFContextActivity"/>
+        <activity android:name=".chifen.camera.activity.ContextListItemActivity"/>
+        <activity android:name=".chifen.camera.activity.CSContextActivity"/>
         <activity android:name=".cehouyi.activity.ThresholdActivity" />
         <activity android:name=".cehouyi.activity.MainMenuActivity" />
         <activity android:name=".main.activity.TestActivity" />

@@ -172,11 +172,11 @@ public class SettingActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.llCSContext:
-                intent = new Intent(this, ContextActivity.class);
+                intent = new Intent(this, CSContextActivity.class);
                 startActivity(intent);
                 break;
             case R.id.llCFContext:
-                intent = new Intent(this, ContextActivity.class);
+                intent = new Intent(this, CFContextActivity.class);
                 startActivity(intent);
                 break;
             case R.id.btnSure:
@@ -228,9 +228,5 @@ public class SettingActivity extends BaseActivity {
                 //        finish();
                 break;
         }
-    }
-
-    @OnClick(R.id.llCFContext)
-    public void onViewClicked() {
     }
 }

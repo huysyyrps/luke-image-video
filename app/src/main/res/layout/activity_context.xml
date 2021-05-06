@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".chifen.camera.activity.ContextActivity">
+    tools:context=".chifen.camera.activity.CSContextActivity">
 
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"

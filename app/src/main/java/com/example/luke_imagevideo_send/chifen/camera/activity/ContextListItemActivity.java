@@ -8,7 +8,7 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 
 import butterknife.ButterKnife;
 
-public class CSContextListItemActivity extends BaseActivity {
+public class ContextListItemActivity extends BaseActivity {
     String tag = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,10 @@ public class CSContextListItemActivity extends BaseActivity {
             return R.layout.activity_cs_context_list_thirteen ;
         }else if (tag.equals("13")){
             return R.layout.activity_cs_context_list_fourteen ;
+        }else if (tag.equals("14")){
+            return R.layout.activity_cf_context_list_one ;
+        }else if (tag.equals("15")){
+            return R.layout.activity_cf_context_list_two ;
         }
         return R.layout.activity_cs_context_list_one;
     }

@@ -52,6 +52,22 @@ public class ContextListItemActivity extends BaseActivity {
             return R.layout.activity_cf_context_list_one ;
         }else if (tag.equals("15")){
             return R.layout.activity_cf_context_list_two ;
+        } else if (tag.equals("16")){
+            return R.layout.activity_cx_context_list_one ;
+        } else if (tag.equals("17")){
+            return R.layout.activity_cx_context_list_two ;
+        } else if (tag.equals("18")){
+            return R.layout.activity_cx_context_list_there ;
+        } else if (tag.equals("19")){
+            return R.layout.activity_cx_context_list_four ;
+        } else if (tag.equals("20")){
+            return R.layout.activity_cx_context_list_five ;
+        } else if (tag.equals("21")){
+            return R.layout.activity_cx_context_list_six ;
+        } else if (tag.equals("22")){
+            return R.layout.activity_cx_context_list_seven ;
+        } else if (tag.equals("23")){
+            return R.layout.activity_cx_context_list_eight ;
         }
         return R.layout.activity_cs_context_list_one;
     }

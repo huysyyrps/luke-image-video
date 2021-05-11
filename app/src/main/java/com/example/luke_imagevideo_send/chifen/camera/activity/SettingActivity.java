@@ -47,6 +47,8 @@ public class SettingActivity extends BaseActivity {
     LinearLayout llCSContext;
     @BindView(R.id.llCFContext)
     LinearLayout llCFContext;
+    @BindView(R.id.llCXContext)
+    LinearLayout llCXContext;
 
     Intent intent;
     private String address = "";
@@ -168,7 +170,7 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.llCSContext, R.id.btnSure,R.id.llCFContext})
+    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext,R.id.llCXContext})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.llCSContext:
@@ -177,6 +179,10 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.llCFContext:
                 intent = new Intent(this, CFContextActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.llCXContext:
+                intent = new Intent(this, CXContextActivity.class);
                 startActivity(intent);
                 break;
             case R.id.btnSure:

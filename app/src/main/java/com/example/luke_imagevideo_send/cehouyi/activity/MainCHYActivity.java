@@ -362,7 +362,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         EventBus.getDefault().unregister(this);
     }
 
-
 //    @Override
 //    public void setTest(List<Test> test) {
 //        Toast.makeText(this, test.get(0).getDate(), Toast.LENGTH_SHORT).show();

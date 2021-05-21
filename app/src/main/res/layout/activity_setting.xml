@@ -238,6 +238,33 @@
             </LinearLayout>
             <View style="@style/Line"/>
 
+            <LinearLayout
+                android:id="@+id/llDaily"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_setting_ld"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:text="工作日志"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/go"/>
+            </LinearLayout>
+            <View style="@style/Line"/>
+
             <Button
                 android:id="@+id/btnSure"
                 android:layout_width="match_parent"

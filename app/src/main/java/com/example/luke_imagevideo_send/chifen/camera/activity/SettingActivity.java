@@ -51,6 +51,8 @@ public class SettingActivity extends BaseActivity {
     LinearLayout llCXContext;
 
     Intent intent;
+    @BindView(R.id.llDaily)
+    LinearLayout llDaily;
     private String address = "";
     Setting setting = new Setting();
     SharePreferencesUtils sharePreferencesUtils;
@@ -170,7 +172,7 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext,R.id.llCXContext})
+    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext, R.id.llCXContext,R.id.llDaily})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.llCSContext:
@@ -183,6 +185,10 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.llCXContext:
                 intent = new Intent(this, CXContextActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.llDaily:
+                intent = new Intent(this, DailyActivity.class);
                 startActivity(intent);
                 break;
             case R.id.btnSure:

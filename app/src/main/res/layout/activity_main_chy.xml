@@ -347,22 +347,16 @@
 
                     <RadioButton
                         android:id="@+id/rb2"
+                        android:visibility="gone"
                         style="@style/RadionButton"
                         android:text="扫描" />
-                    <View style="@style/VLine" />
 
                     <RadioButton
                         android:id="@+id/rb3"
+                        android:visibility="gone"
                         style="@style/RadionButton"
                         android:text="调校" />
-                </LinearLayout>
-                <View style="@style/Line" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
                     <RadioButton
                         android:id="@+id/rb4"
                         style="@style/RadionButton"
@@ -373,13 +367,6 @@
                         android:id="@+id/rb5"
                         style="@style/RadionButton"
                         android:text="保存" />
-                    <View style="@style/VLine" />
-
-                    <RadioButton
-                        android:id="@+id/rb6"
-                        style="@style/RadionButton"
-                        android:text="确认" />
-                    <View style="@style/VLine" />
                 </LinearLayout>
                 <View style="@style/Line" />
 
@@ -388,14 +375,22 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
+
                     <RadioButton
-                        android:id="@+id/rb7"
+                        android:id="@+id/rb6"
                         style="@style/RadionButton"
-                        android:text="菜单" />
+                        android:text="确认" />
                     <View style="@style/VLine" />
 
+                    <RadioButton
+                        android:id="@+id/rb7"
+                        android:visibility="gone"
+                        android:layout_weight="2"
+                        style="@style/RadionButton"
+                        android:text="菜单" />
                 </LinearLayout>
                 <View style="@style/Line" />
+
             </LinearLayout>
         </LinearLayout>
 

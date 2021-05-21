@@ -43,10 +43,11 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".chifen.camera.activity.CXContextActivity"/>
-        <activity android:name=".chifen.camera.activity.CFContextActivity"/>
-        <activity android:name=".chifen.camera.activity.ContextListItemActivity"/>
-        <activity android:name=".chifen.camera.activity.CSContextActivity"/>
+        <activity android:name=".chifen.camera.activity.DailyActivity"></activity>
+        <activity android:name=".chifen.camera.activity.CXContextActivity" />
+        <activity android:name=".chifen.camera.activity.CFContextActivity" />
+        <activity android:name=".chifen.camera.activity.ContextListItemActivity" />
+        <activity android:name=".chifen.camera.activity.CSContextActivity" />
         <activity android:name=".cehouyi.activity.ThresholdActivity" />
         <activity android:name=".cehouyi.activity.MainMenuActivity" />
         <activity android:name=".main.activity.TestActivity" />
@@ -68,6 +69,7 @@
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

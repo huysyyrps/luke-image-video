@@ -203,19 +203,27 @@ public class SettingActivity extends BaseActivity {
                         @Override
                         public void run() {
                             //发送设置数据
-                            SSHExcuteCommandHelper.main(address, "cat > /date.json <<EOF", new SSHCallBack() {
+                            SSHExcuteCommandHelper.main(address, "cat > /date.json <<EOF/r", new SSHCallBack() {
                                 @Override
                                 public void confirm(String data) {
                                     Gson gson = new Gson();
                                     Setting setting = gson.fromJson(data, Setting.class);
                                     new SSHExcuteCommandHelper(address).disconnect();
                                     //发送结束指令
-                                    SSHExcuteCommandHelper.main(address, obj2 + "EOF", new SSHCallBack() {
+                                    SSHExcuteCommandHelper.main(address, obj2 + "/r", new SSHCallBack() {
                                         @Override
                                         public void confirm(String data) {
                                             Gson gson = new Gson();
                                             Setting setting = gson.fromJson(data, Setting.class);
                                             new SSHExcuteCommandHelper(address).disconnect();
+                                            SSHExcuteCommandHelper.main(address, "EOF/r", new SSHCallBack() {
+                                                @Override
+                                                public void confirm(String data) {
+                                                    Gson gson = new Gson();
+                                                    Setting setting = gson.fromJson(data, Setting.class);
+                                                    new SSHExcuteCommandHelper(address).disconnect();
+                                                }
+                                            });
                                         }
                                     });
                                     //重新读取数据，保存到sp

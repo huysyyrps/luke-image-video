@@ -39,11 +39,16 @@ public class PhotoPresenter implements PhotoContract.presenter {
                 .subscribe(new BaseObserverNoEntry<PhotoUp>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
                     protected void onSuccees(PhotoUp t) throws Exception {
-                        view.setPhoto(t);
+                        if (t.result){
+                            view.setPhoto(t);
+                        }else {
+                            view.setPhotoMessage("上传失败");
+                        }
+
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
-                        view.setPhotoMessage(""+ e.getMessage());
+                        view.setPhotoMessage("上传失败");
                     }
                 });
     }

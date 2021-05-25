@@ -39,7 +39,11 @@ public class HaveVideoPresenter implements HaveVideoContract.presenter {
                 .subscribe(new BaseObserverNoEntry<HaveVideoUp>(context, context.getResources().getString(R.string.handler_data)) {
                     @Override
                     protected void onSuccees(HaveVideoUp t) throws Exception {
-                        view.setHaveVideo(t);
+                        if (t.result){
+                            view.setHaveVideo(t);
+                        }else {
+                            view.setHaveVideoMessage("上传失败");
+                        }
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {

@@ -34,8 +34,6 @@ import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -231,10 +229,6 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
             Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
         } else {
             String base = "";
-//            for (int i = 0; i < selectList.size(); i++) {
-//                fileList.add(new File(selectList.get(i)));
-//            }
-
             for (int i = 0; i < selectList.size(); i++) {
                 if (i==0){
                     base = new StringBase().bitmapToString(selectList.get(0));
@@ -242,36 +236,14 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                     base = base+ "---"+new StringBase().bitmapToString(selectList.get(i));
                 }
             }
-
-            try {
-                base = URLEncoder.encode(base,"UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
             HashMap<String, String> map = new HashMap<String, String>();
-            map.put("company" , "rujia001");
-            map.put("device" , "citanji001");
+            map.put("company" , "luke");
+            map.put("device" , "LK500");
             map.put("pic" , base);
-
             Gson gson = new Gson();
+            String s = gson.toJson(map);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
-//            photoPresenter.getPhoto("XXX","XXXX","base");
             photoPresenter.getPhoto(requestBody);
-//            QuietOkHttp.postFile(ApiAddress.api+ApiAddress.getData)
-//                    .uploadFile("files", fileList)
-//                    .addParams("num", "4")
-//                    .addParams("string", "4")
-//                    .execute(new StringCallBack() {
-//                        @Override
-//                        protected void onSuccess(Call call, String response) {
-//                            Log.e("TAG", "response:" + response);
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call call, Exception e) {
-//                            Log.e("TAG", "onFailure:" + e.toString());
-//                        }
-//                    });
         }
     }
 
@@ -293,7 +265,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     @Override
     public void setPhoto(PhotoUp photoUp) {
-        Toast.makeText(this, "XXX", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override

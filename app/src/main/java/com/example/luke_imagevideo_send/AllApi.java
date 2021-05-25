@@ -4,7 +4,6 @@ import com.example.luke_imagevideo_send.cehouyi.bean.SaveData;
 import com.example.luke_imagevideo_send.cehouyi.bean.SaveDataBack;
 import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
 import com.example.luke_imagevideo_send.chifen.camera.bean.PhotoUp;
-import com.example.luke_imagevideo_send.chifen.magnetic.bean.Test01;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
 import com.example.luke_imagevideo_send.main.bean.Login;
 import com.example.luke_imagevideo_send.main.bean.Register;
@@ -56,16 +55,12 @@ public interface AllApi {
      */
     @POST(ApiAddress.photoup)
     @Headers({"Content-Type:application/json; charset=UTF-8"})
-    /*Observable<PhotoUp> getPhoto(@Field("company") String company, @Field("device") String device, @Field("pic") String pic);*/
     Observable<PhotoUp> getPhoto(@Body RequestBody body);
 
     /**
      * 视频上传
      *  @GET(ApiAddress.login)
      */
-//    @POST(ApiAddress.havevideoup)
-//    @Headers({"Content-Type:application/json; charset=UTF-8"})
-//    Observable<HaveVideoUp> getHaveVideoUp(@Body RequestBody body);
 
     @Multipart
     @POST(ApiAddress.havevideoup)
@@ -91,11 +86,6 @@ public interface AllApi {
     @POST(ApiAddress.checkpassword)
     Observable<CheckPassWord> getCheckPassWord(@Field("account") String account, @Field("newPwd") String newPwd);
 
-    /**
-     * 测试01
-     */
-    @GET(ApiAddress.getData)
-    Observable<Test01> getTset1();
 
     /**
      * 测厚数据上传

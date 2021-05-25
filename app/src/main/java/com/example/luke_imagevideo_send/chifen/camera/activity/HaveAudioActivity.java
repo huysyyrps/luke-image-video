@@ -215,7 +215,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i));
                 builder.addFormDataPart("file"+i,selectList.get(i).getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
-            builder.addFormDataPart("company","shangjia001");
+            builder.addFormDataPart("company","shangjia002");
             builder.addFormDataPart("device" , "cehouyi001");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
@@ -299,12 +299,12 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     @Override
     public void setHaveVideo(HaveVideoUp HaveVideoUp) {
-
+        Toast.makeText(this, HaveVideoUp.result+"", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void setHaveVideoMessage(String message) {
-
+        Toast.makeText(this, "上传失败", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
+import com.example.luke_imagevideo_send.chifen.camera.module.HaveVideoContract;
+import com.example.luke_imagevideo_send.chifen.camera.presenter.HaveVideoPresenter;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
@@ -33,9 +36,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 
-public class NoAudioActivity extends BaseActivity {
+public class NoAudioActivity extends BaseActivity implements HaveVideoContract.View {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -46,19 +52,21 @@ public class NoAudioActivity extends BaseActivity {
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
     List<File> imagePaths = new ArrayList<>();
-    List<String> selectList = new ArrayList<>();
+    List<File> selectList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
     private SVProgressHUD mSVProgressHUD;
     private int startNum = 0;
     private int lastNum = 12;
     private int allNum;
     File[] files;
+    private HaveVideoPresenter haveVideoPresenter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
+        haveVideoPresenter = new HaveVideoPresenter(this, this);
         ButterKnife.bind(this);
         header.setTvTitle("无声视频");
         mSVProgressHUD = new SVProgressHUD(this);
@@ -77,6 +85,20 @@ public class NoAudioActivity extends BaseActivity {
                         intent.putExtra("path", o.getAbsolutePath());
                         intent.putExtra("tag", "video");
                         startActivity(intent);
+                    }
+                });
+                holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (selectList.contains(o)) {
+                            selectList.remove(o);
+                        } else {
+                            if (selectList.size() >= 3) {
+                                Toast.makeText(NoAudioActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
+                            } else {
+                                selectList.add(o);
+                            }
+                        }
                     }
                 });
             }
@@ -179,7 +201,15 @@ public class NoAudioActivity extends BaseActivity {
         if (selectList.size() == 0) {
             Toast.makeText(NoAudioActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(NoAudioActivity.this, selectList.size() + "", Toast.LENGTH_SHORT).show();
+            MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+            for (int i=0;i<selectList.size();i++){
+                RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i));
+                builder.addFormDataPart("file"+i,selectList.get(i).getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
+            }
+            builder.addFormDataPart("company","shangjia002");
+            builder.addFormDataPart("device" , "cehouyi001");
+            List<MultipartBody.Part> parts = builder.build().parts();
+            haveVideoPresenter.getHaveVideo(parts);
         }
     }
 
@@ -271,5 +301,15 @@ public class NoAudioActivity extends BaseActivity {
     @Override
     protected void rightClient() {
 
+    }
+
+    @Override
+    public void setHaveVideo(HaveVideoUp HaveVideoUp) {
+        Toast.makeText(this, HaveVideoUp.result+"", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setHaveVideoMessage(String message) {
+        Toast.makeText(this, "上传失败", Toast.LENGTH_SHORT).show();
     }
 }

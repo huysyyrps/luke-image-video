@@ -2,12 +2,14 @@ package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
@@ -193,7 +195,14 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.btnSure:
                 String time = etTime.getText().toString();
+                dataBean.setId(sharePreferencesUtils.getString(this,"id",""));
+                dataBean.setDate(sharePreferencesUtils.getString(this,"date",""));
+                dataBean.setMac(sharePreferencesUtils.getString(this,"mac",""));
+                dataBean.setPower(sharePreferencesUtils.getString(this,"power",""));
+                dataBean.setMode(sharePreferencesUtils.getString(this,"mode",""));
+                dataBean.setIp(sharePreferencesUtils.getString(this,"ip",""));
                 dataBean.setAuto_time(time);
+
                 setting.setData(dataBean);
                 Gson gson = new Gson();
                 String obj2 = gson.toJson(setting);
@@ -203,38 +212,40 @@ public class SettingActivity extends BaseActivity {
                         @Override
                         public void run() {
                             //发送设置数据
-                            SSHExcuteCommandHelper.main(address, "cat > /date.json <<EOF/r", new SSHCallBack() {
+                            SSHExcuteCommandHelper.writeBefor(address, "/write_data.sh", new SSHCallBack() {
                                 @Override
                                 public void confirm(String data) {
-                                    Gson gson = new Gson();
-                                    Setting setting = gson.fromJson(data, Setting.class);
-                                    new SSHExcuteCommandHelper(address).disconnect();
-                                    //发送结束指令
-                                    SSHExcuteCommandHelper.main(address, obj2 + "/r", new SSHCallBack() {
-                                        @Override
-                                        public void confirm(String data) {
-                                            Gson gson = new Gson();
-                                            Setting setting = gson.fromJson(data, Setting.class);
-                                            new SSHExcuteCommandHelper(address).disconnect();
-                                            SSHExcuteCommandHelper.main(address, "EOF/r", new SSHCallBack() {
-                                                @Override
-                                                public void confirm(String data) {
-                                                    Gson gson = new Gson();
-                                                    Setting setting = gson.fromJson(data, Setting.class);
-                                                    new SSHExcuteCommandHelper(address).disconnect();
-                                                }
-                                            });
-                                        }
-                                    });
-                                    //重新读取数据，保存到sp
-                                    SSHExcuteCommandHelper.readAgain(address, SettingActivity.this, new SSHCallBack() {
-                                        @Override
-                                        public void confirm(String data) {
-                                            Gson gson = new Gson();
-                                            Setting setting = gson.fromJson(data, Setting.class);
-                                            new SSHExcuteCommandHelper(address).disconnect();
-                                        }
-                                    });
+                                    if (data!=null){
+                                        SSHExcuteCommandHelper.writeBefor(address, obj2, new SSHCallBack() {
+                                            @Override
+                                            public void confirm(String data) {
+                                                Log.e("XXX",data);
+//                                            new SSHExcuteCommandHelper(address).disconnect();
+                                                Gson gson = new Gson();
+                                                Setting setting = gson.fromJson(data,Setting.class);
+                                                sharePreferencesUtils.setString(SettingActivity.this, "acdc", setting.getData().getAcdc());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "auto", setting.getData().getAuto());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "auto_time", setting.getData().getAuto_time());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "bw", setting.getData().getBw());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "id", setting.getData().getId());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "mac", setting.getData().getMac());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "power", setting.getData().getPower());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "ip", setting.getData().getIp());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "date", setting.getData().getDate());
+                                                sharePreferencesUtils.setString(SettingActivity.this, "mode", setting.getData().getMode());
+                                            }
+
+                                            @Override
+                                            public void error(String s) {
+                                                Toast.makeText(SettingActivity.this, s, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void error(String s) {
+                                    Toast.makeText(SettingActivity.this, s, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -129,7 +130,8 @@ public class SendSelectActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SSHExcuteCommandHelper.read(address,SendSelectActivity.this, new SSHCallBack() {
+//                            cat /data.json  /write_data.sh
+                    SSHExcuteCommandHelper.writeBefor(address,"cat /data.json", new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
                             Gson gson = new Gson();
@@ -142,7 +144,14 @@ public class SendSelectActivity extends AppCompatActivity {
 //                            sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
 //                            sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
 //                            sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
-                            new SSHExcuteCommandHelper(address).disconnect();
+//                            sharePreferencesUtils.setString(SendSelectActivity.this, "date", setting.getData().getDate());
+//                            sharePreferencesUtils.setString(SendSelectActivity.this, "mode", setting.getData().getMode());
+//                            new SSHExcuteCommandHelper(address).disconnect();
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            Toast.makeText(SendSelectActivity.this, s, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

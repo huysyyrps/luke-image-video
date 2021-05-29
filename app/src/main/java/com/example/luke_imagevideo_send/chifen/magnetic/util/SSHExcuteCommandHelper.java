@@ -1,12 +1,10 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.util;
 
-import android.widget.Toast;
+import android.util.Log;
 
-import com.example.luke_imagevideo_send.MyApplication;
-import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
-import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -15,26 +13,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 /**
  * SSH工具类
- *
  */
 public class SSHExcuteCommandHelper {
     Session session = null;
     ChannelExec openChannel = null;
+    ChannelShell channel = null;
+
     /**
-     * @param host  主机ip
-//     * @param user 用户名
-//     * @param pwd 密码
-//     * @param port ssh端口
+     * @param host 主机ip
+     *             //     * @param user 用户名
+     *             //     * @param pwd 密码
+     *             //     * @param port ssh端口
      */
     public SSHExcuteCommandHelper(String host) {
         JSch jsch = new JSch();
         try {
-            session = jsch.getSession("root", "192.168.43.104", 22);
+            session = jsch.getSession("root", host, 22);
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setTimeout(6000);
@@ -44,11 +43,13 @@ public class SSHExcuteCommandHelper {
             e.printStackTrace();
         }
     }
+
     /**
      * 是否连接成功,调用如果不需要调用execCommand方法那么必须调用 disconnect方法关闭session
+     *
      * @return
      */
-    public boolean canConnection(){
+    public boolean canConnection() {
         try {
             session.connect();
             return true;
@@ -57,10 +58,11 @@ public class SSHExcuteCommandHelper {
             return false;
         }
     }
+
     /**
      * 关闭连接
      */
-    public void disconnect(){
+    public void disconnect() {
         if (openChannel != null && !openChannel.isClosed()) {
             openChannel.disconnect();
         }
@@ -72,26 +74,25 @@ public class SSHExcuteCommandHelper {
 
     /**
      * 执行命令
+     *
      * @param command
      * @return
      */
     public String execCommand(String command) {
         StringBuffer result = new StringBuffer();
         try {
-            if(!session.isConnected()){
+            if (!session.isConnected()) {
                 session.connect();
             }
             openChannel = (ChannelExec) session.openChannel("exec");
-            openChannel.setCommand(command);
+            openChannel.setCommand(command + "\nexit");
             //int exitStatus = openChannel.getExitStatus();
             openChannel.connect();
             InputStream in = openChannel.getInputStream();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in));
-
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String tmpStr = "";
             while ((tmpStr = reader.readLine()) != null) {
-                result.append(new String(tmpStr.getBytes("gbk"), "UTF-8")).append("\n");
+                result.append(tmpStr);
             }
         } catch (JSchException | IOException e) {
             e.printStackTrace();
@@ -101,96 +102,93 @@ public class SSHExcuteCommandHelper {
         }
         return result.toString();
     }
-    /**
-     * 解析
-     * @param result
-     * @return
-     */
-    public List<List<String>> parseResult(String result){
-        List<List<String>> parseResult = new ArrayList<>();
-        List<String> list = null;
-//
-        for (String line : result.split("\n")) {
-            list = new ArrayList<String>();
-            String[] columns = {};
-//这个是针对df命令的 [Mounted on] 其实就一个,如果用空格就会分割出两个
-            if(line.contains("Mounted ")){
-                columns = line.replace("Mounted ", "Mounted-").split(" ");
-            }else{
-                columns = line.split(" ");
-            }
 
-            for (String column : columns) {
-                if (!" ".equals(column) && !"".equals(column)) {
-                    list.add(column);
-                }
+
+    public String execCommand1(String command) {
+        try {
+            channel = (ChannelShell) session.openChannel("shell");
+            InputStream inputStream = channel.getInputStream();
+            OutputStream outputStream = channel.getOutputStream();//写入该流的所有数据都将发送到远程端。
+            //使用PrintWriter流的目的就是为了使用println这个方法
+            //好处就是不需要每次手动给字符串加\n
+            PrintWriter printWriter = new PrintWriter(outputStream);
+
+            String cmd2 = command;
+            printWriter.println(cmd2 + "\nexit");
+//            printWriter.println("exit");//加上个就是为了，结束本次交互
+            printWriter.flush();
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+            String msg = null;
+            while ((msg = in.readLine()) != null) {
+                System.out.println(msg);
             }
-            parseResult.add(list);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSchException e) {
+            e.printStackTrace();
         }
-        return parseResult;
+        return "XXX";
     }
 
-    public static void main(String address,String data, final SSHCallBack SSHCallBack) {
+    public static void writeBefor(String address, String data, final SSHCallBack SSHCallBack) {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
-        if (ss){
+        if (ss) {
             //发送指令
-            String s = execute.execCommand(data);
+            String s = null;
+            try {
+                s = execute.sendCmd(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             SSHCallBack.confirm(s);
-        }else {
-            Toast.makeText(MyApplication.getContext(), "连接失败", Toast.LENGTH_SHORT).show();
+        } else {
+            SSHCallBack.error("连接失败");
         }
     }
 
-    public static void read(String address, SendSelectActivity sendSelectActivity, final SSHCallBack SSHCallBack) {
-        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
-        boolean ss = execute.canConnection();
-        if (ss){
-            //发送指令
-            String data = execute.execCommand("cat /date.json");
-//            System.out.println("解析前");
-//            System.out.println(s);
-//            System.out.println("解析后");
-//            List<List<String>> parseResult = execute.parseResult(s);
-//            SSHCallBack.confirm(parseResult);
-            SSHCallBack.confirm(data);
-        }else {
-            sendSelectActivity.runOnUiThread(() -> {
-                Toast.makeText(sendSelectActivity, "连接失败", Toast.LENGTH_SHORT).show();
-            });
 
+    public String sendCmd(String command)throws Exception {
+        byte[] tmp = new byte[1024]; //读数据缓存
+        StringBuffer strBuffer = new StringBuffer();  //执行SSH返回的结果
+        ChannelExec ssh = (ChannelExec) session.openChannel("exec");
+        //返回的结果可能是标准信息,也可能是错误信息,所以两种输出都要获取
+        //一般情况下只会有一种输出.
+        //但并不是说错误信息就是执行命令出错的信息,如获得远程java JDK版本就以
+        //ErrStream来获得.
+        InputStream InputStream = ssh.getInputStream();
+        InputStream ErrStream = ssh.getErrStream();
+        ssh.setCommand(command);
+        ssh.connect();
+        //开始获得SSH命令的结果
+        while(true) {
+        //获得错误输出
+            while(ErrStream.available() > 0) {
+                int i = ErrStream.read(tmp, 0, 1024);
+                if(i < 0) {
+                    break;
+                }
+                strBuffer.append(new String(tmp, 0, i));
+            }
+            //获得标准输出
+            while(InputStream.available() > 0) {
+                int i = InputStream.read(tmp, 0, 1024);
+                if(i < 0) {
+                    break;
+                }
+                strBuffer.append(new String(tmp, 0, i));
+                return strBuffer.toString();
+            }
+            if(ssh.isClosed()) {
+                Log.e("XXX","XXXXX");
+                break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch(Exception ee) {
+            }
         }
-//        String s = execute.execCommand("uci show system.id");
-//        System.out.println("解析前");
-//        System.out.println(s);
-//        System.out.println("解析后");
-//        List<List<String>> parseResult = execute.parseResult(s);
-//        SSHCallBack.confirm(parseResult);
-    }
-
-    public static void readAgain(String address, SettingActivity settingActivity, final SSHCallBack SSHCallBack) {
-        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
-        boolean ss = execute.canConnection();
-        if (ss){
-            //发送指令
-            String data = execute.execCommand("cat /date.json");
-//            System.out.println("解析前");
-//            System.out.println(s);
-//            System.out.println("解析后");
-//            List<List<String>> parseResult = execute.parseResult(s);
-//            SSHCallBack.confirm(parseResult);
-            SSHCallBack.confirm(data);
-        }else {
-            settingActivity.runOnUiThread(() -> {
-                Toast.makeText(settingActivity, "连接失败", Toast.LENGTH_SHORT).show();
-            });
-
-        }
-//        String s = execute.execCommand("uci show system.id");
-//        System.out.println("解析前");
-//        System.out.println(s);
-//        System.out.println("解析后");
-//        List<List<String>> parseResult = execute.parseResult(s);
-//        SSHCallBack.confirm(parseResult);
+        return strBuffer.toString();
     }
 }

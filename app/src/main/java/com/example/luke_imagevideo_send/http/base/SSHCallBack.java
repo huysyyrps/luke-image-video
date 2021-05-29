@@ -7,4 +7,5 @@ package com.example.luke_imagevideo_send.http.base;
 public interface SSHCallBack {
 //    void confirm(List<List<String>> parseResult);
      void confirm(String string);
+     void error(String string);
 }

@@ -1,7 +1,11 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.util;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.luke_imagevideo_send.MyApplication;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
@@ -23,6 +27,7 @@ public class SSHExcuteCommandHelper {
     Session session = null;
     ChannelExec openChannel = null;
     ChannelShell channel = null;
+    private Handler mHandler;
 
     /**
      * @param host 主机ip
@@ -41,6 +46,10 @@ public class SSHExcuteCommandHelper {
             session.setPassword("root");
         } catch (JSchException e) {
             e.printStackTrace();
+            Looper.prepare();
+            Toast.makeText(MyApplication.getContext(), "ip获取为空", Toast.LENGTH_SHORT).show();
+            Looper.loop();
+            return;
         }
     }
 
@@ -50,13 +59,30 @@ public class SSHExcuteCommandHelper {
      * @return
      */
     public boolean canConnection() {
-        try {
-            session.connect();
-            return true;
-        } catch (JSchException e) {
-            e.printStackTrace();
-            return false;
+        while (true){
+            if (session!=null){
+                try {
+                    session.connect();
+                    return true;
+                } catch (JSchException e) {
+                    e.printStackTrace();
+                   break;
+                }
+            }
         }
+        return false;
+//        mHandler = new Handler();
+//        new Handler().postDelayed(new Runnable() {
+//            public void run() {
+//                try {
+//                    if (session!=null){
+//                        session.connect();
+//                    }
+//                } catch (JSchException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, 3500); //延迟3.5秒跳转
     }
 
     /**
@@ -144,12 +170,12 @@ public class SSHExcuteCommandHelper {
             }
             SSHCallBack.confirm(s);
         } else {
-            SSHCallBack.error("连接失败");
+            SSHCallBack.error("连接失败,请检查设备热点链接是否成功");
         }
     }
 
 
-    public String sendCmd(String command)throws Exception {
+    public String sendCmd(String command) throws Exception {
         byte[] tmp = new byte[1024]; //读数据缓存
         StringBuffer strBuffer = new StringBuffer();  //执行SSH返回的结果
         ChannelExec ssh = (ChannelExec) session.openChannel("exec");
@@ -162,31 +188,31 @@ public class SSHExcuteCommandHelper {
         ssh.setCommand(command);
         ssh.connect();
         //开始获得SSH命令的结果
-        while(true) {
-        //获得错误输出
-            while(ErrStream.available() > 0) {
+        while (true) {
+            //获得错误输出
+            while (ErrStream.available() > 0) {
                 int i = ErrStream.read(tmp, 0, 1024);
-                if(i < 0) {
+                if (i < 0) {
                     break;
                 }
                 strBuffer.append(new String(tmp, 0, i));
             }
             //获得标准输出
-            while(InputStream.available() > 0) {
+            while (InputStream.available() > 0) {
                 int i = InputStream.read(tmp, 0, 1024);
-                if(i < 0) {
+                if (i < 0) {
                     break;
                 }
                 strBuffer.append(new String(tmp, 0, i));
                 return strBuffer.toString();
             }
-            if(ssh.isClosed()) {
-                Log.e("XXX","XXXXX");
+            if (ssh.isClosed()) {
+                Log.e("XXX", "XXXXX");
                 break;
             }
             try {
                 Thread.sleep(100);
-            } catch(Exception ee) {
+            } catch (Exception ee) {
             }
         }
         return strBuffer.toString();

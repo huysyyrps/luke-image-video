@@ -33,6 +33,9 @@ public class CSContextActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("tag");
+        header.setTvTitle(title);
         dataList.add("承压设备用板材中部检测区域质量分级");
         dataList.add("承压设备用板材边缘或剖口预定线两侧质量分级");
         dataList.add("复合板超声检测质量分级");

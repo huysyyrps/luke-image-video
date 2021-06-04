@@ -33,6 +33,9 @@ public class CFContextActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("tag");
+        header.setTvTitle(title);
         dataList.add("焊接接头的质量分级");
         dataList.add("其他部件的质量分级");
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

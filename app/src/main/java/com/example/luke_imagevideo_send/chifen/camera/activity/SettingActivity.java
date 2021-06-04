@@ -179,14 +179,17 @@ public class SettingActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.llCSContext:
                 intent = new Intent(this, CSContextActivity.class);
+                intent.putExtra("tag","超声文档");
                 startActivity(intent);
                 break;
             case R.id.llCFContext:
                 intent = new Intent(this, CFContextActivity.class);
+                intent.putExtra("tag","磁粉文档");
                 startActivity(intent);
                 break;
             case R.id.llCXContext:
                 intent = new Intent(this, CXContextActivity.class);
+                intent.putExtra("tag","射线文档");
                 startActivity(intent);
                 break;
             case R.id.llDaily:
@@ -222,17 +225,17 @@ public class SettingActivity extends BaseActivity {
                                                 Log.e("XXX",data);
 //                                            new SSHExcuteCommandHelper(address).disconnect();
                                                 Gson gson = new Gson();
-                                                Setting setting = gson.fromJson(data,Setting.class);
-                                                sharePreferencesUtils.setString(SettingActivity.this, "acdc", setting.getData().getAcdc());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "auto", setting.getData().getAuto());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "auto_time", setting.getData().getAuto_time());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "bw", setting.getData().getBw());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "id", setting.getData().getId());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "mac", setting.getData().getMac());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "power", setting.getData().getPower());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "ip", setting.getData().getIp());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "date", setting.getData().getDate());
-                                                sharePreferencesUtils.setString(SettingActivity.this, "mode", setting.getData().getMode());
+//                                                Setting setting = gson.fromJson(data,Setting.class);
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "acdc", setting.getData().getAcdc());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "auto", setting.getData().getAuto());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "auto_time", setting.getData().getAuto_time());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "bw", setting.getData().getBw());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "id", setting.getData().getId());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "mac", setting.getData().getMac());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "power", setting.getData().getPower());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "ip", setting.getData().getIp());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "date", setting.getData().getDate());
+//                                                sharePreferencesUtils.setString(SettingActivity.this, "mode", setting.getData().getMode());
                                             }
 
                                             @Override

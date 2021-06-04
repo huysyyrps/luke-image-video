@@ -33,6 +33,9 @@ public class CXContextActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("tag");
+        header.setTvTitle(title);
         dataList.add("钢、镍、铜制承压设备各级别熔化焊焊接接头允许的圆形缺陷点数");
         dataList.add("钢、镍、铜制承压设备各级别熔化焊焊接接头允许的条形缺陷长度");
         dataList.add("铝制承压设备各级别熔化焊焊接接头允许的圆形缺陷点数");

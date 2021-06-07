@@ -34,6 +34,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -137,6 +138,20 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     Button btnRight;
     @BindView(R.id.btnBotton)
     Button btnBotton;
+    @BindView(R.id.tcCH)
+    TextView tcCH;
+    @BindView(R.id.tvSDJia)
+    TextView tvSDJia;
+    @BindView(R.id.tvSDJian)
+    TextView tvSDJian;
+    @BindView(R.id.tvCE)
+    TextView tvCE;
+    @BindView(R.id.tvDG)
+    TextView tvDG;
+    @BindView(R.id.ivBack)
+    ImageView ivBack;
+    @BindView(R.id.llItem)
+    LinearLayout llItem;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
@@ -151,7 +166,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     boolean rbVideoV = true;
     boolean rbSoundV = true;
     private int clickNum = 0;
-    String tag = "",log = "";
+    String tag = "", log = "";
     private Handler handler = new Handler();
 
     @Override
@@ -211,7 +226,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         } catch (Exception e) {
             e.printStackTrace();
         }
-        address = "http://"+address + ":8080?action=stream";
+        address = "http://" + address + ":8080?action=stream";
         webView.loadUrl(address);
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -296,7 +311,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     }
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
-                ,R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton})
+            , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton,R.id.tcCH, R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -426,53 +441,78 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 startActivityForResult(intent, Constant.TAG_TWO);
                 break;
             case R.id.btnTop:
-                onBtnClick("向上单击","向上双击");
+                onBtnClick("向上单击", "向上双击");
                 break;
             case R.id.btnLeft:
-                onBtnClick("向左单击","向左双击");
+                onBtnClick("向左单击", "向左双击");
                 break;
             case R.id.btnRight:
-                onBtnClick("向右单击","向右双击");
+                onBtnClick("向右单击", "向右双击");
                 break;
             case R.id.btnBotton:
-                onBtnClick("向下单击","向下双击");
+                onBtnClick("向下单击", "向下双击");
                 break;
             case R.id.btnLight:
-                Toast.makeText(mNotifications, "灯光单击", Toast.LENGTH_SHORT).show();
+                if (llItem.getVisibility()==View.VISIBLE){
+                    llItem.setVisibility(View.GONE);
+                }else {
+                    llItem.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.tcCH:
+                Toast.makeText(mNotifications, "磁化", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tvSDJia:
+                Toast.makeText(mNotifications, "速度+", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tvSDJian:
+                Toast.makeText(mNotifications, "速度—", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tvCE:
+                Toast.makeText(mNotifications, "磁轭", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.tvDG:
+                Toast.makeText(mNotifications, "灯光", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.ivBack:
+                llItem.setVisibility(View.GONE);
                 break;
         }
     }
 
+
     /**
      * 按钮单击按监听
+     *
      * @param
      * @return
      */
-    public void onBtnClick(String value1,String value2) {
+    public void onBtnClick(String value1, String value2) {
         clickNum++;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (clickNum == 1) {
                     Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
-                }else if(clickNum==2){
+                } else if (clickNum == 2) {
                     Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
                 }
                 //防止handler引起的内存泄漏
                 handler.removeCallbacksAndMessages(null);
                 clickNum = 0;
             }
-        },800);
+        }, 800);
     }
 
     /**
      * 按钮长按监听
+     *
      * @param v
      * @return
      */
     @Override
     public boolean onLongClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnTop:
                 Toast.makeText(mNotifications, "向上长按", Toast.LENGTH_SHORT).show();
                 tag = "longUp";
@@ -499,6 +539,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
     /**
      * 按钮松开监听
+     *
      * @param v
      * @param event
      * @return
@@ -506,12 +547,12 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnTop:
             case R.id.btnBotton:
             case R.id.btnLeft:
             case R.id.btnRight:
-                if (action == MotionEvent.ACTION_UP&&tag.equals("longUp")) {
+                if (action == MotionEvent.ACTION_UP && tag.equals("longUp")) {
                     Toast.makeText(mNotifications, log, Toast.LENGTH_SHORT).show();
                     tag = "";
                     log = "";
@@ -853,5 +894,4 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
         }
     }
-
 }

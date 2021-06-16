@@ -305,7 +305,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
 
     @Override
     public void setHaveVideo(HaveVideoUp HaveVideoUp) {
-        Toast.makeText(this, HaveVideoUp.result+"", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override

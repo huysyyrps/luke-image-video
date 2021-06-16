@@ -86,7 +86,7 @@ public class CircleTextProgressbar extends TextView {
     /**
      * 进度条类型。
      */
-    private ProgressType mProgressType = ProgressType.COUNT_BACK;
+    private ProgressType mProgressType = ProgressType.COUNT;
     /**
      * 进度倒计时时间。
      */

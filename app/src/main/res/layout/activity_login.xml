@@ -8,7 +8,7 @@
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
         style="@style/Header"
-        app:header_title="注册登录"
+        app:header_title="登录"
         app:header_is_left_iv_visiable="false">
     </com.example.luke_imagevideo_send.http.views.Header>
     <FrameLayout
@@ -108,16 +108,19 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginBottom="20dp"/>
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="15dp">
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tvForgrtPassword"
                     style="@style/TextView"
                     android:text="@string/forgrt_password"
                     android:gravity="right"
+                    android:layout_marginRight="20dp"
                     android:paddingRight="5dp"
                     android:textColor="@color/color_bg_selected"/>
                 <View
@@ -128,10 +131,11 @@
 
                 <TextView
                     android:id="@+id/tvRegister"
+                    android:visibility="gone"
+                    android:layout_marginRight="30dp"
                     style="@style/TextView"
                     android:text="@string/login_register"
-                    android:textColor="@color/color_bg_selected"
-                    android:gravity="left"/>
+                    android:textColor="@color/color_bg_selected"/>
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
@@ -148,7 +152,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="点击登录或注册表示您已阅读并同意鲁科智能检测"
+                android:text="点击登录表示您已阅读并同意鲁科智能检测"
                 android:gravity="center"/>
             <LinearLayout
                 android:layout_width="wrap_content"

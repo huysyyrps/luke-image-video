@@ -193,16 +193,16 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         compName = intent.getStringExtra("etCompName");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        if (compName.equals("") && workName.equals("") && workCode.equals("")) {
+        if (compName.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
             linearLayout1.setVisibility(View.GONE);
         }
-        if (!compName.equals("")) {
+        if (!compName.trim().equals("")) {
             tvCompName.setText(compName);
         }
-        if (!workName.equals("")) {
+        if (!workName.trim().equals("")) {
             tvWorkName.setText(workName);
         }
-        if (!workCode.equals("")) {
+        if (!workCode.trim().equals("")) {
             tvWorkCode.setText(workCode);
         }
         header.setVisibility(View.GONE);

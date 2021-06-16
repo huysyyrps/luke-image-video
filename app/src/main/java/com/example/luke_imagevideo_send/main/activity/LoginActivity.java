@@ -87,7 +87,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
                 @Override
                 public void cancel() {
-
+                    isExit = false;
                 }
 
                 @Override

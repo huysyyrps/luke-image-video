@@ -39,7 +39,7 @@
         android:background="@drawable/linelayout_radion">
         <TextView
             android:id="@+id/yes"
-            android:text="@string/title_tips_up"
+            android:text="@string/title_tips_save"
             android:textColor="@color/color_forget_button"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"

@@ -15,7 +15,7 @@ public class getIp {
         Process proc = runtime.exec("ip neigh show");
         proc.waitFor();
         BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        //BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"));
+//        BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"));
         String line;
         while ((line = br.readLine()) != null) {
             String[] splitted = line.split(" +");

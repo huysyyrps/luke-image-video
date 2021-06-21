@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.activity.MainCHYActivity;
-import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
@@ -267,19 +266,19 @@ public class SendSelectActivity extends AppCompatActivity {
                     SSHExcuteCommandHelper.writeBefor(address, "cat /data.json", new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            if (data != null && !data.equals("\n")) {
+                            if (data != null && !data.equals("\n")&& !data.equals("")) {
                                 Gson gson = new Gson();
-                                Setting setting = gson.fromJson(data, Setting.class);
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "acdc", setting.getData().getAcdc());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto", setting.getData().getAuto());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto_time", setting.getData().getAuto_time());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "bw", setting.getData().getBw());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "id", setting.getData().getId());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "date", setting.getData().getDate());
-                                sharePreferencesUtils.setString(SendSelectActivity.this, "mode", setting.getData().getMode());
+//                                Setting setting = gson.fromJson(data, Setting.class);
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "acdc", setting.getData().getAcdc());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto", setting.getData().getAuto());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "auto_time", setting.getData().getAuto_time());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "bw", setting.getData().getBw());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "id", setting.getData().getId());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "mac", setting.getData().getMac());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "power", setting.getData().getPower());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "ip", setting.getData().getIp());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "date", setting.getData().getDate());
+//                                sharePreferencesUtils.setString(SendSelectActivity.this, "mode", setting.getData().getMode());
                             }
 
 //                            new SSHExcuteCommandHelper(address).disconnect();

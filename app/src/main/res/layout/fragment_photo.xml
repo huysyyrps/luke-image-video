@@ -7,6 +7,7 @@
     <com.example.luke_imagevideo_send.http.views.Header
         android:id="@+id/header"
         style="@style/Header"
+        app:header_title_right="@string/delet"
         app:header_title="图库">
     </com.example.luke_imagevideo_send.http.views.Header>
 

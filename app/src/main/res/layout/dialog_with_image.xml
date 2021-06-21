@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:minHeight="100dp"
         android:background="@null"
-        android:hint="请输入图片名称\n(默认名称为当前时间)"/>
+        android:hint="请输入文件名称\n(默认名称为当前时间)"/>
 
     <LinearLayout
         android:orientation="horizontal"

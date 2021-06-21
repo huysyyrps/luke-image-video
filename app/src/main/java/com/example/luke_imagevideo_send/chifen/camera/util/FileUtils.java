@@ -28,7 +28,7 @@ public class FileUtils {
                     out = new FileOutputStream(file);
                     return bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
                 default:
-                    file = new File(filePath + ".png");
+                    file = new File(filePath + ".jpg");
                     out = new FileOutputStream(file);
                     return bitmap.compress(Bitmap.CompressFormat.PNG, quality, out);
             }

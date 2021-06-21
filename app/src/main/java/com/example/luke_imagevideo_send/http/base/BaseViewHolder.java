@@ -72,6 +72,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    /**
+     * 设置checkBox不可选择
+     */
+    public BaseViewHolder setCheckBoxFalse(int viewId) {
+        CheckBox checkBox = getView(viewId);
+        checkBox.setChecked(false);
+        return this;
+    }
+
 
     /**
      * 给TextView设置setText方法

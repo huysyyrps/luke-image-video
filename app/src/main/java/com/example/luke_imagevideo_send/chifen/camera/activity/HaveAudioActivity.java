@@ -63,7 +63,6 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     private HaveVideoPresenter haveVideoPresenter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +78,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
             public void convert(BaseViewHolder holder, final File o) {
                 holder.setBitmap(R.id.imageView, getRingBitmap(o));
                 holder.setVisitionTextView(R.id.tvTime);
+                holder.setText( R.id.tvName, o.getName()+"");
                 holder.setText(R.id.tvTime, getRingDuring(o));
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
@@ -97,6 +97,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                             selectList.remove(o);
                         } else {
                             if (selectList.size() >= 3) {
+                                holder.setCheckBoxFalse( R.id.cbSelect);
                                 Toast.makeText(HaveAudioActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(o);
@@ -144,7 +145,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
 //        File file = new File(path);
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKEVideo/");
+        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
         files = file.listFiles();
         if (files != null) {
             allNum = files.length;
@@ -203,7 +204,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     @OnClick(R.id.ivSend)
     public void onClick() {
         if (selectList.size() == 0) {
-            Toast.makeText(HaveAudioActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HaveAudioActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
         } else {
 //            HashMap<String, Object> map = new HashMap<String, Object>();
 //            map.put("video" , selectList);
@@ -319,7 +320,14 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     @Override
     protected void rightClient() {
-
+        if (selectList.size()==0){
+            Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
+        }else {
+            for (File file : selectList){
+                imagePaths.remove(file);
+                file.delete();
+            }
+            baseRecyclerAdapter.notifyDataSetChanged();
+        }
     }
-
 }

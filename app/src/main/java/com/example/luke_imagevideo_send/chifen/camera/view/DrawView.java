@@ -13,13 +13,13 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
 import com.example.luke_imagevideo_send.chifen.camera.bean.PointBean;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.NamedSpinner;
 
 import java.util.LinkedList;
 
@@ -60,6 +60,7 @@ public class DrawView extends ImageView {
             setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
         }
     };
+    private CloseActivity closeActivity;
 
     public DrawView(Context context) {
         super(context);
@@ -264,6 +265,9 @@ public class DrawView extends ImageView {
             pointLists.removeLast();
             rangeLists.removeLast();
             invalidate();
+        }else {
+            setCallback(closeActivity);
+            closeActivity.closeThisActivity();
         }
     }
 
@@ -300,5 +304,13 @@ public class DrawView extends ImageView {
      */
     public Bitmap getImageBitmap() {
         return mBitmap;
+    }
+
+    public interface CloseActivity {
+        void closeThisActivity();
+    }
+
+    public void setCallback(CloseActivity closeActivity) {
+        this.closeActivity = closeActivity;
     }
 }

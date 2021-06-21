@@ -69,4 +69,5 @@
     <string name="time">时间</string>
     <string name="time1">发生时间</string>
     <string name="title1">标题</string>
+    <string name="delet">删除</string>
 </resources>

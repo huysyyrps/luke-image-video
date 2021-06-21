@@ -78,13 +78,16 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
             @Override
             public void convert(BaseViewHolder holder, final String o) {
                 holder.setImage(PhotoActivity.this, R.id.imageView, o);
+                String s = getFileName(o);
+                holder.setText( R.id.tvName, getFileName(o));
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(PhotoActivity.this, SeeImageOrVideoActivity.class);
                         intent.putExtra("path", o);
                         intent.putExtra("tag", "photo");
-                        startActivity(intent);
+//                        startActivity(intent);
+                        startActivityForResult(intent,Constant.TAG_ONE);
                     }
                 });
 
@@ -95,6 +98,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                             selectList.remove(o);
                         } else {
                             if (selectList.size() >= 9) {
+                                holder.setCheckBoxFalse( R.id.cbSelect);
                                 Toast.makeText(PhotoActivity.this, "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(o);
@@ -259,7 +263,16 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     @Override
     protected void rightClient() {
-
+        if (selectList.size()==0){
+            Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
+        }else {
+            for (String path : selectList){
+                imagePaths.remove(path);
+                File file = new File(path);
+                file.delete();
+            }
+            baseRecyclerAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -269,7 +282,31 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        baseRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void setPhotoMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+
+    /**
+     * 从路径中提取文件名
+     * @param pathandname
+     * @return
+     */
+    public String getFileName(String pathandname){
+        int start=pathandname.lastIndexOf("/");
+        int end=pathandname.length();
+        if(start!=-1 && end!=-1){
+            return pathandname.substring(start+1,end);
+        }else{
+            return "null";
+        }
+
+    }
+
 }

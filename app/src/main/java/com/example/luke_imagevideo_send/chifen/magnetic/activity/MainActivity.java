@@ -166,7 +166,11 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     boolean rbVideoV = true;
     boolean rbSoundV = true;
     private int clickNum = 0;
+    File file = null;
+    VideoEncodeConfig video;
+    AudioEncodeConfig audio;
     String tag = "", log = "";
+    SimpleDateFormat format;
     private Handler handler = new Handler();
 
     @Override
@@ -311,7 +315,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     }
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
-            , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton,R.id.tcCH, R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack})
+            , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH, R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -358,56 +362,71 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 }
                 break;
             case R.id.rbVideo:
-                if (rbVideoV) {
-                    rbCamera.setVisibility(View.INVISIBLE);
-                    rbAlbum.setVisibility(View.INVISIBLE);
-                    rbSound.setVisibility(View.INVISIBLE);
-                    rbSetting.setVisibility(View.INVISIBLE);
-                    rbVideo.setVisibility(View.GONE);
-                    rbSuspend.setVisibility(View.VISIBLE);
-                    new BottomUI().hideBottomUIMenu(this.getWindow());
-                    rbVideoV = false;
-                }
                 haveAudio = "noAudio";
-                if (mRecorder != null) {
-                    stopRecordingAndOpenFile(view1.getContext());
-                } else if (hasPermissions()) {
-                    if (mMediaProjection == null) {
-                        requestMediaProjection();
-                    } else {
-                        startCapturing(mMediaProjection);
+                format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+                name = format.format(new Date())+ ".mp4";
+                alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
+                    @Override
+                    public void confirm(String name1) {
+                        if (!name1.equals("")) {
+                            name = "/"+name1 + ".mp4";
+                        }
                     }
-                } else if (Build.VERSION.SDK_INT >= M) {
-                    requestPermissions();
-                } else {
-                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
-                }
+
+                    @Override
+                    public void cancel() {
+                        radioGroup.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void save(String name1) {
+                        if (!name1.equals("")) {
+                            name = name1 + ".mp4";
+                        }
+                        startVideoCapturing(view1);
+                    }
+
+                    @Override
+                    public void checkName(String name1) {
+                        if (!name1.equals("")) {
+                            name = "/"+name1 + ".mp4";
+                        }
+                    }
+                });
                 break;
             case R.id.rbSound:
-                if (rbSoundV) {
-                    rbCamera.setVisibility(View.INVISIBLE);
-                    rbAlbum.setVisibility(View.INVISIBLE);
-                    rbSound.setVisibility(View.INVISIBLE);
-                    rbSetting.setVisibility(View.INVISIBLE);
-                    rbVideo.setVisibility(View.GONE);
-                    rbSuspend.setVisibility(View.VISIBLE);
-                    new BottomUI().hideBottomUIMenu(this.getWindow());
-                    rbSoundV = false;
-                }
                 haveAudio = "Audio";
-                if (mRecorder != null) {
-                    stopRecordingAndOpenFile(view1.getContext());
-                } else if (hasPermissions()) {
-                    if (mMediaProjection == null) {
-                        requestMediaProjection();
-                    } else {
-                        startCapturing(mMediaProjection);
+                format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+                name = format.format(new Date())+ ".mp4";
+                alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
+                    @Override
+                    public void confirm(String name1) {
+                        if (!name1.equals("")) {
+                            name = "/"+name1 + ".mp4";
+                        }
                     }
-                } else if (Build.VERSION.SDK_INT >= M) {
-                    requestPermissions();
-                } else {
-                    Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
-                }
+
+                    @Override
+                    public void cancel() {
+                        radioGroup.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void save(String name1) {
+                        if (!name1.equals("")) {
+                            name = name1 + ".mp4";
+                        }
+                        startVideoCapturing(view1);
+                    }
+
+                    @Override
+                    public void checkName(String name1) {
+                        if (!name1.equals("")) {
+                            name = "/"+name1 + ".mp4";
+                        }
+                    }
+                });
+
                 break;
             case R.id.rbSuspend:
                 new BottomUI().BottomUIMenu(this.getWindow());
@@ -425,7 +444,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     if (mMediaProjection == null) {
                         requestMediaProjection();
                     } else {
-                        startCapturing(mMediaProjection);
+                        startCapturing(mMediaProjection,view1);
                     }
                 } else if (Build.VERSION.SDK_INT >= M) {
                     requestPermissions();
@@ -453,9 +472,9 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 onBtnClick("向下单击", "向下双击");
                 break;
             case R.id.btnLight:
-                if (llItem.getVisibility()==View.VISIBLE){
+                if (llItem.getVisibility() == View.VISIBLE) {
                     llItem.setVisibility(View.GONE);
-                }else {
+                } else {
                     llItem.setVisibility(View.VISIBLE);
                 }
                 break;
@@ -480,6 +499,48 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     }
 
+
+    public void startVideoCapturing(View view1) {
+        if (haveAudio.equals("noAudio")){
+            if (rbVideoV) {
+                rbCamera.setVisibility(View.INVISIBLE);
+                rbAlbum.setVisibility(View.INVISIBLE);
+                rbSound.setVisibility(View.INVISIBLE);
+                rbSetting.setVisibility(View.INVISIBLE);
+                rbVideo.setVisibility(View.GONE);
+                rbSuspend.setVisibility(View.VISIBLE);
+                new BottomUI().hideBottomUIMenu(this.getWindow());
+                rbVideoV = false;
+            }
+        }
+
+        if (haveAudio.equals("Audio")){
+            if (rbSoundV) {
+                rbCamera.setVisibility(View.INVISIBLE);
+                rbAlbum.setVisibility(View.INVISIBLE);
+                rbSound.setVisibility(View.INVISIBLE);
+                rbSetting.setVisibility(View.INVISIBLE);
+                rbVideo.setVisibility(View.GONE);
+                rbSuspend.setVisibility(View.VISIBLE);
+                new BottomUI().hideBottomUIMenu(this.getWindow());
+                rbSoundV = false;
+            }
+        }
+
+        if (mRecorder != null) {
+            stopRecordingAndOpenFile(view1.getContext());
+        } else if (hasPermissions()) {
+            if (mMediaProjection == null) {
+                requestMediaProjection();
+            } else {
+                startCapturing(mMediaProjection,view1);
+            }
+        } else if (Build.VERSION.SDK_INT >= M) {
+            requestPermissions();
+        } else {
+            Toast.makeText(mNotifications, "权限未允许", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     /**
      * 按钮单击按监听
@@ -633,6 +694,33 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         });
     }
 
+    private void selectVideoDialog(File mFile, String name2, View view1) {
+        alertDialogUtil.showImageNameSelect(new DialogCallBack() {
+
+            @Override
+            public void confirm(String name1, Dialog dialog) {
+                if (name1.equals("")) {
+                    Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
+                } else {
+                    name1 = name1+".mp4";
+                    if (name.equals(name1)) {
+                        Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
+                    } else {
+                        name = name1;
+                        startCapturing(mMediaProjection,view1);
+                        dialog.dismiss();
+                    }
+                }
+            }
+
+            @Override
+            public void cancel() {
+                mFile.delete();
+                startCapturing(mMediaProjection,view1);
+            }
+        });
+    }
+
     private void startRecorder() {
         if (mRecorder == null) return;
         mRecorder.start();
@@ -716,35 +804,45 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         startActivityForResult(captureIntent, REQUEST_MEDIA_PROJECTION);
     }
 
-    private void startCapturing(MediaProjection mediaProjection) {
-        VideoEncodeConfig video = createVideoConfig();
-        AudioEncodeConfig audio = createAudioConfig(); // audio can be null
+    private void startCapturing(MediaProjection mediaProjection,View view1) {
+        video = createVideoConfig();
+        audio = createAudioConfig(); // audio can be null
         if (video == null) {
             Toast.makeText(this, "Create ScreenRecorder failure", Toast.LENGTH_SHORT).show();
             return;
         }
         File dir = null;
         if (haveAudio.equals("Audio")) {
-            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKEVideo/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
             }
         } else if (haveAudio.equals("noAudio")) {
-            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKENOVideo/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
+            }
+        }
+        file = new File(dir, name);
+        if ( rbVideoV && rbSoundV ){
+            Log.e("XXX","XXX");
+        }else {
+            if (haveAudio.equals("Audio")) {
+                //将要保存的图片文件
+                if (file.exists()) {
+                    selectVideoDialog(file, name,view1);
+                    return;
+                }
+            } else if (haveAudio.equals("noAudio")) {
+                if (file.exists()) {
+                    selectVideoDialog(file, name,view1);
+                    return;
+                }
             }
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
-        File file = null;
-        if (haveAudio.equals("Audio")) {
-            file = new File(dir, format.format(new Date()) + ".mp4");
-        } else if (haveAudio.equals("noAudio")) {
-            file = new File(dir, format.format(new Date()) + ".mp4");
-        }
         Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
         mRecorder = newRecorder(mediaProjection, video, audio, file);
         if (hasPermissions()) {
@@ -822,7 +920,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         final String codec = "c2.android.avc.encoder";
         int height = 1080;
         int width = 1920;
-        int framerate = 15;
+        int framerate = 25;
         int iframe = 1;
         int bitrate = 800000;
         MediaCodecInfo.CodecProfileLevel profileLevel = null;

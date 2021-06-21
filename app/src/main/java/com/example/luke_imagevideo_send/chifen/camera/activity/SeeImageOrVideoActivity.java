@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClickListener {
+public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClickListener, DrawView.CloseActivity {
     Bitmap bitmap;
     @BindView(R.id.color_panel)
     ImageButton colorPanel;
@@ -45,12 +46,17 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     @BindView(R.id.videoView)
     CustomerVideoView videoView;
     String path = "";
+    @BindView(R.id.ivStart)
+    ImageView ivStart;
+    @BindView(R.id.ivPause)
+    ImageView ivPause;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
+        drawView.setCallback(this);
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
@@ -73,7 +79,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
 //            if (be <= 0)
 //                be = 1;
 //            options.inSampleSize = be; //重新读入图片，注意此时已经把 options.inJustDecodeBounds 设回 false 了
-            bitmap=BitmapFactory.decodeFile(path,options);
+            bitmap = BitmapFactory.decodeFile(path, options);
 //            DisplayMetrics dm = getResources().getDisplayMetrics();
 //            Bitmap originalBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
 //            Bitmap finalBitmap = Bitmap.createScaledBitmap(originalBitmap, dm.heightPixels, dm.widthPixels, true);//heightPixels
@@ -108,7 +114,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         drawView.loadImage(bitmap, width, height);
     }
 
-    @OnClick({R.id.color_panel, R.id.undo, R.id.save})
+    @OnClick({R.id.color_panel, R.id.undo, R.id.save, R.id.ivStart, R.id.ivPause,R.id.videoView})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.color_panel:
@@ -139,14 +145,37 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
                     Toast.makeText(this, "图片保存失败", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.ivStart:
+                videoView.pause();
+                ivStart.setVisibility(View.GONE);
+                ivPause.setVisibility(View.VISIBLE);
+                break;
+            case R.id.ivPause:
+                videoView.start();
+                ivStart.setVisibility(View.GONE);
+                ivPause.setVisibility(View.GONE);
+                break;
+            case R.id.videoView:
+                if (ivPause.getVisibility()==View.VISIBLE){
+                    ivPause.setVisibility(View.GONE);
+                    ivStart.setVisibility(View.VISIBLE);
+                }else if (ivStart.getVisibility()==View.VISIBLE){
+                    ivStart.setVisibility(View.GONE);
+                    ivPause.setVisibility(View.VISIBLE);
+                }else {
+                    ivStart.setVisibility(View.VISIBLE);
+                }
+                break;
         }
     }
 
     public void saveImage() {
         String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/";//图片保存的文件夹名
         String filename = dir + fileName;
+//        File file = new File(filename + ".jpg");
+//        file.delete();
         if (FileUtils.saveBitmap(filename, mBitmap, Bitmap.CompressFormat.PNG, 100)) {
-            Toast.makeText(this, "Save Success", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             paintBar.setVisibility(View.VISIBLE);
@@ -211,5 +240,10 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void closeThisActivity() {
+        finish();
     }
 }

@@ -77,6 +77,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
             public void convert(BaseViewHolder holder, final File o) {
                 holder.setBitmap(R.id.imageView, getRingBitmap(o));
                 holder.setVisitionTextView(R.id.tvTime);
+                holder.setText( R.id.tvName, o.getName()+"");
                 holder.setText(R.id.tvTime, getRingDuring(o));
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
@@ -94,6 +95,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
                             selectList.remove(o);
                         } else {
                             if (selectList.size() >= 3) {
+                                holder.setCheckBoxFalse( R.id.cbSelect);
                                 Toast.makeText(NoAudioActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
                             } else {
                                 selectList.add(o);
@@ -140,7 +142,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
 
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/LUKENoVideo/");
+        File file = new File(Environment.getExternalStorageDirectory() + "/LUKENoVideo/");
         files = file.listFiles();
         if (files!=null){
             allNum = files.length;
@@ -199,7 +201,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
     @OnClick(R.id.ivSend)
     public void onClick() {
         if (selectList.size() == 0) {
-            Toast.makeText(NoAudioActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NoAudioActivity.this, "您还未选择无声视频", Toast.LENGTH_SHORT).show();
         } else {
             MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
             for (int i=0;i<selectList.size();i++){
@@ -300,7 +302,15 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
 
     @Override
     protected void rightClient() {
-
+        if (selectList.size()==0){
+            Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
+        }else {
+            for (File file : selectList){
+                imagePaths.remove(file);
+                file.delete();
+            }
+            baseRecyclerAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

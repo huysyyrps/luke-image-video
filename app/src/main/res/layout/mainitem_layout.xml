@@ -112,7 +112,6 @@
             android:gravity="center"
             android:text="速度-"
             android:textSize="16dp" />
-
         <View style="@style/VLine" />
 
         <TextView
@@ -122,9 +121,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="磁轭"
+            android:text="提起"
             android:textSize="16dp" />
-
         <View style="@style/VLine" />
 
         <TextView
@@ -136,7 +134,27 @@
             android:gravity="center"
             android:text="灯光"
             android:textSize="16dp" />
+        <View style="@style/VLine" />
 
+        <TextView
+            android:id="@+id/tvOpen"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="灯光（开）"
+            android:textSize="16dp" />
+        <TextView
+            android:id="@+id/tvClose"
+            android:layout_width="0dp"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="灯光（关）"
+            android:textSize="16dp" />
         <View style="@style/VLine" />
 
         <ImageView

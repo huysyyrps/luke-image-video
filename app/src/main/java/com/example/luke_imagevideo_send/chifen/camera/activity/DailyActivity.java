@@ -20,7 +20,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,11 +72,13 @@ public class DailyActivity extends BaseActivity {
     }
 
     public void setAdapter() {
-        baseRecyclerAdapter = new BaseRecyclerAdapter<Setting>(DailyActivity.this, R.layout.bluetooth_device_name_item, settingList) {
+        baseRecyclerAdapter = new BaseRecyclerAdapter<Setting>(DailyActivity.this, R.layout.activity_daily_item, settingList) {
             @Override
             public void convert(BaseViewHolder holder, final Setting setting) {
                 if (setting.getData().getDate() != null) {
-                    holder.setText(R.id.textView, setting.getData().getDate());
+                    holder.setText(R.id.tvTime, checkDate(setting.getData().getDate()));
+                    holder.setText(R.id.tvMax, setting.getData().getMac());
+                    holder.setText(R.id.tvIp, setting.getData().getIp());
                 }
             }
         };
@@ -93,4 +99,14 @@ public class DailyActivity extends BaseActivity {
     protected void rightClient() {
 
     }
+
+    public static String checkDate(String s){
+        SimpleDateFormat sdf1=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
+        ParsePosition pos=new ParsePosition(0);
+        Date d=sdf1.parse(s,pos);
+        System.out.println(d);
+        SimpleDateFormat sdf2=new SimpleDateFormat("yyyy年MM月dd日hh时mm分ss秒");
+        return sdf2.format(d);
+    }
+
 }

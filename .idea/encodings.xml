@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/LoginActivity.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/cehouyi/module/DataContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/AlertDialogLoginCallBack.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/BaseEView.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/BaseObserverNoEntry1.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/JudgePhone.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/MD5.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/NetworkTest.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/network/CookieReadInterceptor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/network/CookiesSaveInterceptor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/network/NoCookieReadInterceptor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/network/NoCookiesSaveInterceptor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/CustomDatePicker.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/CustomDatePickerDay.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/CustomDatePickerMin.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/CustomDatePickerMinS.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/CustomDatePickerMonth.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/utils/time_select/DatePickerView.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/activity/CheckPassWordActivity.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/activity/RegisterActivity.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/bean/CheckPassWord.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/bean/Login.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/bean/Register.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/CheckPassWordContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/LoginContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/RegisterContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/TokenTestContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/CheckPassWordPresenter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/LoginPresenter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/RegisterPresenter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/TokenTestPresenter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/color/radionbutton_select.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_top.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_forgrt_password.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/custom_date_picker.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/down.xml" charset="GBK" />
+  </component>
+</project>

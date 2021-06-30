@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         } catch (Exception e) {
             e.printStackTrace();
         }
-        address = "http://" + address + ":8080?action=stream";
+        address = "http://" + address + ":8080";
         webView.loadUrl(address);
         webView.setWebViewClient(new WebViewClient() {
             @Override

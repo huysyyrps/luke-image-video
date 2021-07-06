@@ -44,7 +44,7 @@ public class SendSelectActivity extends AppCompatActivity {
     private RelativeLayout relativeLayout;
     private ImageView ivRight;
     private TextView tvHeader;
-    private EditText etCompName, etWorkName, etWorkCode;
+    private EditText etProject, etWorkName, etWorkCode;
     //富有动感的Sheet弹窗
     private SweetSheet sheet;
     Intent intent;
@@ -100,7 +100,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
                 }
             });
-            mHandler.sendEmptyMessageDelayed(0, 2000);
+            mHandler.sendEmptyMessageDelayed(0, 1500);
         } else {
             finish();
             System.exit(0);
@@ -118,7 +118,7 @@ public class SendSelectActivity extends AppCompatActivity {
         new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         relativeLayout = findViewById(R.id.relativeLayout);
         tvHeader = findViewById(R.id.tv_tittle);
-        etCompName = findViewById(R.id.etCompName);
+        etProject = findViewById(R.id.etProject);
         etWorkName = findViewById(R.id.etWorkName);
         etWorkCode = findViewById(R.id.etWorkCode);
         etWorkCode = findViewById(R.id.etWorkCode);
@@ -131,7 +131,7 @@ public class SendSelectActivity extends AppCompatActivity {
             }
         });
 
-        etCompName.addTextChangedListener(new TextWatcher() {
+        etProject.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -144,8 +144,8 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etCompName.getText().length()>=20){
-                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入20字", Toast.LENGTH_SHORT).show();
+                if (etProject.getText().length()>=15){
+                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -163,8 +163,8 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etWorkCode.getText().length()>20){
-                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入20字", Toast.LENGTH_SHORT).show();
+                if (etWorkCode.getText().length()>15){
+                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -182,8 +182,8 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etWorkName.getText().length()>20){
-                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入20字", Toast.LENGTH_SHORT).show();
+                if (etWorkName.getText().length()>15){
+                    Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -226,22 +226,25 @@ public class SendSelectActivity extends AppCompatActivity {
             @Override
             public boolean onItemClick(int position, MenuEntity menuEntity) {
                 //根据返回值, true 会关闭 SweetSheet ,false 则不会
-                sharePreferencesUtils.setString(SendSelectActivity.this, "compName", etCompName.getText().toString());
+                sharePreferencesUtils.setString(SendSelectActivity.this, "project", etProject.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workCode", etWorkCode.getText().toString());
-                if (etCompName.getText().toString().equals("")){
+                if (etProject.getText().toString().trim().equals("")){
                     Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-                }else if (etWorkCode.getText().toString().equals("")){
-                    Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
-                }else if (etWorkName.getText().toString().equals("")){
+                }else if (etWorkCode.getText().toString().trim().equals("")){
+                    Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+                }else if (etWorkName.getText().toString().trim().equals("")){
                     Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
                 }else {
                     if (menuEntity.title.equals("本地存储")) {
                         sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                         intent = new Intent(SendSelectActivity.this, MainActivity.class);
-                        intent.putExtra("etCompName", etCompName.getText().toString());
+                        intent.putExtra("project", etProject.getText().toString());
                         intent.putExtra("etWorkName", etWorkName.getText().toString());
                         intent.putExtra("etWorkCode", etWorkCode.getText().toString());
+                        etProject.setText("");
+                        etWorkCode.setText("");
+                        etWorkName.setText("");
                         startActivity(intent);
                     } else if (menuEntity.title.equals("实时上传")) {
 //                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);

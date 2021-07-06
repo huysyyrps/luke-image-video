@@ -158,7 +158,6 @@
             <View style="@style/Line"/>
 
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/llCSContext"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -183,8 +182,7 @@
                     android:layout_marginRight="20dp"
                     android:src="@drawable/go"/>
             </LinearLayout>
-            <View style="@style/Line"
-                android:visibility="gone"/>
+            <View style="@style/Line"/>
 
             <LinearLayout
                 android:id="@+id/llCFContext"
@@ -214,7 +212,6 @@
             <View style="@style/Line"/>
 
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/llCXContext"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -239,8 +236,7 @@
                     android:layout_marginRight="20dp"
                     android:src="@drawable/go"/>
             </LinearLayout>
-            <View style="@style/Line"
-                android:visibility="gone"/>
+            <View style="@style/Line"/>
 
             <LinearLayout
                 android:id="@+id/llDaily"

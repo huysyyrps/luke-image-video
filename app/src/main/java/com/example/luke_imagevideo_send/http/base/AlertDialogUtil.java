@@ -248,7 +248,7 @@ public class AlertDialogUtil {
         }
     }
 
-    public void showImageNameSelect(final DialogCallBack alertDialogCallBack) {
+    public void showImageNameSelect(final DialogCallBackTwo alertDialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
             dialog.setCancelable(false);
@@ -262,15 +262,14 @@ public class AlertDialogUtil {
             tvYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    alertDialogCallBack.confirm(editText.getText().toString(),dialog);
+                    alertDialogCallBack.confirm(editText.getText().toString(),dialog,editText);
                 }
             });
 
             tvCover.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialog.dismiss();
-                    alertDialogCallBack.cancel();
+                    alertDialogCallBack.cancel(editText.getText().toString(),dialog);
                 }
             });
 

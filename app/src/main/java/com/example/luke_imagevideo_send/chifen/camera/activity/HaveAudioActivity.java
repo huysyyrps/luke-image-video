@@ -3,6 +3,7 @@ package com.example.luke_imagevideo_send.chifen.camera.activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.camera.bean.HaveAudio;
 import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
 import com.example.luke_imagevideo_send.chifen.camera.module.HaveVideoContract;
 import com.example.luke_imagevideo_send.chifen.camera.presenter.HaveVideoPresenter;
@@ -25,6 +27,7 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
@@ -51,17 +54,19 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     Header header;
     @BindView(R.id.pullToRefreshLayout)
     PullToRefreshLayout pullToRefreshLayout;
-    List<File> imagePaths = new ArrayList<>();
-    List<File> selectList = new ArrayList<>();
+    List<HaveAudio> imagePaths = new ArrayList<>();
+    List<HaveAudio> selectList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
+    SharePreferencesUtils sharePreferencesUtils;
     private SVProgressHUD mSVProgressHUD;
     private int startNum = 0;
-    private int lastNum = 12;
+    private int lastNum = 9;
     private int allNum;
     File[] files;
     File[] files1;
 
     private HaveVideoPresenter haveVideoPresenter;
+    private String project = "", workName = "", workCode = "",compName = "",device = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,22 +74,26 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
         header.setTvTitle("有声视频");
+        sharePreferencesUtils = new SharePreferencesUtils();
+        project = sharePreferencesUtils.getString(HaveAudioActivity.this,"project","");
+        workName = sharePreferencesUtils.getString(HaveAudioActivity.this,"workName","");
+        workCode = sharePreferencesUtils.getString(HaveAudioActivity.this,"workCode","");
         haveVideoPresenter = new HaveVideoPresenter(this, this);
         mSVProgressHUD = new SVProgressHUD(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(HaveAudioActivity.this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        baseRecyclerAdapter = new BaseRecyclerAdapter<File>(HaveAudioActivity.this, R.layout.album_item, imagePaths) {
+        baseRecyclerAdapter = new BaseRecyclerAdapter<HaveAudio>(HaveAudioActivity.this, R.layout.album_item, imagePaths) {
             @Override
-            public void convert(BaseViewHolder holder, final File o) {
-                holder.setBitmap(R.id.imageView, getRingBitmap(o));
+            public void convert(BaseViewHolder holder, final HaveAudio haveAudio) {
+                holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
                 holder.setVisitionTextView(R.id.tvTime);
-                holder.setText( R.id.tvName, o.getName()+"");
-                holder.setText(R.id.tvTime, getRingDuring(o));
+                holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
+                holder.setText(R.id.tvTime, haveAudio.getTime());
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(HaveAudioActivity.this, SeeImageOrVideoActivity.class);
-                        intent.putExtra("path", o.getAbsolutePath());
+                        intent.putExtra("path", haveAudio.getFile().getAbsolutePath());
                         intent.putExtra("tag", "video");
                         startActivity(intent);
                     }
@@ -93,14 +102,20 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (selectList.contains(o)) {
-                            selectList.remove(o);
+                        if (selectList.contains(haveAudio.getFile())) {
+                            selectList.remove(haveAudio.getFile());
+                            if (selectList.size()==0){
+                                header.setTvTitle("有声视频");
+                            }else {
+                                header.setTvTitle("有声视频"+"("+selectList.size()+"/3)");
+                            }
                         } else {
                             if (selectList.size() >= 3) {
-                                holder.setCheckBoxFalse( R.id.cbSelect);
+                                holder.setCheckBoxFalse(R.id.cbSelect);
                                 Toast.makeText(HaveAudioActivity.this, "最多只能选择3个视频", Toast.LENGTH_SHORT).show();
                             } else {
-                                selectList.add(o);
+                                selectList.add(haveAudio);
+                                header.setTvTitle("有声视频"+"("+selectList.size()+"/3)");
                             }
                         }
                     }
@@ -112,7 +127,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
             @Override
             public void refresh() {
                 startNum = 0;
-                lastNum = 12;
+                lastNum = 9;
                 imagePaths.clear();
                 setData();
             }
@@ -125,7 +140,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                     pullToRefreshLayout.setCanLoadMore(false);
                 } else if (lastNum < allNum) {
                     startNum = lastNum;
-                    lastNum += 12;
+                    lastNum += 9;
                     if (lastNum >= allNum) {
                         lastNum = allNum;
                     }
@@ -137,7 +152,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/");
             }
         }).start();
     }
@@ -145,7 +160,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
 //        File file = new File(path);
-        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/");
         files = file.listFiles();
         if (files != null) {
             allNum = files.length;
@@ -159,17 +174,27 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         try {
             if (allNum > 12) {
                 for (int i = startNum; i < lastNum; i++) {
-                    Log.e("XXX", getRingDuring(files[i]));
-                    if (getRingDuring(files[i]) != null && !getRingDuring(files[i]).equals("null")) {
-                        imagePaths.add(files[i]);
+                    String longTime = getRingDuring(files[i]);
+                    HaveAudio haveAudio = new HaveAudio();
+                    if (longTime != null && !longTime.equals("null")) {
+                        haveAudio.setFile(files[i]);
+                        haveAudio.setTime(longTime);
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_imageloding);
+                        haveAudio.setBitmap(bitmap);
                     }
+                    imagePaths.add(haveAudio);
                 }
             } else {
                 for (int i = startNum; i < files.length + 1; i++) {
-                    Log.e("XXX", getRingDuring(files[i]));
-                    if (getRingDuring(files[i]) != null && !getRingDuring(files[i]).equals("null")) {
-                        imagePaths.add(files[i]);
+                    String longTime = getRingDuring(files[i]);
+                    HaveAudio haveAudio = new HaveAudio();
+                    if (longTime != null && !longTime.equals("null")) {
+                        haveAudio.setFile(files[i]);
+                        haveAudio.setTime(longTime);
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_imageloding);
+                        haveAudio.setBitmap(bitmap);
                     }
+                    imagePaths.add(haveAudio);
                 }
                 lastNum = allNum;
                 pullToRefreshLayout.finishLoadMore();
@@ -192,14 +217,34 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 case Constant.TAG_ONE:
                     baseRecyclerAdapter.notifyDataSetChanged();
                     mSVProgressHUD.dismiss();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setImage();
+                        }
+                    }).start();
                     break;
                 case Constant.TAG_TWO:
                     Toast.makeText(HaveAudioActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
                     mSVProgressHUD.dismiss();
                     break;
+                case Constant.TAG_THERE:
+                    baseRecyclerAdapter.notifyDataSetChanged();
+                    break;
             }
         }
     };
+
+    private void setImage() {
+        for (int i = 0; i < imagePaths.size(); i++) {
+            HaveAudio haveAudio = new HaveAudio();
+            haveAudio.setFile(imagePaths.get(i).getFile());
+            haveAudio.setTime(imagePaths.get(i).getTime());
+            haveAudio.setBitmap(getRingBitmap(imagePaths.get(i).getFile()));
+            imagePaths.set(i,haveAudio);
+        }
+        handler.sendEmptyMessage(Constant.TAG_THERE);
+    }
 
     @OnClick(R.id.ivSend)
     public void onClick() {
@@ -211,13 +256,16 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 //            Gson gson = new Gson();
 //            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), gson.toJson(map));
 //            haveVideoPresenter.getHaveVideo(requestBody);
-            MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
-            for (int i=0;i<selectList.size();i++){
-                RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i));
-                builder.addFormDataPart("file"+i,selectList.get(i).getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+            for (int i = 0; i < selectList.size(); i++) {
+                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
+                builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
-            builder.addFormDataPart("company","shangjia002");
-            builder.addFormDataPart("device" , "cehouyi001");
+            builder.addFormDataPart("company", "abc");
+//            builder.addFormDataPart("project", "abc123");
+            builder.addFormDataPart("device", "abc1234");
+//            builder.addFormDataPart("workpiece", "abc12345");
+//            builder.addFormDataPart("voice", "有声");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
         }
@@ -251,7 +299,6 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     /**
      * 获取视频第一帧图片
-     *
      * @param mUri
      * @return
      */
@@ -301,6 +348,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     @Override
     public void setHaveVideo(HaveVideoUp HaveVideoUp) {
         Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
+        header.setTvTitle("有声视频");
     }
 
     @Override
@@ -320,14 +368,16 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     @Override
     protected void rightClient() {
-        if (selectList.size()==0){
+        if (selectList.size() == 0) {
             Toast.makeText(this, "请先选择想要删除的文件", Toast.LENGTH_SHORT).show();
-        }else {
-            for (File file : selectList){
-                imagePaths.remove(file);
-                file.delete();
+        } else {
+            for (HaveAudio haveAudio : selectList) {
+                imagePaths.remove(haveAudio);
+                haveAudio.getFile().delete();
             }
-            baseRecyclerAdapter.notifyDataSetChanged();
+            selectList.clear();
+            recyclerView.setAdapter(null);
+            recyclerView.setAdapter(baseRecyclerAdapter);
         }
     }
 }

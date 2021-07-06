@@ -44,7 +44,6 @@ public class PhotoPresenter implements PhotoContract.presenter {
                         }else {
                             view.setPhotoMessage("上传失败");
                         }
-
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {

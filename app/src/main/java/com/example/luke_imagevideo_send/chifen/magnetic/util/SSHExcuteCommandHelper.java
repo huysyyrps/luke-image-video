@@ -47,7 +47,7 @@ public class SSHExcuteCommandHelper {
         } catch (JSchException e) {
             e.printStackTrace();
             Looper.prepare();
-            Toast.makeText(MyApplication.getContext(), "IP获取为空,请检查设备与手机是否建立网络连接", Toast.LENGTH_LONG).show();
+            Toast.makeText(MyApplication.getContext(), "IP获取为空,请检查wifi板设备与手机是否建立网络连接", Toast.LENGTH_LONG).show();
             Looper.loop();
             return;
         }

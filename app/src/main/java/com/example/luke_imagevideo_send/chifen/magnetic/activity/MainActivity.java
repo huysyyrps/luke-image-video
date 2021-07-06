@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -26,6 +27,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,6 +38,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,7 +66,7 @@ import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
-import com.example.luke_imagevideo_send.http.base.DialogCallBack;
+import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
 import com.google.gson.Gson;
@@ -170,7 +173,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     private String haveAudio = "noAudio";
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
-    private String compName = "", workName = "", workCode = "";
+    private String project = "", workName = "", workCode = "";
     boolean rbVideoV = true;
     boolean rbSoundV = true;
     private int clickNum = 0;
@@ -216,14 +219,14 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
 
         Intent intent = getIntent();
-        compName = intent.getStringExtra("etCompName");
+        project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        if (compName.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
             linearLayout1.setVisibility(View.GONE);
         }
-        if (!compName.trim().equals("")) {
-            tvCompName.setText(compName);
+        if (!project.trim().equals("")) {
+            tvCompName.setText(project);
         }
         if (!workName.trim().equals("")) {
             tvWorkName.setText(workName);
@@ -338,17 +341,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
             , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack,R.id.tvOpen, R.id.tvClose})
+            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
                 radioGroup.setVisibility(View.GONE);
+                new BottomUI().hideBottomUIMenu(this.getWindow());
                 name = getNowDate();
-//                View view = view1.getRootView();
-//                view.setDrawingCacheEnabled(true);
-//                view.buildDrawingCache();
-//                mBitmap = view.getDrawingCache();
-
                 isScreenshot = true;
                 if (mMediaProjection != null) {
                     setUpVirtualDisplay();
@@ -364,13 +363,10 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             case R.id.rbVideo:
                 haveAudio = "noAudio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
-                name = format.format(new Date()) + ".mp4";
+                name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
                 alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
                     @Override
                     public void confirm(String name1) {
-                        if (!name1.equals("")) {
-                            name = "/" + name1 + ".mp4";
-                        }
                     }
 
                     @Override
@@ -381,29 +377,23 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     @Override
                     public void save(String name1) {
                         if (!name1.equals("")) {
-                            name = name1 + ".mp4";
+                            name = name1 + "(" + workCode + ")" + ".mp4";
                         }
                         startVideoCapturing(view1);
                     }
 
                     @Override
                     public void checkName(String name1) {
-                        if (!name1.equals("")) {
-                            name = "/" + name1 + ".mp4";
-                        }
                     }
                 });
                 break;
             case R.id.rbSound:
                 haveAudio = "Audio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
-                name = format.format(new Date()) + ".mp4";
+                name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
                 alertDialogUtil.showImageDialog(new AlertDialogCallBack() {
                     @Override
                     public void confirm(String name1) {
-                        if (!name1.equals("")) {
-                            name = "/" + name1 + ".mp4";
-                        }
                     }
 
                     @Override
@@ -414,19 +404,15 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     @Override
                     public void save(String name1) {
                         if (!name1.equals("")) {
-                            name = name1 + ".mp4";
+                            name = name1 + "(" + workCode + ")" + ".mp4";
                         }
                         startVideoCapturing(view1);
                     }
 
                     @Override
                     public void checkName(String name1) {
-                        if (!name1.equals("")) {
-                            name = "/" + name1 + ".mp4";
-                        }
                     }
                 });
-
                 break;
             case R.id.rbSuspend:
                 new BottomUI().BottomUIMenu(this.getWindow());
@@ -513,7 +499,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     }
 
-
     private void startCapture() {
         Image image = mImageReader.acquireLatestImage();
         if (image == null) {
@@ -537,10 +522,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
                 @Override
                 public void confirm(String name1) {
-                    if (!name1.equals("")) {
-                        name = name1 + ".jpg";
-                    }
-                    saveImg(name, MainActivity.this);
                 }
 
                 @Override
@@ -551,17 +532,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 @Override
                 public void save(String name1) {
                     if (!name1.equals("")) {
-                        name = name1 + ".jpg";
+                        name = name1 + "(" + workCode + ")" + ".png";
                     }
                     saveImg(name, MainActivity.this);
                 }
 
                 @Override
                 public void checkName(String name1) {
-                    if (!name1.equals("")) {
-                        name = name1 + ".jpg";
-                    }
-                    saveImg(name, MainActivity.this);
                 }
             });
         } else {
@@ -713,8 +690,10 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      * 获取当前时间,用来给文件夹命名
      */
     private String getNowDate() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDateFormat.format(new Date()) + ".jpg";
+        long time = System.currentTimeMillis();//获取系统时间的10位的时间戳
+        String str = String.valueOf(time);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HHmmss");
+        return str + "(" + workCode + ")" + ".png";
     }
 
     /**
@@ -722,8 +701,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      */
     public boolean saveImg(String name, Context context) {
         try {
-            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/";//图片保存的文件夹名
-            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/");
+            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/";//图片保存的文件夹名
+            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/");
             //如果不存在  就mkdirs()创建此文件夹
             if (!file.exists()) {
                 file.mkdirs();
@@ -735,16 +714,12 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 return false;
             }
             FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
-
-
 //            int bmpWidth=mBitmap.getWidth();
 //            int bmpHeight=mBitmap.getHeight();
 //            /* 产生reSize后的Bitmap对象 */
 //            Matrix matrix = new Matrix();
 //            matrix.postScale(1920, 1080);
 //            mBitmap = Bitmap.createBitmap(mBitmap,0,0,bmpWidth, bmpHeight,matrix,true);
-
-
             mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
             Uri uri = Uri.fromFile(mFile);                                  //获得图片的uri
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
@@ -753,53 +728,74 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             //隐藏image显示webview
             Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
             radioGroup.setVisibility(View.VISIBLE);
+            new BottomUI().BottomUIMenu(this.getWindow());
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             radioGroup.setVisibility(View.VISIBLE);
+            new BottomUI().BottomUIMenu(this.getWindow());
         } catch (IOException e) {
             e.printStackTrace();
             radioGroup.setVisibility(View.VISIBLE);
+            new BottomUI().BottomUIMenu(this.getWindow());
         }
         return false;
     }
 
     private void selectDialog(File mFile, String name) {
-        alertDialogUtil.showImageNameSelect(new DialogCallBack() {
-
+        alertDialogUtil.showImageNameSelect(new DialogCallBackTwo() {
             @Override
-            public void confirm(String name1, Dialog dialog) {
-                if (name1.equals("")) {
-                    Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
+            public void confirm(String name1, Dialog dialog, EditText editText) {
+                if (name1.trim().equals("")) {
+                    SpannableString s = new SpannableString("请输入文件名");//这里输入自己想要的提示文字
+                    editText.setText("");
+                    editText.setHint(s);
                 } else {
-                    if (name.equals(name1 + ".jpg")) {
-                        Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
+                    if (name.equals(name1 + ".png")) {
+                        SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
+                        editText.setText("");
+                        editText.setHint(s);
                     } else {
-                        saveImg(name1 + ".jpg", MainActivity.this);
+                        saveImg(name1 + "(" + workCode + ")" + ".png", MainActivity.this);
                         dialog.dismiss();
                     }
                 }
             }
 
             @Override
-            public void cancel() {
-                mFile.delete();
-                saveImg(name, MainActivity.this);
+            public void cancel(String name2, Dialog dialog) {
+                Log.e("XXX", name2);
+                Log.e("XXX", name);
+                if (name.equals(name2 + "(" + workCode + ")" + ".mp4")) {
+                    dialog.dismiss();
+                    mFile.delete();
+                    saveImg(name, MainActivity.this);
+                }else if (name2.equals("")){
+                    dialog.dismiss();
+                    mFile.delete();
+                    saveImg(name, MainActivity.this);
+                } else {
+                    Toast.makeText(MainActivity.this, "不存在重复文件，请点击保存按钮", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     private void selectVideoDialog(File mFile, String name2, View view1) {
-        alertDialogUtil.showImageNameSelect(new DialogCallBack() {
+        alertDialogUtil.showImageNameSelect(new DialogCallBackTwo() {
 
             @Override
-            public void confirm(String name1, Dialog dialog) {
-                if (name1.equals("")) {
-                    Toast.makeText(MainActivity.this, "请输入文件名", Toast.LENGTH_SHORT).show();
+            public void confirm(String name1, Dialog dialog, EditText editText) {
+                if (name1.trim().equals("")) {
+                    SpannableString s = new SpannableString("请输入文件名");//这里输入自己想要的提示文字
+                    editText.setText("");
+                    editText.setHint(s);
                 } else {
-                    name1 = name1 + ".mp4";
+                    name1 = name1 + "(" + workCode + ")" + ".mp4";
                     if (name.equals(name1)) {
-                        Toast.makeText(MainActivity.this, "文件名已存在", Toast.LENGTH_SHORT).show();
+                        SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
+                        editText.setText("");
+                        editText.setHint(s);
                     } else {
                         name = name1;
                         startCapturing(mMediaProjection, view1);
@@ -809,9 +805,20 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             }
 
             @Override
-            public void cancel() {
-                mFile.delete();
-                startCapturing(mMediaProjection, view1);
+            public void cancel(String name2, Dialog dialog) {
+                Log.e("XXX", name2);
+                Log.e("XXX", name);
+                if (name.equals(name2 + "(" + workCode + ")" + ".mp4")) {
+                    dialog.dismiss();
+                    mFile.delete();
+                    startCapturing(mMediaProjection, view1);
+                } else if (name2.equals("")){
+                    dialog.dismiss();
+                    mFile.delete();
+                    startCapturing(mMediaProjection, view1);
+                }else{
+                    Toast.makeText(MainActivity.this, "不存在重复文件，请点击保存按钮", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -908,13 +915,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
         File dir = null;
         if (haveAudio.equals("Audio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
             }
         } else if (haveAudio.equals("noAudio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
@@ -1027,13 +1034,17 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         super.onActivityResult(requestCode, resultCode, backdata);
         switch (requestCode) {
             case REQUEST_MEDIA_PROJECTION:
-                MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
-                if (mediaProjection == null) {
-                    Log.e("@@", "media projection is null");
-                    return;
+                if (resultCode == Activity.RESULT_OK) {
+                    MediaProjection mediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, backdata);
+                    if (mediaProjection == null) {
+                        Log.e("@@", "media projection is null");
+                        return;
+                    }
+                    mMediaProjection = mediaProjection;
+                    mMediaProjection.registerCallback(mProjectionCallback, new Handler());
+                } else {
+                    finish();
                 }
-                mMediaProjection = mediaProjection;
-                mMediaProjection.registerCallback(mProjectionCallback, new Handler());
                 break;
             case Constant.TAG_TWO:
                 if (resultCode == Constant.TAG_ONE) {

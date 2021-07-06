@@ -36,7 +36,14 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseVi
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
+        getItemViewType(position);
         convert(holder, mData.get(position));
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
 

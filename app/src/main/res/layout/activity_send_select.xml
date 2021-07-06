@@ -57,12 +57,12 @@
                     android:textColor="@color/white"
                     android:textSize="17dp" />
                 <EditText
-                    android:id="@+id/etCompName"
+                    android:id="@+id/etProject"
                     style="@style/EditText"
                     android:layout_weight="2.5"
                     android:hint="请填写工程名称"
                     android:textColor="@color/white"
-                    android:maxLength="20"
+                    android:maxLength="15"
                     android:textColorHint ="@color/white"/>
             </LinearLayout>
             <LinearLayout
@@ -85,7 +85,7 @@
                     android:layout_weight="2.5"
                     android:hint="请填写工件名称"
                     android:textColor="@color/white"
-                    android:maxLength="20"
+                    android:maxLength="15"
                     android:textColorHint ="@color/white"/>
             </LinearLayout>
             <LinearLayout
@@ -108,7 +108,7 @@
                     android:layout_weight="2.5"
                     android:hint="请填写工件编号"
                     android:textColor="@color/white"
-                    android:maxLength="20"
+                    android:maxLength="15"
                     android:textColorHint ="@color/white"/>
             </LinearLayout>
 
@@ -134,7 +134,7 @@
                     android:textSize="12dp"
                     android:textColor="@color/ziti"
                     android:lineHeight="17dp"
-                    android:text="\t\请在选择上传方式之前填写“工程名称”、“工件名称”、“工件编号”等信息，便于电脑端查找和分类."/>
+                    android:text="\t\请在选择“上传方式”之前填写“工程名称”、“工件名称”、“工件编号”等信息，便于电脑端查找和分类."/>
             </LinearLayout>
         </LinearLayout>
 

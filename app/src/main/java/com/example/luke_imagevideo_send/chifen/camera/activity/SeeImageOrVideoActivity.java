@@ -22,6 +22,9 @@ import com.example.luke_imagevideo_send.chifen.camera.util.FileUtils;
 import com.example.luke_imagevideo_send.chifen.camera.view.CustomerVideoView;
 import com.example.luke_imagevideo_send.chifen.camera.view.DrawView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,12 +53,18 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     ImageView ivStart;
     @BindView(R.id.ivPause)
     ImageView ivPause;
+    SharePreferencesUtils sharePreferencesUtils;
+    private String project = "", workName = "", workCode = "",compName = "",device = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
+        sharePreferencesUtils = new SharePreferencesUtils();
+        project = sharePreferencesUtils.getString(SeeImageOrVideoActivity.this,"project","");
+        workName = sharePreferencesUtils.getString(SeeImageOrVideoActivity.this,"workName","");
+        workCode = sharePreferencesUtils.getString(SeeImageOrVideoActivity.this,"workCode","");
         drawView.setCallback(this);
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -170,10 +179,10 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     }
 
     public void saveImage() {
-        String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/";//图片保存的文件夹名
+        String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/";
         String filename = dir + fileName;
-//        File file = new File(filename + ".jpg");
-//        file.delete();
+        File file = new File(filename + ".png");
+        file.delete();
         if (FileUtils.saveBitmap(filename, mBitmap, Bitmap.CompressFormat.PNG, 100)) {
             Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
             finish();

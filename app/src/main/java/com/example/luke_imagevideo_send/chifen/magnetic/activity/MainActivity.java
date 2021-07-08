@@ -751,13 +751,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     editText.setText("");
                     editText.setHint(s);
                 } else {
-                    if (name.equals(name1 + ".png")) {
+                    if (name.equals(name1+ "(" + workCode + ")" + ".png")) {
                         SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
                         editText.setText("");
                         editText.setHint(s);
                     } else {
-                        saveImg(name1 + "(" + workCode + ")" + ".png", MainActivity.this);
                         dialog.dismiss();
+                        saveImg(name1 + "(" + workCode + ")" + ".png", MainActivity.this);
                     }
                 }
             }
@@ -797,9 +797,9 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         editText.setText("");
                         editText.setHint(s);
                     } else {
+                        dialog.dismiss();
                         name = name1;
                         startCapturing(mMediaProjection, view1);
-                        dialog.dismiss();
                     }
                 }
             }

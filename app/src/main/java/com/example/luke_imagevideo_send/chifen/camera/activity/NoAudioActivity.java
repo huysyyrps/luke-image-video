@@ -121,6 +121,8 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
+        pullToRefreshLayout.setCanLoadMore(false);
+        pullToRefreshLayout.setCanRefresh(false);
         pullToRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
             public void refresh() {
@@ -171,6 +173,7 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
         try {
             if (allNum > 9) {
                 for (int i = startNum; i < lastNum; i++) {
+                    pullToRefreshLayout.setCanLoadMore(true);
                     String longTime = getRingDuring(files[i]);
                     HaveAudio haveAudio = new HaveAudio();
                     if (longTime != null && !longTime.equals("null")) {

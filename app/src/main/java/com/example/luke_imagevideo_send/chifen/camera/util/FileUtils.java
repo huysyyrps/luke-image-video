@@ -24,11 +24,11 @@ public class FileUtils {
         try {
             switch (format) {
                 case JPEG:
-                    file = new File(filePath + ".jpg");
+                    file = new File(filePath + ".png");
                     out = new FileOutputStream(file);
                     return bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
                 default:
-                    file = new File(filePath + ".jpg");
+                    file = new File(filePath + ".png");
                     out = new FileOutputStream(file);
                     return bitmap.compress(Bitmap.CompressFormat.PNG, quality, out);
             }

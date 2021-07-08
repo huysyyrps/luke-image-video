@@ -123,6 +123,8 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
+        pullToRefreshLayout.setCanLoadMore(false);
+        pullToRefreshLayout.setCanRefresh(false);
         pullToRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
             public void refresh() {
@@ -172,7 +174,8 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     private void setData() {
         try {
-            if (allNum > 12) {
+            if (allNum > 9) {
+                pullToRefreshLayout.setCanLoadMore(true);
                 for (int i = startNum; i < lastNum; i++) {
                     String longTime = getRingDuring(files[i]);
                     HaveAudio haveAudio = new HaveAudio();
@@ -198,7 +201,6 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 }
                 lastNum = allNum;
                 pullToRefreshLayout.finishLoadMore();
-                pullToRefreshLayout.setCanLoadMore(false);
             }
 
         } catch (Exception e) {
@@ -262,9 +264,9 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
             builder.addFormDataPart("company", "abc");
-//            builder.addFormDataPart("project", "abc123");
-            builder.addFormDataPart("device", "abc1234");
-//            builder.addFormDataPart("workpiece", "abc12345");
+//            builder.addFormDataPart("project", "abc93");
+            builder.addFormDataPart("device", "abc934");
+//            builder.addFormDataPart("workpiece", "abc9345");
 //            builder.addFormDataPart("voice", "有声");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
@@ -308,7 +310,8 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         try {
             if (mUri != null) {
                 mmr.setDataSource(mUri.getAbsolutePath());
-                bitmap = mmr.getFrameAtTime();//获得视频第一帧的Bitmap对象
+                //获得视频第一帧的Bitmap对象
+                bitmap = mmr.getFrameAtTime(1000*5);
             }
         } catch (Exception ex) {
             Log.e("XXX", ex.toString());

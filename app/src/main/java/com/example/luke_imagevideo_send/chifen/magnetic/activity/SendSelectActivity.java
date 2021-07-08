@@ -232,7 +232,7 @@ public class SendSelectActivity extends AppCompatActivity {
                 if (etProject.getText().toString().trim().equals("")){
                     Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
                 }else if (etWorkCode.getText().toString().trim().equals("")){
-                    Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
                 }else if (etWorkName.getText().toString().trim().equals("")){
                     Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
                 }else {

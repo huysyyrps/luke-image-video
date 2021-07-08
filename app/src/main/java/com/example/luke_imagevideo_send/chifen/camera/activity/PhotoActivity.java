@@ -129,6 +129,8 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
             }
         };
         recyclerView.setAdapter(baseRecyclerAdapter);
+        pullToRefreshLayout.setCanLoadMore(false);
+        pullToRefreshLayout.setCanRefresh(false);
         pullToRefreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
             public void refresh() {
@@ -184,6 +186,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     private void setData(){
         try {
             if (allNum > 24) {
+                pullToRefreshLayout.setCanLoadMore(true);
                 for (int i = startNum; i < lastNum; i++) {
                     if (checkIsImageFile(files[i].getPath()) && !files[i].getPath().equals("null")) {
                         imagePaths.add(files[i].getPath());
@@ -309,6 +312,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     @Override
     protected void onRestart() {
         super.onRestart();
+        baseRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override

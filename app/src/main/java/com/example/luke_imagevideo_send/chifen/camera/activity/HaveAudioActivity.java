@@ -75,6 +75,8 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         ButterKnife.bind(this);
         header.setTvTitle("有声视频");
         sharePreferencesUtils = new SharePreferencesUtils();
+        compName = "鲁科检测";
+        device = "磁探机";
         project = sharePreferencesUtils.getString(HaveAudioActivity.this,"project","");
         workName = sharePreferencesUtils.getString(HaveAudioActivity.this,"workName","");
         workCode = sharePreferencesUtils.getString(HaveAudioActivity.this,"workCode","");
@@ -263,11 +265,20 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
                 builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
-            builder.addFormDataPart("company", "abc");
-//            builder.addFormDataPart("project", "abc93");
-            builder.addFormDataPart("device", "abc934");
-//            builder.addFormDataPart("workpiece", "abc9345");
-//            builder.addFormDataPart("voice", "有声");
+//            builder.addFormDataPart("company", compName);
+//            builder.addFormDataPart("project", project);
+//            builder.addFormDataPart("device", device);
+//            builder.addFormDataPart("workpiece", workName);
+//            builder.addFormDataPart("workpiecenum", workCode);
+//            builder.addFormDataPart("voice", "audiovideo");
+//            builder.addFormDataPart("company", compName);
+//            builder.addFormDataPart("project", project);
+//            builder.addFormDataPart("device", device);
+//            builder.addFormDataPart("workpiece", workName);
+//            builder.addFormDataPart("workpiecenum", workCode);
+//            builder.addFormDataPart("voice", "audiovideo");
+            builder.addFormDataPart("company","shangjia002");
+            builder.addFormDataPart("device" , "cehouyi001");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
         }

@@ -75,6 +75,8 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
         ButterKnife.bind(this);
         header.setTvTitle("无声视频");
         sharePreferencesUtils = new SharePreferencesUtils();
+        compName = "鲁科检测";
+        device = "磁探机";
         project = sharePreferencesUtils.getString(NoAudioActivity.this,"project","");
         workName = sharePreferencesUtils.getString(NoAudioActivity.this,"workName","");
         workCode = sharePreferencesUtils.getString(NoAudioActivity.this,"workCode","");
@@ -256,11 +258,14 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
                 RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i).getFile());
                 builder.addFormDataPart("file"+i,selectList.get(i).getFile().getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
-            builder.addFormDataPart("company", "abc");
-            builder.addFormDataPart("project", "abc123");
-            builder.addFormDataPart("device", "abc1234");
-            builder.addFormDataPart("workpiece", "abc12345");
-            builder.addFormDataPart("voice", "有声");
+//            builder.addFormDataPart("company", compName);
+//            builder.addFormDataPart("project", project);
+//            builder.addFormDataPart("device", device);
+//            builder.addFormDataPart("workpiece", workName);
+//            builder.addFormDataPart("workpiecenum", workCode);
+//            builder.addFormDataPart("voice", "silentvideo");
+            builder.addFormDataPart("company","shangjia002");
+            builder.addFormDataPart("device" , "cehouyi001");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
         }

@@ -267,22 +267,12 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 }
             }
             HashMap<String, String> map = new HashMap<String, String>();
-//            map.put("company" , "luke");
-//            map.put("project" , "11111");
-//            map.put("device" , "LK500");
-//            map.put("workpiece" , "1111");
-//            map.put("workpiecenum" , "11111");
-//            map.put("name" , "2021-07-03 14/31/00.png");
-//            map.put("pic" , base);
-//            map.put("company" , compName);
-//            map.put("project" , project);
-//            map.put("device" , device);
-//            map.put("workpiece" , workName);
-//            map.put("workpiecenum" , workCode);
-//            map.put("name" , imageName);
-//            map.put("pic" , base);
-            map.put("company" , "luke");
-            map.put("device" , "LK500");
+            map.put("company" , compName);
+            map.put("project" , project);
+            map.put("device" , device);
+            map.put("workpiece" , workName);
+            map.put("workpiecenum" , workCode);
+            map.put("name" , imageName);
             map.put("pic" , base);
             Gson gson = new Gson();
             String s = gson.toJson(map);

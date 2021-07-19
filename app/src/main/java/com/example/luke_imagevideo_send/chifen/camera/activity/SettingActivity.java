@@ -2,6 +2,8 @@ package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -9,17 +11,26 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.MenuAlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
+import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.google.gson.Gson;
+import com.kaopiz.kprogresshud.KProgressHUD;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,10 +66,21 @@ public class SettingActivity extends BaseActivity {
     Intent intent;
     @BindView(R.id.llDaily)
     LinearLayout llDaily;
+    @BindView(R.id.tvZS)
+    TextView tvZS;
+    @BindView(R.id.llZSSetting)
+    LinearLayout llZSSetting;
+    @BindView(R.id.tvXS)
+    TextView tvXS;
+    @BindView(R.id.llXSSetting)
+    LinearLayout llXSSetting;
     private String address = "";
     Setting setting = new Setting();
     SharePreferencesUtils sharePreferencesUtils;
     Setting.DataBean dataBean = new Setting.DataBean();
+    List<String> listZS = new ArrayList<>();
+    List<String> listXS = new ArrayList<>();
+    private KProgressHUD progressHUD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +116,8 @@ public class SettingActivity extends BaseActivity {
             switchHG.setChecked(false);
             switchBG.setChecked(true);
         }
-
+        initListData();
         etTime.setText(auto_time);
-
     }
 
     @Override
@@ -112,6 +133,16 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void rightClient() {
 
+    }
+
+    private void initListData() {
+        listZS.add("20");
+        listZS.add("25");
+        listZS.add("30");
+
+        listXS.add("640x480");
+        listXS.add("960x540");
+        listXS.add("1280x640");
     }
 
     /**
@@ -174,22 +205,22 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext, R.id.llCXContext,R.id.llDaily})
+    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext, R.id.llCXContext, R.id.llDaily, R.id.llZSSetting, R.id.llXSSetting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.llCSContext:
                 intent = new Intent(this, CSContextActivity.class);
-                intent.putExtra("tag","超声文档");
+                intent.putExtra("tag", "超声文档");
                 startActivity(intent);
                 break;
             case R.id.llCFContext:
                 intent = new Intent(this, CFContextActivity.class);
-                intent.putExtra("tag","磁粉文档");
+                intent.putExtra("tag", "磁粉文档");
                 startActivity(intent);
                 break;
             case R.id.llCXContext:
                 intent = new Intent(this, CXContextActivity.class);
-                intent.putExtra("tag","射线文档");
+                intent.putExtra("tag", "射线文档");
                 startActivity(intent);
                 break;
             case R.id.llDaily:
@@ -198,12 +229,12 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.btnSure:
                 String time = etTime.getText().toString();
-                dataBean.setId(sharePreferencesUtils.getString(this,"id",""));
-                dataBean.setDate(sharePreferencesUtils.getString(this,"date",""));
-                dataBean.setMac(sharePreferencesUtils.getString(this,"mac",""));
-                dataBean.setPower(sharePreferencesUtils.getString(this,"power",""));
-                dataBean.setMode(sharePreferencesUtils.getString(this,"mode",""));
-                dataBean.setIp(sharePreferencesUtils.getString(this,"ip",""));
+                dataBean.setId(sharePreferencesUtils.getString(this, "id", ""));
+                dataBean.setDate(sharePreferencesUtils.getString(this, "date", ""));
+                dataBean.setMac(sharePreferencesUtils.getString(this, "mac", ""));
+                dataBean.setPower(sharePreferencesUtils.getString(this, "power", ""));
+                dataBean.setMode(sharePreferencesUtils.getString(this, "mode", ""));
+                dataBean.setIp(sharePreferencesUtils.getString(this, "ip", ""));
                 dataBean.setAuto_time(time);
 
                 setting.setData(dataBean);
@@ -218,11 +249,11 @@ public class SettingActivity extends BaseActivity {
                             SSHExcuteCommandHelper.writeBefor(address, "/write_data.sh", new SSHCallBack() {
                                 @Override
                                 public void confirm(String data) {
-                                    if (data!=null){
+                                    if (data != null) {
                                         SSHExcuteCommandHelper.writeBefor(address, obj2, new SSHCallBack() {
                                             @Override
                                             public void confirm(String data) {
-                                                Log.e("XXX",data);
+                                                Log.e("XXX", data);
 //                                            new SSHExcuteCommandHelper(address).disconnect();
                                                 Gson gson = new Gson();
 //                                                Setting setting = gson.fromJson(data,Setting.class);
@@ -261,6 +292,84 @@ public class SettingActivity extends BaseActivity {
                 //        setResult(Constant.TAG_ONE, intent);
                 //        finish();
                 break;
+            case R.id.llZSSetting:
+                new AlertDialogUtil(SettingActivity.this).showListStringDialog("设置选项", listZS, new MenuAlertDialogCallBack() {
+                    @Override
+                    public void confirm(String filed, String name) {
+                        ShowDialog("uci set mjpg-streamer.core.fps=" + name, "uci commit", "/etc/init.d/mjpg-streamer restart");
+                    }
+                });
+                break;
+            case R.id.llXSSetting:
+                new AlertDialogUtil(SettingActivity.this).showListStringDialog("设置选项", listXS, new MenuAlertDialogCallBack() {
+                    @Override
+                    public void confirm(String filed, String name) {
+                        ShowDialog("uci set mjpg-streamer.core.resolution=" + name, "uci commit", "/etc/init.d/mjpg-streamer restart");
+                    }
+                });
+                break;
         }
     }
+
+    private void ShowDialog(String data1, String data2, String data3) {
+        try {
+            address = new getIp().getConnectIp();
+            progressHUD = ProgressHUD.show(SettingActivity.this);
+            progressHUD.setLabel("设置中");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            SSHExcuteCommandHelper.writeBefor(address, data2, new SSHCallBack() {
+                                @Override
+                                public void confirm(String data) {
+                                    SSHExcuteCommandHelper.writeBefor(address, data3, new SSHCallBack() {
+                                        @Override
+                                        public void confirm(String data) {
+                                            handler.sendEmptyMessage(Constant.TAG_ONE);
+                                        }
+
+                                        @Override
+                                        public void error(String s) {
+                                            handler.sendEmptyMessage(Constant.TAG_TWO);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void error(String s) {
+                                    handler.sendEmptyMessage(Constant.TAG_TWO);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            handler.sendEmptyMessage(Constant.TAG_TWO);
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.TAG_ONE:
+                    Toast.makeText(SettingActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+                    finish();
+                    break;
+                case Constant.TAG_TWO:
+                    Toast.makeText(SettingActivity.this, "设置失败", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+            }
+        }
+    };
 }

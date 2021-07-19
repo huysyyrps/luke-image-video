@@ -2,10 +2,12 @@ package com.example.luke_imagevideo_send.http.base;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -166,6 +168,38 @@ public class AlertDialogUtil {
         }
     }
 
+    public void showListStringDialog(String description, List<String> list3, final MenuAlertDialogCallBack alertDialogCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new AlertDialog.Builder(context).create();
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_list, null, false);
+            RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(manager);
+            BaseRecyclerAdapter mAdapter = new BaseRecyclerAdapter<String>(context, R.layout.dialog_setting_item, list3) {
+                @Override
+                public void convert(BaseViewHolder holder, String string) {
+                    holder.setText(R.id.tvData, string);
+                    holder.setOnClickListener(R.id.tvData, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            alertDialogCallBack.confirm(string,string);
+                        }
+                    });
+                }
+            };
+            recyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+            dialog.getWindow().setContentView(view);
+        }
+    }
+
     public void showSmallDialog(String description) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new AlertDialog.Builder(context).create();
@@ -270,6 +304,60 @@ public class AlertDialogUtil {
                 @Override
                 public void onClick(View v) {
                     alertDialogCallBack.cancel(editText.getText().toString(),dialog);
+                }
+            });
+
+            dialog.getWindow().setContentView(view);
+        }
+    }
+
+    public void showWifiSetting(Context context,String ssid,String pwd,final DialogCallBack dialogCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new Dialog(context);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_wifisetting, null, false);
+            TextView tvSSID = (TextView) view.findViewById(R.id.tvSSID);
+            TextView tvPWD = (TextView) view.findViewById(R.id.tvPWD);
+            Button btnCapySSID = (Button) view.findViewById(R.id.btnCapySSID);
+            Button btnCopyPwd = (Button) view.findViewById(R.id.btnCapyPWD);
+            TextView tvSetting = (TextView) view.findViewById(R.id.tvSetting);
+            TextView tvCancle = (TextView) view.findViewById(R.id.tvCancle);
+
+            tvSSID.setText(ssid);
+            tvPWD.setText(pwd);
+
+            btnCapySSID.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setText(ssid);
+                }
+            });
+
+            btnCopyPwd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setText(pwd);
+                }
+            });
+
+
+            tvSetting.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogCallBack.confirm("",dialog);
+                }
+            });
+
+            tvCancle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    dialogCallBack.cancel();
                 }
             });
 

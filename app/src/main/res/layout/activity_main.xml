@@ -61,6 +61,11 @@
             style="@style/MainRadionButton"
             android:drawableLeft="@drawable/ic_setting"/>
 
+        <RadioButton
+            android:id="@+id/rbRefresh"
+            style="@style/MainRadionButton"
+            android:drawableLeft="@drawable/ic_refresh"/>
+
     </RadioGroup>
 
     <LinearLayout

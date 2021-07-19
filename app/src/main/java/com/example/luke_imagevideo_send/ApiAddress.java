@@ -16,7 +16,6 @@ public class ApiAddress {
     /**************************************个人中心************************************************/
     //获取图片验证码
     public final static String getVerifyCode = "getVerityCode.do";
-
     //登录
     public final static String login = "api/LoginAuth/Login";
     //图片上传https://172.16.18.73:5001/api/FileProccess/UpLoadPic

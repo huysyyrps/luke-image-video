@@ -1,4 +1,9 @@
 <resources>
+
+    <drawable name="color1">#F5B12A</drawable>
+
+    <drawable name="color2">#525252</drawable>
+
     <string name="app_name">鲁科智能检测</string>
     <string name="title_tips">提示</string>
     <string name="title_tips_save">保存</string>

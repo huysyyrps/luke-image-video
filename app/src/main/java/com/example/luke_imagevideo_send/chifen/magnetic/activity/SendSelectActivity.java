@@ -1,12 +1,15 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -17,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
@@ -26,6 +30,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
+import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
@@ -54,7 +59,9 @@ public class SendSelectActivity extends AppCompatActivity {
     SharePreferencesUtils sharePreferencesUtils;
     MediaProjectionManager projectionManager;
     private WifiManager mWifiManager;
-    private boolean flag=false;
+    private String sid = "", pwd = "";
+    private WifiManager wifiMgr;
+    private WifiManager.LocalOnlyHotspotReservation mReservation;
     //推出程序
     Handler mHandler = new Handler() {
 
@@ -107,6 +114,7 @@ public class SendSelectActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +123,8 @@ public class SendSelectActivity extends AppCompatActivity {
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
         sharePreferencesUtils = new SharePreferencesUtils();
+        sid = sharePreferencesUtils.getString(this, "sid", "");
+        pwd = sharePreferencesUtils.getString(this, "pwd", "");
         new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         relativeLayout = findViewById(R.id.relativeLayout);
         tvHeader = findViewById(R.id.tv_tittle);
@@ -123,6 +133,7 @@ public class SendSelectActivity extends AppCompatActivity {
         etWorkCode = findViewById(R.id.etWorkCode);
         etWorkCode = findViewById(R.id.etWorkCode);
         ivRight = findViewById(R.id.ivRight);
+
         ivRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +141,6 @@ public class SendSelectActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         etProject.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -144,12 +154,11 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etProject.getText().length()>=15){
+                if (etProject.getText().length() >= 15) {
                     Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
         etWorkCode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -163,12 +172,11 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etWorkCode.getText().length()>15){
+                if (etWorkCode.getText().length() > 15) {
                     Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
         etWorkName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -182,14 +190,26 @@ public class SendSelectActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etWorkName.getText().length()>15){
+                if (etWorkName.getText().length() > 15) {
                     Toast.makeText(SendSelectActivity.this, "当前项最多可以输入15字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         initData();
-        getNewData();
+//        getNewData();
+        alertDialogUtil.showWifiSetting(this,"luke_office","42D63C0496C3", new DialogCallBack() {
+            @Override
+            public void confirm(String data,Dialog dialog) {
+                Intent intent =  new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                startActivity(intent);
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        });
     }
 
     //设置SweetSheet上的数据
@@ -229,13 +249,13 @@ public class SendSelectActivity extends AppCompatActivity {
                 sharePreferencesUtils.setString(SendSelectActivity.this, "project", etProject.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workCode", etWorkCode.getText().toString());
-                if (etProject.getText().toString().trim().equals("")){
+                if (etProject.getText().toString().trim().equals("")) {
                     Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-                }else if (etWorkCode.getText().toString().trim().equals("")){
+                } else if (etWorkCode.getText().toString().trim().equals("")) {
                     Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
-                }else if (etWorkName.getText().toString().trim().equals("")){
+                } else if (etWorkName.getText().toString().trim().equals("")) {
                     Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     if (menuEntity.title.equals("本地存储")) {
                         sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                         intent = new Intent(SendSelectActivity.this, MainActivity.class);
@@ -269,7 +289,7 @@ public class SendSelectActivity extends AppCompatActivity {
                     SSHExcuteCommandHelper.writeBefor(address, "cat /data.json", new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            if (data != null && !data.equals("\n")&& !data.equals("")) {
+                            if (data != null && !data.equals("\n") && !data.equals("")) {
                                 Gson gson = new Gson();
 //                                Setting setting = gson.fromJson(data, Setting.class);
 //                                sharePreferencesUtils.setString(SendSelectActivity.this, "acdc", setting.getData().getAcdc());
@@ -283,8 +303,6 @@ public class SendSelectActivity extends AppCompatActivity {
 //                                sharePreferencesUtils.setString(SendSelectActivity.this, "date", setting.getData().getDate());
 //                                sharePreferencesUtils.setString(SendSelectActivity.this, "mode", setting.getData().getMode());
                             }
-
-//                            new SSHExcuteCommandHelper(address).disconnect();
                         }
 
                         @Override

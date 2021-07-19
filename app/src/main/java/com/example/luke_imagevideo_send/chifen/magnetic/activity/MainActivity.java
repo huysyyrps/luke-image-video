@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
@@ -59,6 +60,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.MainUI;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
@@ -67,9 +69,12 @@ import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
+import com.example.luke_imagevideo_send.http.base.SSHCallBack;
+import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.example.luke_imagevideo_send.modbus.ModbusManager;
 import com.google.gson.Gson;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.licheedev.modbus4android.BuildConfig;
 
 import java.io.File;
@@ -163,6 +168,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     TextView tvOpen;
     @BindView(R.id.tvClose)
     TextView tvClose;
+    @BindView(R.id.rbRefresh)
+    RadioButton rbRefresh;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
@@ -181,11 +188,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     VideoEncodeConfig video;
     AudioEncodeConfig audio;
     String tag = "", log = "";
+    String address = null;
     SimpleDateFormat format;
     private ImageReader mImageReader;
     private int mWindowWidth;
     private int mWindowHeight;
     private int mScreenDensity;
+    private KProgressHUD progressHUD;
     private WindowManager mWindowManager;
     private boolean isScreenshot = false;
     private Handler handler = new Handler();
@@ -249,7 +258,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
         webView.setBackgroundColor(Color.BLACK);
         webView.getSettings().setJavaScriptEnabled(true);
-        String address = null;
         try {
             address = new getIp().getConnectIp();
         } catch (Exception e) {
@@ -325,6 +333,12 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        webView.loadUrl(address);
+    }
+
+    @Override
     protected int provideContentViewId() {
         return R.layout.activity_main;
     }
@@ -341,7 +355,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
             , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose})
+            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose,R.id.rbRefresh})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -421,6 +435,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbSound.setVisibility(View.VISIBLE);
                 rbSetting.setVisibility(View.VISIBLE);
                 rbVideo.setVisibility(View.VISIBLE);
+                rbRefresh.setVisibility(View.VISIBLE);
                 rbSuspend.setVisibility(View.GONE);
                 rbVideoV = true;
                 rbSoundV = true;
@@ -496,6 +511,39 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             case R.id.ivBack:
                 llItem.setVisibility(View.GONE);
                 break;
+            case R.id.rbRefresh:
+                ShowDialog("/etc/init.d/mjpg-streamer restart");
+                break;
+        }
+    }
+
+    /**
+     * 重启服务刷新视频
+     * @param data1
+     */
+    private void ShowDialog(String data1) {
+        try {
+            address = new getIp().getConnectIp();
+            progressHUD = ProgressHUD.show(MainActivity.this);
+            progressHUD.setLabel("重启中");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            handlerSetting.sendEmptyMessage(Constant.TAG_TWO);
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -570,6 +618,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbAlbum.setVisibility(View.INVISIBLE);
                 rbSound.setVisibility(View.INVISIBLE);
                 rbSetting.setVisibility(View.INVISIBLE);
+                rbRefresh.setVisibility(View.GONE);
                 rbVideo.setVisibility(View.GONE);
                 rbSuspend.setVisibility(View.VISIBLE);
                 new BottomUI().hideBottomUIMenu(this.getWindow());
@@ -583,6 +632,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbAlbum.setVisibility(View.INVISIBLE);
                 rbSound.setVisibility(View.INVISIBLE);
                 rbSetting.setVisibility(View.INVISIBLE);
+                rbRefresh.setVisibility(View.GONE);
                 rbVideo.setVisibility(View.GONE);
                 rbSuspend.setVisibility(View.VISIBLE);
                 new BottomUI().hideBottomUIMenu(this.getWindow());
@@ -751,7 +801,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     editText.setText("");
                     editText.setHint(s);
                 } else {
-                    if (name.equals(name1+ "(" + workCode + ")" + ".png")) {
+                    if (name.equals(name1 + "(" + workCode + ")" + ".png")) {
                         SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
                         editText.setText("");
                         editText.setHint(s);
@@ -770,7 +820,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     dialog.dismiss();
                     mFile.delete();
                     saveImg(name, MainActivity.this);
-                }else if (name2.equals("")){
+                } else if (name2.equals("")) {
                     dialog.dismiss();
                     mFile.delete();
                     saveImg(name, MainActivity.this);
@@ -812,11 +862,11 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     dialog.dismiss();
                     mFile.delete();
                     startCapturing(mMediaProjection, view1);
-                } else if (name2.equals("")){
+                } else if (name2.equals("")) {
                     dialog.dismiss();
                     mFile.delete();
                     startCapturing(mMediaProjection, view1);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "不存在重复文件，请点击保存按钮", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1099,4 +1149,20 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     }
 
+    Handler handlerSetting = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.TAG_ONE:
+                    Toast.makeText(MainActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+                    address = "http://" + address + ":8080";
+                    webView.loadUrl(address);
+                    break;
+                case Constant.TAG_TWO:
+                    Toast.makeText(MainActivity.this, "重启失败", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+            }
+        }
+    };
 }

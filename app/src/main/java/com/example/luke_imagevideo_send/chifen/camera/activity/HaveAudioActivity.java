@@ -265,20 +265,15 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
                 builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
             }
-//            builder.addFormDataPart("company", compName);
-//            builder.addFormDataPart("project", project);
-//            builder.addFormDataPart("device", device);
-//            builder.addFormDataPart("workpiece", workName);
-//            builder.addFormDataPart("workpiecenum", workCode);
-//            builder.addFormDataPart("voice", "audiovideo");
-//            builder.addFormDataPart("company", compName);
-//            builder.addFormDataPart("project", project);
-//            builder.addFormDataPart("device", device);
-//            builder.addFormDataPart("workpiece", workName);
-//            builder.addFormDataPart("workpiecenum", workCode);
-//            builder.addFormDataPart("voice", "audiovideo");
-            builder.addFormDataPart("company","shangjia002");
-            builder.addFormDataPart("device" , "cehouyi001");
+            builder.addFormDataPart("company", compName);
+            builder.addFormDataPart("project", project);
+            builder.addFormDataPart("device", device);
+            builder.addFormDataPart("workpiece", workName);
+            builder.addFormDataPart("workpiecenum", workCode);
+            builder.addFormDataPart("voice", "audiovideo");
+
+//            builder.addFormDataPart("company","shangjia002");
+//            builder.addFormDataPart("device" , "cehouyi001");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
         }

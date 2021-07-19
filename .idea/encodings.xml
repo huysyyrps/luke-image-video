@@ -37,6 +37,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_forgrt_password.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/custom_date_picker.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_setting_item.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/down.xml" charset="GBK" />
   </component>
 </project>

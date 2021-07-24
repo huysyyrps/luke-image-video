@@ -9,8 +9,8 @@ package com.example.luke_imagevideo_send;
 public class ApiAddress {
 
     //生成环境
-    public final static String  api = "https://www.944414275.top:6060/";
-//    public final static String  api = "https://172.16.18.73:5001/";
+//    public final static String  api = "https://www.944414275.top:6060/";
+    public final static String  api = "https://172.16.18.73:5001/";
  
 
     /**************************************个人中心************************************************/
@@ -30,4 +30,6 @@ public class ApiAddress {
     public final static String register = "mobile_phone/save";
     //测厚数据上传
     public final static String cedatasend = "Post/PostNine";
+    //日志上传
+    public final static String daily = "api/UploadLog/UploadLog";
 }

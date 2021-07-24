@@ -301,7 +301,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 File file = new File(path);
                 file.delete();
             }
-            baseRecyclerAdapter.notifyDataSetChanged();
+            selectList.clear();
+            recyclerView.setAdapter(null);
+            recyclerView.setAdapter(baseRecyclerAdapter);
         }
     }
 

@@ -6,7 +6,7 @@ public class Setting implements Serializable {
 
 
     /**
-     * date : Sat Jun 26 12:10:34 CST 2021
+     * date : Sat Jun 26 20:45:38 CST 2021
      * data : {"id":"xxxxxxxx","date":"Fri Jan 8 03:23:55 CST 2021","mac":"xx xx xx xx xx","power":"","acdc":"0","mode":"0","bw":"0","auto":"0","auto_time":"xx","ip":"113.104.182.107"}
      */
 
@@ -29,7 +29,7 @@ public class Setting implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable {
+    public static class DataBean {
         /**
          * id : xxxxxxxx
          * date : Fri Jan 8 03:23:55 CST 2021

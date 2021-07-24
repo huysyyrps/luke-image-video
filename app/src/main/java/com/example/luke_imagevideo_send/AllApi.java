@@ -2,6 +2,7 @@ package com.example.luke_imagevideo_send;
 
 import com.example.luke_imagevideo_send.cehouyi.bean.SaveData;
 import com.example.luke_imagevideo_send.cehouyi.bean.SaveDataBack;
+import com.example.luke_imagevideo_send.chifen.camera.bean.Daily;
 import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
 import com.example.luke_imagevideo_send.chifen.camera.bean.PhotoUp;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
@@ -65,6 +66,15 @@ public interface AllApi {
     @Multipart
     @POST(ApiAddress.havevideoup)
     Observable<HaveVideoUp> getHaveVideoUp(@Part List<MultipartBody.Part> partList);
+
+    /**
+     * 日志上传
+     *  @GET(ApiAddress.login)
+     */
+
+    @Multipart
+    @POST(ApiAddress.daily)
+    Observable<Daily> getDaily(@Part List<MultipartBody.Part> partList);
 
     /**
      * 测试token

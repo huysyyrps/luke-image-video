@@ -71,18 +71,6 @@ public class SSHExcuteCommandHelper {
             }
         }
         return false;
-//        mHandler = new Handler();
-//        new Handler().postDelayed(new Runnable() {
-//            public void run() {
-//                try {
-//                    if (session!=null){
-//                        session.connect();
-//                    }
-//                } catch (JSchException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, 3500); //延迟3.5秒跳转
     }
 
     /**
@@ -111,7 +99,7 @@ public class SSHExcuteCommandHelper {
                 session.connect();
             }
             openChannel = (ChannelExec) session.openChannel("exec");
-            openChannel.setCommand(command + "\nexit");
+            openChannel.setCommand(command);
             //int exitStatus = openChannel.getExitStatus();
             openChannel.connect();
             InputStream in = openChannel.getInputStream();
@@ -165,6 +153,23 @@ public class SSHExcuteCommandHelper {
             String s = null;
             try {
                 s = execute.sendCmd(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            SSHCallBack.confirm(s);
+        } else {
+            SSHCallBack.error("连接失败,请检查设备热点链接是否成功");
+        }
+    }
+
+    public static void writeBefor1(String address, String data, final SSHCallBack SSHCallBack) {
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
+        boolean ss = execute.canConnection();
+        if (ss) {
+            //发送指令
+            String s = null;
+            try {
+                s = execute.execCommand(data);
             } catch (Exception e) {
                 e.printStackTrace();
             }

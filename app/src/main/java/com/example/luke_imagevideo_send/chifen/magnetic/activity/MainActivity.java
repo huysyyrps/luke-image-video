@@ -764,12 +764,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 return false;
             }
             FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
-//            int bmpWidth=mBitmap.getWidth();
-//            int bmpHeight=mBitmap.getHeight();
-//            /* 产生reSize后的Bitmap对象 */
-//            Matrix matrix = new Matrix();
-//            matrix.postScale(1920, 1080);
-//            mBitmap = Bitmap.createBitmap(mBitmap,0,0,bmpWidth, bmpHeight,matrix,true);
             mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
             Uri uri = Uri.fromFile(mFile);                                  //获得图片的uri
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片

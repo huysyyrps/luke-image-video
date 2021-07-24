@@ -104,8 +104,8 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 holder.setCheckClickListener(R.id.cbSelect, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (selectList.contains(haveAudio.getFile())) {
-                            selectList.remove(haveAudio.getFile());
+                        if (selectList.contains(haveAudio)) {
+                            selectList.remove(haveAudio);
                             if (selectList.size()==0){
                                 header.setTvTitle("有声视频");
                             }else {

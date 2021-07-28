@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHDataExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
@@ -74,6 +75,8 @@ public class SettingActivity extends BaseActivity {
     TextView tvXS;
     @BindView(R.id.llXSSetting)
     LinearLayout llXSSetting;
+    @BindView(R.id.llPut)
+    LinearLayout llPut;
     private String address = "";
     Setting setting = new Setting();
     SharePreferencesUtils sharePreferencesUtils;
@@ -205,7 +208,7 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext, R.id.llCXContext, R.id.llDaily, R.id.llZSSetting, R.id.llXSSetting})
+    @OnClick({R.id.llCSContext, R.id.btnSure, R.id.llCFContext, R.id.llCXContext, R.id.llDaily, R.id.llZSSetting, R.id.llXSSetting,R.id.llPut})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.llCSContext:
@@ -308,6 +311,35 @@ public class SettingActivity extends BaseActivity {
                     }
                 });
                 break;
+            case R.id.llPut:
+                progressHUD = ProgressHUD.show(SettingActivity.this);
+                progressHUD.setLabel("设置中...");
+                try {
+                    address = new getIp().getConnectIp();
+                    if (address != null) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SSHDataExcuteCommandHelper.getBefor(address, "s", new SSHCallBack() {
+                                    @Override
+                                    public void confirm(String data1) {
+                                        handler.sendEmptyMessage(Constant.TAG_ONE);
+                                    }
+
+                                    @Override
+                                    public void error(String s) {
+                                        handler.sendEmptyMessage(Constant.TAG_TWO);
+                                    }
+                                });
+                            }
+                        }).start();
+                    } else {
+                        Toast.makeText(this, "请检查设备是否连接到手机热点", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
@@ -362,12 +394,12 @@ public class SettingActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.TAG_ONE:
-                    Toast.makeText(SettingActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
                     progressHUD.dismiss();
                     finish();
                     break;
                 case Constant.TAG_TWO:
-                    Toast.makeText(SettingActivity.this, "设置失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "操作失败", Toast.LENGTH_SHORT).show();
                     progressHUD.dismiss();
             }
         }

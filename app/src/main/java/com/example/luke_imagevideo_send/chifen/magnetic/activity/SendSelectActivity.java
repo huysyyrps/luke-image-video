@@ -198,10 +198,10 @@ public class SendSelectActivity extends AppCompatActivity {
 
         initData();
 //        getNewData();
-        alertDialogUtil.showWifiSetting(this,"luke_office","42D63C0496C3", new DialogCallBack() {
+        alertDialogUtil.showWifiSetting(this, "luke_office", "42D63C0496C3", new DialogCallBack() {
             @Override
-            public void confirm(String data,Dialog dialog) {
-                Intent intent =  new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+            public void confirm(String data, Dialog dialog) {
+                Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
                 startActivity(intent);
             }
 
@@ -249,14 +249,14 @@ public class SendSelectActivity extends AppCompatActivity {
                 sharePreferencesUtils.setString(SendSelectActivity.this, "project", etProject.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workCode", etWorkCode.getText().toString());
-                if (etProject.getText().toString().trim().equals("")) {
-                    Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-                } else if (etWorkCode.getText().toString().trim().equals("")) {
-                    Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
-                } else if (etWorkName.getText().toString().trim().equals("")) {
-                    Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (menuEntity.title.equals("本地存储")) {
+                if (menuEntity.title.equals("本地存储")) {
+                    if (etProject.getText().toString().trim().equals("")) {
+                        Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
+                    } else if (etWorkCode.getText().toString().trim().equals("")) {
+                        Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
+                    } else if (etWorkName.getText().toString().trim().equals("")) {
+                        Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+                    }else {
                         sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                         intent = new Intent(SendSelectActivity.this, MainActivity.class);
                         intent.putExtra("project", etProject.getText().toString());
@@ -266,17 +266,17 @@ public class SendSelectActivity extends AppCompatActivity {
                         etWorkCode.setText("");
                         etWorkName.setText("");
                         startActivity(intent);
-                    } else if (menuEntity.title.equals("实时上传")) {
-//                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
-                        intent = new Intent(SendSelectActivity.this, MainCHYActivity.class);
-                        startActivity(intent);
                     }
+                } else if (menuEntity.title.equals("实时上传")) {
+//                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
+                    intent = new Intent(SendSelectActivity.this, MainCHYActivity.class);
+                    startActivity(intent);
                 }
                 return false;
-            }
-        });
+        }
+    });
         sheet.toggle();
-    }
+}
 
     //获取设备基础信息
     public void getNewData() {

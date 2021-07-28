@@ -104,9 +104,11 @@ public class MainMenuActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case Constant.TAG_ONE:
-                String top = data.getStringExtra("top");
-                String button = data.getStringExtra("button");
-                Toast.makeText(this, top+"---"+button, Toast.LENGTH_SHORT).show();
+                if (data!=null){
+                    String top = data.getStringExtra("top");
+                    String button = data.getStringExtra("button");
+                    Toast.makeText(this, top+"---"+button, Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

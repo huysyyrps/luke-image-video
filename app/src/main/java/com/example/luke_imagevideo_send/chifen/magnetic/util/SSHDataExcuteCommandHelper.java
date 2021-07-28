@@ -88,7 +88,7 @@ public class SSHDataExcuteCommandHelper {
      * @param command
      * @return
      */
-    public String execCommand(String command) {
+    public String execCommandSet(String command) {
         StringBuffer result = new StringBuffer();
         try {
             if (!session.isConnected()) {
@@ -112,6 +112,30 @@ public class SSHDataExcuteCommandHelper {
         return result.toString();
     }
 
+    public String execCommandPut(String command) {
+        StringBuffer result = new StringBuffer();
+        try {
+            if (!session.isConnected()) {
+                session.connect();
+            }
+            openChannel = (ChannelSftp) session.openChannel("sftp");
+            openChannel.connect();
+            //path  SFTP服务器的文件路径
+            openChannel.cd("/");
+            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEDaily.txt");
+            //json.log服务器上的文件名
+            openChannel.put(Environment.getExternalStorageDirectory() + "/LUKEDaily.txt", "/LUKEDaily.txt");
+        } catch (JSchException e) {
+            e.printStackTrace();
+            result.append(e.getMessage());
+        } catch (SftpException e) {
+            e.printStackTrace();
+        } finally {
+            disconnect();
+        }
+        return result.toString();
+    }
+
     public static void writeBefor(String address, String data, final SSHCallBack SSHCallBack) {
         SSHDataExcuteCommandHelper execute = new SSHDataExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
@@ -119,7 +143,24 @@ public class SSHDataExcuteCommandHelper {
             //发送指令
             String s = null;
             try {
-                s = execute.execCommand(data);
+                s = execute.execCommandSet(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            SSHCallBack.confirm(s);
+        } else {
+            SSHCallBack.error("连接失败,请检查设备热点链接是否成功");
+        }
+    }
+
+    public static void getBefor(String address, String data, final SSHCallBack SSHCallBack) {
+        SSHDataExcuteCommandHelper execute = new SSHDataExcuteCommandHelper(address);
+        boolean ss = execute.canConnection();
+        if (ss) {
+            //发送指令
+            String s = null;
+            try {
+                s = execute.execCommandPut(data);
             } catch (Exception e) {
                 e.printStackTrace();
             }

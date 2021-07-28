@@ -384,8 +384,7 @@
 
                     <RadioButton
                         android:id="@+id/rb7"
-                        android:visibility="gone"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         style="@style/RadionButton"
                         android:text="菜单" />
                 </LinearLayout>

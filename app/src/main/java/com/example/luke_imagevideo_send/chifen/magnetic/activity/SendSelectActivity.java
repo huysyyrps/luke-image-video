@@ -259,9 +259,9 @@ public class SendSelectActivity extends AppCompatActivity {
                     }else {
                         sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                         intent = new Intent(SendSelectActivity.this, MainActivity.class);
-                        intent.putExtra("project", etProject.getText().toString());
-                        intent.putExtra("etWorkName", etWorkName.getText().toString());
-                        intent.putExtra("etWorkCode", etWorkCode.getText().toString());
+                        intent.putExtra("project", etProject.getText().toString().trim());
+                        intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+                        intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
                         etProject.setText("");
                         etWorkCode.setText("");
                         etWorkName.setText("");

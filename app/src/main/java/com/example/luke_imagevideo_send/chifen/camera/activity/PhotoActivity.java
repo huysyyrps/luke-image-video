@@ -36,6 +36,8 @@ import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -162,7 +164,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/");
+                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
             }
         }).start();
     }
@@ -179,6 +181,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         files = file.listFiles();
         if (files!=null){
             allNum = files.length;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Arrays.sort(files, Comparator.reverseOrder());
+            }
             setData();
         }else {
             handler.sendEmptyMessage(Constant.TAG_TWO);
@@ -302,6 +307,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 file.delete();
             }
             selectList.clear();
+            header.setTvTitle("图库");
             recyclerView.setAdapter(null);
             recyclerView.setAdapter(baseRecyclerAdapter);
         }

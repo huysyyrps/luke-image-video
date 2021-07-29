@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -34,6 +35,8 @@ import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -156,7 +159,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/");
+                getFilesAllName(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
             }
         }).start();
     }
@@ -164,10 +167,13 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
 //        File file = new File(path);
-        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/");
+        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
         files = file.listFiles();
         if (files != null) {
             allNum = files.length;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Arrays.sort(files, Comparator.reverseOrder());
+            }
             setData();
         } else {
             handler.sendEmptyMessage(Constant.TAG_TWO);
@@ -255,11 +261,6 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         if (selectList.size() == 0) {
             Toast.makeText(HaveAudioActivity.this, "您还未选择有声视频", Toast.LENGTH_SHORT).show();
         } else {
-//            HashMap<String, Object> map = new HashMap<String, Object>();
-//            map.put("video" , selectList);
-//            Gson gson = new Gson();
-//            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), gson.toJson(map));
-//            haveVideoPresenter.getHaveVideo(requestBody);
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
             for (int i = 0; i < selectList.size(); i++) {
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
@@ -271,9 +272,6 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
             builder.addFormDataPart("workpiece", workName);
             builder.addFormDataPart("workpiecenum", workCode);
             builder.addFormDataPart("voice", "audiovideo");
-
-//            builder.addFormDataPart("company","shangjia002");
-//            builder.addFormDataPart("device" , "cehouyi001");
             List<MultipartBody.Part> parts = builder.build().parts();
             haveVideoPresenter.getHaveVideo(parts);
         }
@@ -385,6 +383,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 haveAudio.getFile().delete();
             }
             selectList.clear();
+            header.setTvTitle("有声视频");
             recyclerView.setAdapter(null);
             recyclerView.setAdapter(baseRecyclerAdapter);
         }

@@ -33,6 +33,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
@@ -56,6 +57,7 @@ import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.cehouyi.util.ModbusConnection;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
+import com.example.luke_imagevideo_send.chifen.camera.util.CustomToast;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.MainUI;
@@ -198,6 +200,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     private WindowManager mWindowManager;
     private boolean isScreenshot = false;
     private Handler handler = new Handler();
+    private CustomToast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +224,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         mImageReader = ImageReader.newInstance(mWindowWidth, mWindowHeight, 0x1, 2);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -393,7 +395,18 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         if (!name1.equals("")) {
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
-                        startVideoCapturing(view1);
+                        new Thread (new Runnable(){
+                            public void run(){
+                                try {
+                                    Thread.sleep(500);
+                                    MainActivity.this.runOnUiThread(() -> {
+                                        startVideoCapturing(view1);
+                                    });
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                     }
 
                     @Override
@@ -420,7 +433,18 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         if (!name1.equals("")) {
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
-                        startVideoCapturing(view1);
+                        new Thread (new Runnable(){
+                            public void run(){
+                                try {
+                                    Thread.sleep(500);
+                                    MainActivity.this.runOnUiThread(() -> {
+                                        startVideoCapturing(view1);
+                                    });
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                     }
 
                     @Override
@@ -740,10 +764,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      * 获取当前时间,用来给文件夹命名
      */
     private String getNowDate() {
-        long time = System.currentTimeMillis();//获取系统时间的10位的时间戳
-        String str = String.valueOf(time);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HHmmss");
-        return str + "(" + workCode + ")" + ".png";
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+        return format.format(new Date()) + "(" + workCode + ")" + ".png";
     }
 
     /**
@@ -751,8 +773,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      */
     public boolean saveImg(String name, Context context) {
         try {
-            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/";//图片保存的文件夹名
-            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/");
+            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/"+workCode+ "/";//图片保存的文件夹名
+            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
             //如果不存在  就mkdirs()创建此文件夹
             if (!file.exists()) {
                 file.mkdirs();
@@ -769,8 +791,12 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
             outputStream.flush();
             outputStream.close();
-            //隐藏image显示webview
-            Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
+            if (toast != null) {
+                toast.hide();
+            }
+            toast = new CustomToast(MainActivity.this, (ViewGroup) this.findViewById(R.id.toast_custom_parent));
+            toast.show("图片保存成功", 1000);
+//            Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
             radioGroup.setVisibility(View.VISIBLE);
             new BottomUI().BottomUIMenu(this.getWindow());
             return true;
@@ -810,7 +836,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             public void cancel(String name2, Dialog dialog) {
                 Log.e("XXX", name2);
                 Log.e("XXX", name);
-                if (name.equals(name2 + "(" + workCode + ")" + ".mp4")) {
+                if (name.equals(name2 + "(" + workCode + ")" + ".png")) {
                     dialog.dismiss();
                     mFile.delete();
                     saveImg(name, MainActivity.this);
@@ -959,13 +985,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
         File dir = null;
         if (haveAudio.equals("Audio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;
             }
         } else if (haveAudio.equals("noAudio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/");
+            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
             if (!dir.exists() && !dir.mkdirs()) {
                 cancelRecorder();
                 return;

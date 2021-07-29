@@ -9,8 +9,8 @@ package com.example.luke_imagevideo_send;
 public class ApiAddress {
 
     //生成环境
-//    public final static String  api = "https://www.944414275.top:6060/";
-    public final static String  api = "https://172.16.18.73:5001/";
+    public final static String  api = "https://www.944414275.top:6060/";
+//    public final static String  api = "https://172.16.18.73:5001/";
  
 
     /**************************************个人中心************************************************/

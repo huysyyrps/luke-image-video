@@ -275,7 +275,7 @@ public class AlertDialogUtil {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    alertDialogCallBack.save(editText.getText().toString());
+                    alertDialogCallBack.save(editText.getText().toString().trim());
                 }
             });
             dialog.getWindow().setContentView(view);

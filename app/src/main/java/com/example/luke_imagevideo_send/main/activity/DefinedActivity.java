@@ -14,6 +14,10 @@ import android.widget.Toast;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
+import com.example.luke_imagevideo_send.main.bean.Defined;
+import com.example.luke_imagevideo_send.main.module.DefinedContract;
+import com.example.luke_imagevideo_send.main.presenter.DefinedPresenter;
 import com.huawei.hms.hmsscankit.OnLightVisibleCallBack;
 import com.huawei.hms.hmsscankit.OnResultCallback;
 import com.huawei.hms.hmsscankit.RemoteView;
@@ -21,13 +25,16 @@ import com.huawei.hms.ml.scan.HmsScan;
 
 import butterknife.ButterKnife;
 
-public class DefinedActivity extends BaseActivity {
+public class DefinedActivity extends BaseActivity implements DefinedContract.View {
     private FrameLayout frameLayout;
     private RemoteView remoteView;
     private ImageView flushBtn;
     int mScreenWidth;
     int mScreenHeight;
     final int SCAN_FRAME_SIZE = 240;
+    DefinedPresenter definedPresenter;
+    SharePreferencesUtils sharePreferencesUtils;
+    String tag = "first";
 
     private int[] img = {R.drawable.flashlight_on, R.drawable.flashlight_off};
     @Override
@@ -35,30 +42,20 @@ public class DefinedActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         // Bind the camera preview screen.
-
+        sharePreferencesUtils = new SharePreferencesUtils();
+        definedPresenter = new DefinedPresenter(this,this);
         frameLayout = findViewById(R.id.rim);
-
-        //1. Obtain the screen density to calculate the viewfinder's rectangle.
         DisplayMetrics dm = getResources().getDisplayMetrics();
         float density = dm.density;
-        //2. Obtain the screen size.
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
-
         int scanFrameSize = (int) (SCAN_FRAME_SIZE * density);
-
-        //3. Calculate the viewfinder's rectangle, which in the middle of the layout.
-        //Set the scanning area. (Optional. Rect can be null. If no settings are specified, it will be located in the middle of the layout.)
         Rect rect = new Rect();
         rect.left = mScreenWidth / 2 - scanFrameSize / 2;
         rect.right = mScreenWidth / 2 + scanFrameSize / 2;
         rect.top = mScreenHeight / 2 - scanFrameSize / 2;
         rect.bottom = mScreenHeight / 2 + scanFrameSize / 2;
-
-
-        //Initialize the RemoteView instance, and set callback for the scanning result.
         remoteView = new RemoteView.Builder().setContext(this).setBoundingBox(rect).setFormat(HmsScan.ALL_SCAN_TYPE).build();
-        // When the light is dim, this API is called back to display the flashlight switch.
         flushBtn = findViewById(R.id.flush_btn);
         remoteView.setOnLightVisibleCallback(new OnLightVisibleCallBack() {
             @Override
@@ -68,24 +65,27 @@ public class DefinedActivity extends BaseActivity {
                 }
             }
         });
-        // Subscribe to the scanning result callback event.
         remoteView.setOnResultCallback(new OnResultCallback() {
             @Override
             public void onResult(HmsScan[] result) {
-                //Check the result.
-                if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(result[0].getOriginalValue())) {
-                    Toast.makeText(DefinedActivity.this, result[0].getOriginalValue(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(DefinedActivity.this, SendSelectActivity.class);
-                    startActivity(intent);
-                    finish();
+                if (tag.equals("first")){
+                    if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(result[0].getOriginalValue())) {
+                        if (result[0].getOriginalValue()!=null){
+                            String[] data=result[0].getOriginalValue().split("/");
+                            sharePreferencesUtils.setString(DefinedActivity.this, "max", data[2]);
+//                            definedPresenter.getDefined(data[0]);
+                            startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
+                            finish();
+                            tag = "second";
+                            return;
+                        }
+                    }
                 }
             }
         });
-        // Load the customized view to the activity.
         remoteView.onCreate(savedInstanceState);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         frameLayout.addView(remoteView, params);
-        // Set the back, photo scanning, and flashlight operations.
         setFlashOperation();
     }
 
@@ -152,4 +152,24 @@ public class DefinedActivity extends BaseActivity {
         remoteView.onStop();
     }
 
+    @Override
+    public void setDefined(Defined defined) {
+        if (defined.getResult()==null){
+            Toast.makeText(this, "派工单为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String company = defined.getResult().getCompanyName();
+        String deviceName = defined.getResult().getDeviceName();
+        String deviceCode = defined.getResult().getDeviceCode();
+        sharePreferencesUtils.setString(DefinedActivity.this, "company", company);
+        sharePreferencesUtils.setString(DefinedActivity.this, "deviceName", deviceName);
+        sharePreferencesUtils.setString(DefinedActivity.this, "deviceCode", deviceCode);
+        startActivity(new Intent(this, SendSelectActivity.class));
+        finish();
+    }
+
+    @Override
+    public void setDefinedMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }

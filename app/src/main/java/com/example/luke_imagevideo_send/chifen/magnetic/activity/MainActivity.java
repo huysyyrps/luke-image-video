@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.location.LocationManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaCodecInfo;
@@ -51,8 +50,6 @@ import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
-import com.example.luke_imagevideo_send.cehouyi.util.GetGPS;
-import com.example.luke_imagevideo_send.cehouyi.util.GetGPSCallBack;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.cehouyi.util.ModbusConnection;
@@ -178,7 +175,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private Intent intent;
-    private LocationManager locationManager;
     private String haveAudio = "noAudio";
     static final String VIDEO_AVC = MIMETYPE_VIDEO_AVC; // H.264 Advanced Video Coding
     static final String AUDIO_AAC = MIMETYPE_AUDIO_AAC; // H.264 Advanced Audio Coding
@@ -206,6 +202,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        Log.e("MainActivity","onCreate");
         btnTop.setOnLongClickListener(this);
         btnBotton.setOnLongClickListener(this);
         btnLeft.setOnLongClickListener(this);
@@ -311,6 +308,11 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         //获取当前时间
         new GetTime().initTime(new GetTimeCallBack() {
             @Override
@@ -318,15 +320,71 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 tvTime.setText(time);
             }
         });
+        getGPS();
+    }
 
-        //获取GPS
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        new GetGPS().initGPS(MainActivity.this, locationManager, alertDialogUtil, new GetGPSCallBack() {
-            @Override
-            public void backGPS(String gps) {
-                tvGPS.setText(gps);
-            }
-        });
+    /**
+     * 获取定位信息
+     */
+    private void getGPS() {
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //发送设置数据
+                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB2 &", new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            SSHExcuteCommandHelper.writeBefor("192.168.1.251", "echo -en \"AT+QGPSLOC=1\\r\\n\"> /dev/ttyUSB2", new SSHCallBack() {
+                                @Override
+                                public void confirm(String data) {
+                                    if (data != null&&!data.equals("")) {
+                                        String[] GPSData = data.split(",");
+                                        (MainActivity.this).runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                tvGPS.setText(GPSData[1]+","+GPSData[3]);
+                                            }
+                                        });
+                                    }
+                                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "kill %1", new SSHCallBack() {
+                                        @Override
+                                        public void confirm(String data) {
+                                            Log.e("MainAvtivity",data);
+                                        }
+
+                                        @Override
+                                        public void error(String s) {
+                                            Log.e("MainAvtivity",s);
+                                        }
+                                    });
+                                }
+                                @Override
+                                public void error(String s) {
+                                    (MainActivity.this).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        @Override
+                        public void error(String s) {
+                            (MainActivity.this).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -352,7 +410,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
 
     @Override
     protected void rightClient() {
-
     }
 
     @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
@@ -977,51 +1034,62 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     }
 
     private void startCapturing(MediaProjection mediaProjection, View view1) {
-        video = createVideoConfig();
-        audio = createAudioConfig(); // audio can be null
-        if (video == null) {
-            Toast.makeText(this, "Create ScreenRecorder failure", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        File dir = null;
-        if (haveAudio.equals("Audio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
-            if (!dir.exists() && !dir.mkdirs()) {
-                cancelRecorder();
-                return;
-            }
-        } else if (haveAudio.equals("noAudio")) {
-            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
-            if (!dir.exists() && !dir.mkdirs()) {
-                cancelRecorder();
-                return;
-            }
-        }
-        file = new File(dir, name);
-        if (rbVideoV && rbSoundV) {
-            Log.e("XXX", "XXX");
-        } else {
-            if (haveAudio.equals("Audio")) {
-                //将要保存的图片文件
-                if (file.exists()) {
-                    selectVideoDialog(file, name, view1);
-                    return;
-                }
-            } else if (haveAudio.equals("noAudio")) {
-                if (file.exists()) {
-                    selectVideoDialog(file, name, view1);
-                    return;
-                }
-            }
-        }
+        new Thread (new Runnable(){
+            public void run(){
+                try {
+                    Thread.sleep(500);
+                    MainActivity.this.runOnUiThread(() -> {
+                        video = createVideoConfig();
+                        audio = createAudioConfig(); // audio can be null
+                        if (video == null) {
+                            Toast.makeText(MainActivity.this, "Create ScreenRecorder failure", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        File dir = null;
+                        if (haveAudio.equals("Audio")) {
+                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
+                            if (!dir.exists() && !dir.mkdirs()) {
+                                cancelRecorder();
+                                return;
+                            }
+                        } else if (haveAudio.equals("noAudio")) {
+                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
+                            if (!dir.exists() && !dir.mkdirs()) {
+                                cancelRecorder();
+                                return;
+                            }
+                        }
+                        file = new File(dir, name);
+                        if (rbVideoV && rbSoundV) {
+                            Log.e("MainActivity", "XXX");
+                        } else {
+                            if (haveAudio.equals("Audio")) {
+                                //将要保存的图片文件
+                                if (file.exists()) {
+                                    selectVideoDialog(file, name, view1);
+                                    return;
+                                }
+                            } else if (haveAudio.equals("noAudio")) {
+                                if (file.exists()) {
+                                    selectVideoDialog(file, name, view1);
+                                    return;
+                                }
+                            }
+                        }
 
-        Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
-        mRecorder = newRecorder(mediaProjection, video, audio, file);
-        if (hasPermissions()) {
-            startRecorder();
-        } else {
-            cancelRecorder();
-        }
+                        Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
+                        mRecorder = newRecorder(mediaProjection, video, audio, file);
+                        if (hasPermissions()) {
+                            startRecorder();
+                        } else {
+                            cancelRecorder();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private ScreenRecorder newRecorder(MediaProjection mediaProjection, VideoEncodeConfig video, AudioEncodeConfig audio, File output) {

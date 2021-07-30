@@ -6,6 +6,7 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
 import com.example.luke_imagevideo_send.chifen.camera.module.HaveVideoContract;
 import com.example.luke_imagevideo_send.http.base.BaseObserverNoEntry;
+import com.example.luke_imagevideo_send.http.utils.NetStat;
 import com.example.luke_imagevideo_send.http.utils.RetrofitUtil;
 
 import java.util.List;
@@ -47,7 +48,11 @@ public class HaveVideoPresenter implements HaveVideoContract.presenter {
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
-                        view.setHaveVideoMessage(""+ e.getMessage());
+                        if (new NetStat().isNetworkConnected(context)){
+                            view.setHaveVideoMessage(""+ e.getMessage());
+                        }else {
+                            view.setHaveVideoMessage("网络异常");
+                        }
                     }
                 });
     }

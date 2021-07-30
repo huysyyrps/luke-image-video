@@ -25,10 +25,12 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/bean/Login.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/bean/Register.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/CheckPassWordContract.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/DefinedContract.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/LoginContract.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/RegisterContract.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/module/TokenTestContract.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/CheckPassWordPresenter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/DefinedPresenter.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/LoginPresenter.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/RegisterPresenter.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/TokenTestPresenter.java" charset="GBK" />

@@ -387,6 +387,6 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
 
     @Override
     public void setHaveVideoMessage(String message) {
-        Toast.makeText(this, "上传失败", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

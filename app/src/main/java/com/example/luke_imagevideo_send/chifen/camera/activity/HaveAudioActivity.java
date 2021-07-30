@@ -36,6 +36,7 @@ import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     private int lastNum = 9;
     private int allNum;
     File[] files;
-    File[] files1;
+    List<File> fileList = new ArrayList<>();
 
     private HaveVideoPresenter haveVideoPresenter;
     private String project = "", workName = "", workCode = "",compName = "",device = "";
@@ -166,9 +167,9 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     public void getFilesAllName(String path) {
         //传入指定文件夹的路径
-//        File file = new File(path);
         File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
-        files = file.listFiles();
+//        files = listFileSortByModifyTime(Arrays.asList(file.listFiles())).toArray(new File[0]);
+        files =file.listFiles();
         if (files != null) {
             allNum = files.length;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -217,6 +218,28 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         pullToRefreshLayout.finishLoadMore();
         pullToRefreshLayout.finishRefresh();
         handler.sendEmptyMessage(Constant.TAG_ONE);
+    }
+
+    /**
+     * 获取目录下所有文件(按时间排序)
+     *
+     * @return
+     */
+    public static List<File> listFileSortByModifyTime(List<File> files) {
+        if (files != null && files.size() > 0) {
+            Collections.sort(files, new Comparator<File>() {
+                public int compare(File file, File newFile) {
+                    if (file.lastModified() < newFile.lastModified()) {
+                        return -1;
+                    } else if (file.lastModified() == newFile.lastModified()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+        }
+        return files;
     }
 
     Handler handler = new Handler() {
@@ -360,7 +383,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
 
     @Override
     public void setHaveVideoMessage(String message) {
-        Toast.makeText(this, "上传失败", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

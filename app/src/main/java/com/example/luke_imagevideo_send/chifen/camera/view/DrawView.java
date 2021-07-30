@@ -272,6 +272,17 @@ public class DrawView extends ImageView {
     }
 
     /**
+     * 获取壁画数量
+     */
+    public String undoNum() {
+        if (rangeLists.size() > 0) {
+           return "open";
+        }else {
+            return "closr";
+        }
+    }
+
+    /**
      * 修改画笔颜色
      * @param color
      */

@@ -71,7 +71,6 @@
         <activity android:name=".main.activity.CheckPassWordActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".chifen.camera.activity.AlbumActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

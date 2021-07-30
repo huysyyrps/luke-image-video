@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.chifen.magnetic.activity.SendSelectActivity;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -160,7 +159,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 mbDisplayFlg = !mbDisplayFlg;
                 break;
             case R.id.btn_login:
-//                if (etUserName.getText().toString().equals("") || etPassWord.getText().toString().equals("")) {
+//                if (etUserName.getText().toString().trim().equals("") || etPassWord.getText().toString().trim().equals("")) {
 //                    Toast.makeText(this, getResources().getString(R.string.no_name_password), Toast.LENGTH_SHORT).show();
 //                } else {
 //                    if ((Boolean) new NetworkTest().goToNetWork(this)) {
@@ -169,7 +168,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 //                        Toast.makeText(this, getResources().getString(R.string.umeng_socialize_network), Toast.LENGTH_SHORT).show();
 //                    }
 //                }
-                intent = new Intent(this, SendSelectActivity.class);
+                intent = new Intent(this, DefinedActivity.class);
                 startActivity(intent);
                 finish();
                 break;
@@ -210,7 +209,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         if (loginBean.isLogin()) {
             sharePreferencesUtils.setString(this, "userName", etUserName.getText().toString());
             sharePreferencesUtils.setString(this, "passWord", etPassWord.getText().toString());
-            intent = new Intent(this, SendSelectActivity.class);
+            intent = new Intent(this, DefinedActivity.class);
             startActivity(intent);
             finish();
         } else {

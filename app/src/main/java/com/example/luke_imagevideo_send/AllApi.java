@@ -6,6 +6,7 @@ import com.example.luke_imagevideo_send.chifen.camera.bean.Daily;
 import com.example.luke_imagevideo_send.chifen.camera.bean.HaveVideoUp;
 import com.example.luke_imagevideo_send.chifen.camera.bean.PhotoUp;
 import com.example.luke_imagevideo_send.main.bean.CheckPassWord;
+import com.example.luke_imagevideo_send.main.bean.Defined;
 import com.example.luke_imagevideo_send.main.bean.Login;
 import com.example.luke_imagevideo_send.main.bean.Register;
 import com.example.luke_imagevideo_send.main.bean.TokenTest;
@@ -24,6 +25,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 /**
  * @author: Allen.
@@ -103,14 +105,12 @@ public interface AllApi {
     @POST(ApiAddress.cedatasend)
     Observable<SaveDataBack> sendDataSave(@Body SaveData saveData);
 
-//    //图片上传
-//    @Multipart
-//    @POST("face/uploadFile")
-//    Observable<SaveDataBack> uploadFile (@Part List<MultipartBody.Part> partList);
-//    @Multipart
-//    @POST("v1/app/exception")
-//    Observable<ResponseBean<List<String>>> uploadLog(@PartMap Map<String, RequestBody> map);
+    /**
+     * 根据派工单获取信息
+     * @param pgdNum
+     * @return
+     */
+    @GET(ApiAddress.defined)
+    Observable<Defined> getDefined(@Query("pgdNum") String pgdNum);
 
-//    @GET(ApiAddress.LineDetial)
-//    Observable<CustomizedLineDetailBean> sendRequestGetcustomizedLineDetail(@Query("id") int id);
 }

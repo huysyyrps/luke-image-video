@@ -13,9 +13,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +32,6 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.StatusBarUtils;
-import com.example.luke_imagevideo_send.main.activity.DefinedActivity;
 import com.google.gson.Gson;
 import com.mingle.entity.MenuEntity;
 import com.mingle.sweetpick.DimEffect;
@@ -47,7 +44,6 @@ import java.util.ArrayList;
  */
 public class SendSelectActivity extends AppCompatActivity {
     private RelativeLayout relativeLayout;
-    private ImageView ivRight;
     private TextView tvHeader;
     private EditText etProject, etWorkName, etWorkCode;
     //富有动感的Sheet弹窗
@@ -132,15 +128,6 @@ public class SendSelectActivity extends AppCompatActivity {
         etWorkName = findViewById(R.id.etWorkName);
         etWorkCode = findViewById(R.id.etWorkCode);
         etWorkCode = findViewById(R.id.etWorkCode);
-        ivRight = findViewById(R.id.ivRight);
-
-        ivRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SendSelectActivity.this, DefinedActivity.class);
-                startActivity(intent);
-            }
-        });
         etProject.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

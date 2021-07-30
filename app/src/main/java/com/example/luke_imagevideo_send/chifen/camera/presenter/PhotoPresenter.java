@@ -6,6 +6,7 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.bean.PhotoUp;
 import com.example.luke_imagevideo_send.chifen.camera.module.PhotoContract;
 import com.example.luke_imagevideo_send.http.base.BaseObserverNoEntry;
+import com.example.luke_imagevideo_send.http.utils.NetStat;
 import com.example.luke_imagevideo_send.http.utils.RetrofitUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -47,7 +48,11 @@ public class PhotoPresenter implements PhotoContract.presenter {
                     }
                     @Override
                     protected void onFailure(Throwable e, boolean isNetWorkError) throws Exception {
-                        view.setPhotoMessage("上传失败");
+                        if (new NetStat().isNetworkConnected(context)){
+                            view.setPhotoMessage(""+ e.getMessage());
+                        }else {
+                            view.setPhotoMessage("网络异常");
+                        }
                     }
                 });
     }

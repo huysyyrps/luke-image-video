@@ -8,7 +8,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +24,8 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.util.FileUtils;
 import com.example.luke_imagevideo_send.chifen.camera.view.CustomerVideoView;
 import com.example.luke_imagevideo_send.chifen.camera.view.DrawView;
+import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 
@@ -55,12 +60,75 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     ImageView ivPause;
     SharePreferencesUtils sharePreferencesUtils;
     private String project = "", workName = "", workCode = "",compName = "",device = "";
+    private static boolean isExit = false;
+    AlertDialogUtil alertDialogUtil;
+    String tag = "open";
+
+
+    //推出程序
+    Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            isExit = false;
+        }
+    };
+
+    //推出程序
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void exit() {
+        if (!isExit) {
+            isExit = true;
+            if (drawView.undoNum().equals("open")){
+                alertDialogUtil.showDialog("是否保存图片", new AlertDialogCallBack() {
+
+                    @Override
+                    public void confirm(String name) {
+                        getImage(drawView.getRootView());
+                    }
+
+                    @Override
+                    public void cancel() {
+                        isExit = false;
+                        finish();
+                    }
+
+                    @Override
+                    public void save(String name) {
+
+                    }
+
+                    @Override
+                    public void checkName(String name) {
+
+                    }
+                });
+                mHandler.sendEmptyMessageDelayed(0, 4000);
+            }else {
+                finish();
+            }
+
+        } else {
+            finish();
+            System.exit(0);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
         ButterKnife.bind(this);
+        alertDialogUtil = new AlertDialogUtil(this);
         sharePreferencesUtils = new SharePreferencesUtils();
         project = sharePreferencesUtils.getString(SeeImageOrVideoActivity.this,"project","");
         workName = sharePreferencesUtils.getString(SeeImageOrVideoActivity.this,"workName","");
@@ -135,24 +203,7 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
                 drawView.undo();
                 break;
             case R.id.save:
-                /**
-                 * 隐藏下部手机按键
-                 */
-                window = getWindow();
-                WindowManager.LayoutParams params = getWindow().getAttributes();
-                params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-                window.setAttributes(params);
-                paintBar.setVisibility(View.GONE);
-                View view1 = view.getRootView();
-                view1.setDrawingCacheEnabled(true);
-                view1.buildDrawingCache();
-                mBitmap = view1.getDrawingCache();
-                Log.e("TAG", mBitmap.getWidth() + "__________" + mBitmap.getHeight());
-                if (mBitmap != null) {
-                    saveImage();
-                } else {
-                    Toast.makeText(this, "图片保存失败", Toast.LENGTH_SHORT).show();
-                }
+                getImage(view);
                 break;
             case R.id.ivStart:
                 videoView.pause();
@@ -178,8 +229,29 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
         }
     }
 
+    private void getImage(View view) {
+        /**
+         * 隐藏下部手机按键
+         */
+        window = getWindow();
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        window.setAttributes(params);
+        paintBar.setVisibility(View.GONE);
+        View view1 = view.getRootView();
+        view1.setDrawingCacheEnabled(true);
+        view1.buildDrawingCache();
+        mBitmap = view1.getDrawingCache();
+        Log.e("TAG", mBitmap.getWidth() + "__________" + mBitmap.getHeight());
+        if (mBitmap != null) {
+            saveImage();
+        } else {
+            Toast.makeText(this, "图片保存失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void saveImage() {
-        String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/";
+        String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/"+project+"/"+"设备/"+workName+"/"+workCode+"/";
         String filename = dir + fileName;
         File file = new File(filename + ".png");
         file.delete();

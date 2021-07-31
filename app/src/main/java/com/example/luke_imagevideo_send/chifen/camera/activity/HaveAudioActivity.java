@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -35,7 +34,6 @@ import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -66,9 +64,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     private int startNum = 0;
     private int lastNum = 9;
     private int allNum;
-    File[] files;
-    List<File> fileList = new ArrayList<>();
-
+    List<File> fileList;
     private HaveVideoPresenter haveVideoPresenter;
     private String project = "", workName = "", workCode = "",compName = "",device = "";
 
@@ -137,7 +133,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                 startNum = 0;
                 lastNum = 9;
                 imagePaths.clear();
-                setData();
+                setData(fileList);
             }
 
             @Override
@@ -152,7 +148,7 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                     if (lastNum >= allNum) {
                         lastNum = allNum;
                     }
-                    setData();
+                    setData(fileList);
                 }
             }
         });
@@ -166,30 +162,25 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
     }
 
     public void getFilesAllName(String path) {
-        //传入指定文件夹的路径
-        File file = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
-//        files = listFileSortByModifyTime(Arrays.asList(file.listFiles())).toArray(new File[0]);
-        files =file.listFiles();
-        if (files != null) {
-            allNum = files.length;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Arrays.sort(files, Comparator.reverseOrder());
-            }
-            setData();
+        fileList = listFileSortByModifyTime(Environment.getExternalStorageDirectory() + "/LUKEVideo/"+project+"/"+"设备/"+workName+"/"+workCode+"/");
+        Collections.reverse(fileList);
+        if (fileList.size()!=0){
+            allNum = fileList.size();
+            setData(fileList);
         } else {
             handler.sendEmptyMessage(Constant.TAG_TWO);
         }
     }
 
-    private void setData() {
+    private void setData( List<File> list) {
         try {
             if (allNum > 9) {
                 pullToRefreshLayout.setCanLoadMore(true);
                 for (int i = startNum; i < lastNum; i++) {
-                    String longTime = getRingDuring(files[i]);
+                    String longTime = getRingDuring(list.get(i));
                     HaveAudio haveAudio = new HaveAudio();
                     if (longTime != null && !longTime.equals("null")) {
-                        haveAudio.setFile(files[i]);
+                        haveAudio.setFile(list.get(i));
                         haveAudio.setTime(longTime);
                         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_imageloding);
                         haveAudio.setBitmap(bitmap);
@@ -197,11 +188,11 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                     imagePaths.add(haveAudio);
                 }
             } else {
-                for (int i = startNum; i < files.length + 1; i++) {
-                    String longTime = getRingDuring(files[i]);
+                for (int i = startNum; i < fileList.size() + 1; i++) {
+                    String longTime = getRingDuring(list.get(i));
                     HaveAudio haveAudio = new HaveAudio();
                     if (longTime != null && !longTime.equals("null")) {
-                        haveAudio.setFile(files[i]);
+                        haveAudio.setFile(list.get(i));
                         haveAudio.setTime(longTime);
                         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_imageloding);
                         haveAudio.setBitmap(bitmap);
@@ -219,15 +210,16 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
         pullToRefreshLayout.finishRefresh();
         handler.sendEmptyMessage(Constant.TAG_ONE);
     }
-
     /**
      * 获取目录下所有文件(按时间排序)
      *
+     * @param path
      * @return
      */
-    public static List<File> listFileSortByModifyTime(List<File> files) {
-        if (files != null && files.size() > 0) {
-            Collections.sort(files, new Comparator<File>() {
+    public static List<File> listFileSortByModifyTime(String path) {
+        List<File> list = getFilesye(path, new ArrayList<File>());
+        if (list != null && list.size() > 0) {
+            Collections.sort(list, new Comparator<File>() {
                 public int compare(File file, File newFile) {
                     if (file.lastModified() < newFile.lastModified()) {
                         return -1;
@@ -238,6 +230,28 @@ public class HaveAudioActivity extends BaseActivity implements HaveVideoContract
                     }
                 }
             });
+        }
+        return list;
+    }
+
+    /**
+     * 获取目录下所有文件
+     *
+     * @param realpath
+     * @param files
+     * @return
+     */
+    public static List<File> getFilesye(String realpath, List<File> files) {
+        File realFile = new File(realpath);
+        if (realFile.isDirectory()) {
+            File[] subfiles = realFile.listFiles();
+            for (File file : subfiles) {
+                if (file.isDirectory()) {
+                    getFilesye(file.getAbsolutePath(), files);
+                } else {
+                    files.add(file);
+                }
+            }
         }
         return files;
     }

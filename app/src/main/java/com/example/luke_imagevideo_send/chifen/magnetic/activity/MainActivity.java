@@ -307,7 +307,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-
+        getGPS();
     }
 
     @Override
@@ -320,7 +320,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 tvTime.setText(time);
             }
         });
-        getGPS();
     }
 
     /**

@@ -36,7 +36,7 @@ import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +59,6 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     List<String> imagePaths = new ArrayList<>();
     List<String> selectList = new ArrayList<>();
-    List<File> fileList = new ArrayList<>();
     BaseRecyclerAdapter baseRecyclerAdapter;
     SharePreferencesUtils sharePreferencesUtils;
     private SVProgressHUD mSVProgressHUD;
@@ -69,6 +68,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     private int lastNum = 24;
     private int allNum;
     File[] files;
+    List<File> fileListData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +141,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                 startNum = 0;
                 lastNum = 24;
                 imagePaths.clear();
-                setData();
+                setData(fileListData);
             }
 
             @Override
@@ -156,7 +156,7 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
                     if (lastNum>=allNum){
                         lastNum = allNum;
                     }
-                    setData();
+                    setData(fileListData);
                 }
             }
         });
@@ -176,37 +176,33 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
 
     public void getFilesAllName(String path) {
         imagePaths.clear();
-        //传入指定文件夹的路径
-        File file = new File(path);
-        files = file.listFiles();
-        if (files!=null){
-            allNum = files.length;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Arrays.sort(files, Comparator.reverseOrder());
-            }
-            setData();
-        }else {
+        fileListData = listFileSortByModifyTime(path);
+        Collections.reverse(fileListData);
+        if (fileListData.size()!=0){
+            allNum = fileListData.size();
+            setData(fileListData);
+        } else {
             handler.sendEmptyMessage(Constant.TAG_TWO);
         }
     }
 
-    private void setData(){
+    private void setData(List<File> fileListData){
         try {
             if (allNum > 24) {
                 pullToRefreshLayout.setCanLoadMore(true);
                 for (int i = startNum; i < lastNum; i++) {
-                    if (checkIsImageFile(files[i].getPath()) && !files[i].getPath().equals("null")) {
-                        imagePaths.add(files[i].getPath());
+                    if (checkIsImageFile(fileListData.get(i).getPath()) && !fileListData.get(i).getPath().equals("null")) {
+                        imagePaths.add(fileListData.get(i).getPath());
                     }
                 }
             } else {
-                for (int i = 0; i < files.length; i++) {
-                    if (checkIsImageFile(files[i].getPath()) && files[i].getPath() != null) {
+                for (int i = 0; i < fileListData.size(); i++) {
+                    if (checkIsImageFile(fileListData.get(i).getPath()) && fileListData.get(i).getPath() != null) {
                         Bitmap bitmap = null;
-                        bitmap = BitmapFactory.decodeFile(files[i].getPath());
+                        bitmap = BitmapFactory.decodeFile(fileListData.get(i).getPath());
                         if (bitmap != null) {
-                            Log.e("XXX",files[i].getPath());
-                            imagePaths.add(files[i].getPath());
+                            Log.e("XXX",fileListData.get(i).getPath());
+                            imagePaths.add(fileListData.get(i).getPath());
                         }
                     }
                 }
@@ -220,6 +216,52 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
         pullToRefreshLayout.finishLoadMore();
         pullToRefreshLayout.finishRefresh();
         handler.sendEmptyMessage(Constant.TAG_ONE);
+    }
+
+    /**
+     * 获取目录下所有文件(按时间排序)
+     *
+     * @param path
+     * @return
+     */
+    public static List<File> listFileSortByModifyTime(String path) {
+        List<File> list = getFilesye(path, new ArrayList<File>());
+        if (list != null && list.size() > 0) {
+            Collections.sort(list, new Comparator<File>() {
+                public int compare(File file, File newFile) {
+                    if (file.lastModified() < newFile.lastModified()) {
+                        return -1;
+                    } else if (file.lastModified() == newFile.lastModified()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+        }
+        return list;
+    }
+
+    /**
+     * 获取目录下所有文件
+     *
+     * @param realpath
+     * @param files
+     * @return
+     */
+    public static List<File> getFilesye(String realpath, List<File> files) {
+        File realFile = new File(realpath);
+        if (realFile.isDirectory()) {
+            File[] subfiles = realFile.listFiles();
+            for (File file : subfiles) {
+                if (file.isDirectory()) {
+                    getFilesye(file.getAbsolutePath(), files);
+                } else {
+                    files.add(file);
+                }
+            }
+        }
+        return files;
     }
 
     Handler handler = new Handler() {

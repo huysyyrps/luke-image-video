@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
@@ -9,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -55,7 +55,7 @@ public class SendSelectActivity extends AppCompatActivity {
     SharePreferencesUtils sharePreferencesUtils;
     MediaProjectionManager projectionManager;
     private WifiManager mWifiManager;
-    private String sid = "", pwd = "";
+    private String sid = "", pwd = "", max = "";
     private WifiManager wifiMgr;
     private WifiManager.LocalOnlyHotspotReservation mReservation;
     //推出程序
@@ -121,6 +121,7 @@ public class SendSelectActivity extends AppCompatActivity {
         sharePreferencesUtils = new SharePreferencesUtils();
         sid = sharePreferencesUtils.getString(this, "sid", "");
         pwd = sharePreferencesUtils.getString(this, "pwd", "");
+        max = sharePreferencesUtils.getString(this, "max", "");
         new StatusBarUtils().setWindowStatusBarColor(SendSelectActivity.this, R.color.color_bg_selected);
         relativeLayout = findViewById(R.id.relativeLayout);
         tvHeader = findViewById(R.id.tv_tittle);
@@ -185,10 +186,16 @@ public class SendSelectActivity extends AppCompatActivity {
 
         initData();
 //        getNewData();
-        alertDialogUtil.showWifiSetting(this, "luke_office", "42D63C0496C3", new DialogCallBack() {
+        alertDialogUtil.showWifiSetting(this, "luke_office", max, new DialogCallBack() {
             @Override
             public void confirm(String data, Dialog dialog) {
-                Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+//                Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+//                startActivity(intent);
+                Intent intent = new Intent();
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.setAction("android.intent.action.MAIN");
+                ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.Settings$HotspotSettingsActivity");
+                intent.setComponent(cn);
                 startActivity(intent);
             }
 
@@ -243,7 +250,7 @@ public class SendSelectActivity extends AppCompatActivity {
                         Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
                     } else if (etWorkName.getText().toString().trim().equals("")) {
                         Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                         intent = new Intent(SendSelectActivity.this, MainActivity.class);
                         intent.putExtra("project", etProject.getText().toString().trim());
@@ -260,10 +267,10 @@ public class SendSelectActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 return false;
-        }
-    });
+            }
+        });
         sheet.toggle();
-}
+    }
 
     //获取设备基础信息
     public void getNewData() {

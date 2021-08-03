@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -325,6 +326,7 @@ public class AlertDialogUtil {
             Button btnCopyPwd = (Button) view.findViewById(R.id.btnCapyPWD);
             TextView tvSetting = (TextView) view.findViewById(R.id.tvSetting);
             TextView tvCancle = (TextView) view.findViewById(R.id.tvCancle);
+            ImageView ivClose = (ImageView) view.findViewById(R.id.ivClose);
 
             tvSSID.setText(ssid);
             tvPWD.setText(pwd);
@@ -353,13 +355,15 @@ public class AlertDialogUtil {
                 }
             });
 
-            tvCancle.setOnClickListener(new View.OnClickListener() {
+            ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
                     dialogCallBack.cancel();
                 }
             });
+
+
 
             dialog.getWindow().setContentView(view);
         }

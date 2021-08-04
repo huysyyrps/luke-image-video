@@ -29,6 +29,7 @@ import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.main.activity.LoginActivity;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
 
@@ -297,25 +298,29 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
 
     @OnClick(R.id.ivSend)
     public void onClick() {
-        if (selectList.size() == 0) {
-            Toast.makeText(NoAudioActivity.this, "您还未选择无声视频", Toast.LENGTH_SHORT).show();
-        } else {
-            MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
-            for (int i=0;i<selectList.size();i++){
-                RequestBody requestBody=RequestBody.create(MediaType.parse("multipart/form-data"),selectList.get(i).getFile());
-                builder.addFormDataPart("file"+i,selectList.get(i).getFile().getName(),requestBody);//"imgfile"+i 后台接收图片流的参数名
-            }
-            builder.addFormDataPart("company", compName);
-            builder.addFormDataPart("project", project);
-            builder.addFormDataPart("device", device);
-            builder.addFormDataPart("workpiece", workName);
-            builder.addFormDataPart("workpiecenum", workCode);
-            builder.addFormDataPart("voice", "silentvideo");
+        if (sharePreferencesUtils.getString(this,"userName","").equals("")){
+            startActivity(new Intent(this, LoginActivity.class));
+        }else {
+            if (selectList.size() == 0) {
+                Toast.makeText(NoAudioActivity.this, "您还未选择无声视频", Toast.LENGTH_SHORT).show();
+            } else {
+                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM); //表单类型
+                for (int i = 0; i < selectList.size(); i++) {
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), selectList.get(i).getFile());
+                    builder.addFormDataPart("file" + i, selectList.get(i).getFile().getName(), requestBody);//"imgfile"+i 后台接收图片流的参数名
+                }
+                builder.addFormDataPart("company", compName);
+                builder.addFormDataPart("project", project);
+                builder.addFormDataPart("device", device);
+                builder.addFormDataPart("workpiece", workName);
+                builder.addFormDataPart("workpiecenum", workCode);
+                builder.addFormDataPart("voice", "silentvideo");
 
 //            builder.addFormDataPart("company","shangjia002");
 //            builder.addFormDataPart("device" , "cehouyi001");
-            List<MultipartBody.Part> parts = builder.build().parts();
-            haveVideoPresenter.getHaveVideo(parts);
+                List<MultipartBody.Part> parts = builder.build().parts();
+                haveVideoPresenter.getHaveVideo(parts);
+            }
         }
     }
 
@@ -424,6 +429,9 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
     public void setHaveVideo(HaveVideoUp HaveVideoUp) {
         Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
         header.setTvTitle("无声视频");
+        selectList.clear();
+        recyclerView.setAdapter(null);
+        recyclerView.setAdapter(baseRecyclerAdapter);
     }
 
     @Override

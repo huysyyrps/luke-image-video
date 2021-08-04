@@ -47,7 +47,7 @@ public class PermissionActivity extends BaseActivity {
                     public void onFinish() {
                         Log.e("TAG", "close0");
 //                        Intent intent = new Intent(PermissionActivity.this,CaptureActivity.class);
-                        Intent intent = new Intent(PermissionActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(PermissionActivity.this, DefinedActivity.class);
                         startActivity(intent);
                         finish();
                     }

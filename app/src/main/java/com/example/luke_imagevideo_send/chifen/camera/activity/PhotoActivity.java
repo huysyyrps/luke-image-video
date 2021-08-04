@@ -30,6 +30,7 @@ import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.main.activity.LoginActivity;
 import com.google.gson.Gson;
 import com.jwenfeng.library.pulltorefresh.BaseRefreshListener;
 import com.jwenfeng.library.pulltorefresh.PullToRefreshLayout;
@@ -299,32 +300,36 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.ivSend)
     public void onClick() {
-        if (selectList.size() == 0) {
-            Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
-        } else {
-            String base = "";
-            String imageName = "";
-            for (int i = 0; i < selectList.size(); i++) {
-                if (i==0){
-                    base = new StringBase().bitmapToString(selectList.get(0));
-                    imageName = getFileName(selectList.get(0));
-                }else {
-                    base = base+ "---"+new StringBase().bitmapToString(selectList.get(i));
-                    imageName = imageName+"---"+getFileName(selectList.get(i));
+        if (sharePreferencesUtils.getString(this,"userName","").equals("")){
+            startActivity(new Intent(this, LoginActivity.class));
+        }else {
+            if (selectList.size() == 0) {
+                Toast.makeText(PhotoActivity.this, "您还未选择图片", Toast.LENGTH_SHORT).show();
+            } else {
+                String base = "";
+                String imageName = "";
+                for (int i = 0; i < selectList.size(); i++) {
+                    if (i == 0) {
+                        base = new StringBase().bitmapToString(selectList.get(0));
+                        imageName = getFileName(selectList.get(0));
+                    } else {
+                        base = base + "---" + new StringBase().bitmapToString(selectList.get(i));
+                        imageName = imageName + "---" + getFileName(selectList.get(i));
+                    }
                 }
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("company", compName);
+                map.put("project", project);
+                map.put("device", device);
+                map.put("workpiece", workName);
+                map.put("workpiecenum", workCode);
+                map.put("name", imageName);
+                map.put("pic", base);
+                Gson gson = new Gson();
+                String s = gson.toJson(map);
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
+                photoPresenter.getPhoto(requestBody);
             }
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put("company" , compName);
-            map.put("project" , project);
-            map.put("device" , device);
-            map.put("workpiece" , workName);
-            map.put("workpiecenum" , workCode);
-            map.put("name" , imageName);
-            map.put("pic" , base);
-            Gson gson = new Gson();
-            String s = gson.toJson(map);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(map));
-            photoPresenter.getPhoto(requestBody);
         }
     }
 
@@ -360,6 +365,9 @@ public class PhotoActivity extends BaseActivity implements PhotoContract.View {
     public void setPhoto(PhotoUp photoUp) {
         header.setTvTitle("图库");
         Toast.makeText(this, "上传成功", Toast.LENGTH_SHORT).show();
+        selectList.clear();
+        recyclerView.setAdapter(null);
+        recyclerView.setAdapter(baseRecyclerAdapter);
     }
 
     @Override

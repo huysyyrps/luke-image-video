@@ -112,5 +112,4 @@ public interface AllApi {
      */
     @GET(ApiAddress.defined)
     Observable<Defined> getDefined(@Query("pgdNum") String pgdNum);
-
 }

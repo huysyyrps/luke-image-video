@@ -2,6 +2,7 @@ package com.example.luke_imagevideo_send.chifen.camera.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -15,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.chifen.camera.util.DownloadManager;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHDataExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
@@ -30,6 +31,7 @@ import com.example.luke_imagevideo_send.http.views.Header;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -239,7 +241,6 @@ public class SettingActivity extends BaseActivity {
                 dataBean.setMode(sharePreferencesUtils.getString(this, "mode", ""));
                 dataBean.setIp(sharePreferencesUtils.getString(this, "ip", ""));
                 dataBean.setAuto_time(time);
-
                 setting.setData(dataBean);
                 Gson gson = new Gson();
                 String obj2 = gson.toJson(setting);
@@ -312,33 +313,50 @@ public class SettingActivity extends BaseActivity {
                 });
                 break;
             case R.id.llPut:
-                progressHUD = ProgressHUD.show(SettingActivity.this);
-                progressHUD.setLabel("设置中...");
-                try {
-                    address = new getIp().getConnectIp();
-                    if (address != null) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SSHDataExcuteCommandHelper.getBefor(address, "s", new SSHCallBack() {
-                                    @Override
-                                    public void confirm(String data1) {
-                                        handler.sendEmptyMessage(Constant.TAG_ONE);
-                                    }
+                String url = "https://pic4.zhimg.com/03b2d57be62b30f158f48f388c8f3f33_b.png";
+                DownloadManager.download(url, Environment.getExternalStorageDirectory()+"/LUKEUpdata", "test.png", new DownloadManager.OnDownloadListener() {
+                    @Override
+                    public void onSuccess(File file) {
 
-                                    @Override
-                                    public void error(String s) {
-                                        handler.sendEmptyMessage(Constant.TAG_TWO);
-                                    }
-                                });
-                            }
-                        }).start();
-                    } else {
-                        Toast.makeText(this, "请检查设备是否连接到手机热点", Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                    @Override
+                    public void onProgress(int progress) {
+
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
+//                progressHUD = ProgressHUD.show(SettingActivity.this);
+//                progressHUD.setLabel("设置中...");
+//                try {
+//                    address = new getIp().getConnectIp();
+//                    if (address != null) {
+//                        new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                SSHDataExcuteCommandHelper.getBefor(address, "s", new SSHCallBack() {
+//                                    @Override
+//                                    public void confirm(String data1) {
+//                                        handler.sendEmptyMessage(Constant.TAG_ONE);
+//                                    }
+//
+//                                    @Override
+//                                    public void error(String s) {
+//                                        handler.sendEmptyMessage(Constant.TAG_TWO);
+//                                    }
+//                                });
+//                            }
+//                        }).start();
+//                    } else {
+//                        Toast.makeText(this, "请检查设备是否连接到手机热点", Toast.LENGTH_SHORT).show();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
                 break;
         }
     }

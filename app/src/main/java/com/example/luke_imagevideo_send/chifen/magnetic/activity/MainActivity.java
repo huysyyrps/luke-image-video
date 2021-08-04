@@ -27,6 +27,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -34,11 +35,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -129,8 +133,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
-    @BindView(R.id.rbSuspend)
-    RadioButton rbSuspend;
 
     Bitmap mBitmap;
     String name = "";
@@ -169,6 +171,12 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     TextView tvClose;
     @BindView(R.id.rbRefresh)
     RadioButton rbRefresh;
+    @BindView(R.id.timer)
+    Chronometer timer;
+    @BindView(R.id.linearLayoutStop)
+    LinearLayout linearLayoutStop;
+    @BindView(R.id.ivTimer)
+    ImageView ivTimer;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
@@ -197,12 +205,14 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     private boolean isScreenshot = false;
     private Handler handler = new Handler();
     private CustomToast toast;
+    private final int BREATH_INTERVAL_TIME = 1000; //设置呼吸灯时间间隔
+    private AlphaAnimation animationFadeIn;
+    private AlphaAnimation animationFadeOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        Log.e("MainActivity","onCreate");
         btnTop.setOnLongClickListener(this);
         btnBotton.setOnLongClickListener(this);
         btnLeft.setOnLongClickListener(this);
@@ -337,27 +347,28 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                             SSHExcuteCommandHelper.writeBefor("192.168.1.251", "echo -en \"AT+QGPSLOC=1\\r\\n\"> /dev/ttyUSB2", new SSHCallBack() {
                                 @Override
                                 public void confirm(String data) {
-                                    if (data != null&&!data.equals("")) {
+                                    if (data != null && !data.equals("")) {
                                         String[] GPSData = data.split(",");
                                         (MainActivity.this).runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                tvGPS.setText(GPSData[1]+","+GPSData[3]);
+                                                tvGPS.setText(GPSData[1] + "," + GPSData[3]);
                                             }
                                         });
                                     }
                                     SSHExcuteCommandHelper.writeBefor("192.168.1.251", "kill %1", new SSHCallBack() {
                                         @Override
                                         public void confirm(String data) {
-                                            Log.e("MainAvtivity",data);
+                                            Log.e("MainAvtivity", data);
                                         }
 
                                         @Override
                                         public void error(String s) {
-                                            Log.e("MainAvtivity",s);
+                                            Log.e("MainAvtivity", s);
                                         }
                                     });
                                 }
+
                                 @Override
                                 public void error(String s) {
                                     (MainActivity.this).runOnUiThread(new Runnable() {
@@ -369,6 +380,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                                 }
                             });
                         }
+
                         @Override
                         public void error(String s) {
                             (MainActivity.this).runOnUiThread(new Runnable() {
@@ -411,9 +423,9 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     protected void rightClient() {
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.rbSuspend
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.linearLayoutStop
             , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose,R.id.rbRefresh})
+            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose, R.id.rbRefresh})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -433,6 +445,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 }
                 break;
             case R.id.rbVideo:
+                timer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 haveAudio = "noAudio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
                 name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
@@ -451,8 +464,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         if (!name1.equals("")) {
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
-                        new Thread (new Runnable(){
-                            public void run(){
+                        new Thread(new Runnable() {
+                            public void run() {
                                 try {
                                     Thread.sleep(500);
                                     MainActivity.this.runOnUiThread(() -> {
@@ -471,6 +484,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 });
                 break;
             case R.id.rbSound:
+                timer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 haveAudio = "Audio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
                 name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
@@ -489,8 +503,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         if (!name1.equals("")) {
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
-                        new Thread (new Runnable(){
-                            public void run(){
+                        new Thread(new Runnable() {
+                            public void run() {
                                 try {
                                     Thread.sleep(500);
                                     MainActivity.this.runOnUiThread(() -> {
@@ -508,7 +522,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     }
                 });
                 break;
-            case R.id.rbSuspend:
+            case R.id.linearLayoutStop:
                 new BottomUI().BottomUIMenu(this.getWindow());
                 rbCamera.setVisibility(View.VISIBLE);
                 rbAlbum.setVisibility(View.VISIBLE);
@@ -516,7 +530,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbSetting.setVisibility(View.VISIBLE);
                 rbVideo.setVisibility(View.VISIBLE);
                 rbRefresh.setVisibility(View.VISIBLE);
-                rbSuspend.setVisibility(View.GONE);
+                linearLayoutStop.setVisibility(View.GONE);
                 rbVideoV = true;
                 rbSoundV = true;
                 if (mRecorder != null) {
@@ -597,8 +611,62 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     }
 
+    public void checkTirem(){
+        animationFadeIn = new AlphaAnimation(0.1f, 1.0f);
+        animationFadeIn.setDuration(BREATH_INTERVAL_TIME);
+//        animationFadeIn.setStartOffset(100);
+
+        animationFadeOut = new AlphaAnimation(1.0f, 0.1f);
+        animationFadeOut.setDuration(BREATH_INTERVAL_TIME);
+//        animationFadeIn.setStartOffset(100);
+
+        animationFadeIn.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                ivTimer.startAnimation(animationFadeOut);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
+
+        animationFadeOut.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                ivTimer.startAnimation(animationFadeIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
+        ivTimer.startAnimation(animationFadeOut);
+    }
+
     /**
      * 重启服务刷新视频
+     *
      * @param data1
      */
     private void ShowDialog(String data1) {
@@ -700,7 +768,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbSetting.setVisibility(View.INVISIBLE);
                 rbRefresh.setVisibility(View.GONE);
                 rbVideo.setVisibility(View.GONE);
-                rbSuspend.setVisibility(View.VISIBLE);
+                linearLayoutStop.setVisibility(View.VISIBLE);
                 new BottomUI().hideBottomUIMenu(this.getWindow());
                 rbVideoV = false;
             }
@@ -714,7 +782,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 rbSetting.setVisibility(View.INVISIBLE);
                 rbRefresh.setVisibility(View.GONE);
                 rbVideo.setVisibility(View.GONE);
-                rbSuspend.setVisibility(View.VISIBLE);
+                linearLayoutStop.setVisibility(View.VISIBLE);
                 new BottomUI().hideBottomUIMenu(this.getWindow());
                 rbSoundV = false;
             }
@@ -829,8 +897,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
      */
     public boolean saveImg(String name, Context context) {
         try {
-            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/"+workCode+ "/";//图片保存的文件夹名
-            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
+            String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/" + workCode + "/";//图片保存的文件夹名
+            File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/" + workCode + "/");
             //如果不存在  就mkdirs()创建此文件夹
             if (!file.exists()) {
                 file.mkdirs();
@@ -1033,8 +1101,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     }
 
     private void startCapturing(MediaProjection mediaProjection, View view1) {
-        new Thread (new Runnable(){
-            public void run(){
+        new Thread(new Runnable() {
+            public void run() {
                 try {
                     Thread.sleep(500);
                     MainActivity.this.runOnUiThread(() -> {
@@ -1046,13 +1114,13 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                         }
                         File dir = null;
                         if (haveAudio.equals("Audio")) {
-                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
+                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKEVideo/" + project + "/" + "设备/" + workName + "/" + workCode + "/");
                             if (!dir.exists() && !dir.mkdirs()) {
                                 cancelRecorder();
                                 return;
                             }
                         } else if (haveAudio.equals("noAudio")) {
-                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/"+workCode+ "/");
+                            dir = new File(Environment.getExternalStorageDirectory() + "/LUKENOVideo/" + project + "/" + "设备/" + workName + "/" + workCode + "/");
                             if (!dir.exists() && !dir.mkdirs()) {
                                 cancelRecorder();
                                 return;
@@ -1075,8 +1143,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                                 }
                             }
                         }
-
-                        Log.d("@@", "Create recorder with :" + video + " \n " + audio + "\n " + file);
+                        checkTirem();
+                        timer.start();
                         mRecorder = newRecorder(mediaProjection, video, audio, file);
                         if (hasPermissions()) {
                             startRecorder();
@@ -1252,4 +1320,8 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             }
         }
     };
+
+    @OnClick(R.id.linearLayoutStop)
+    public void onViewClicked() {
+    }
 }

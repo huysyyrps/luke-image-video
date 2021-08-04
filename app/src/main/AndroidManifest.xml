@@ -24,6 +24,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.GPS_PROVIDER" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG"
         tools:ignore="ProtectedPermissions" />
 

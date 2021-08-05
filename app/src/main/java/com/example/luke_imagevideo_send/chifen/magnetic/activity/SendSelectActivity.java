@@ -186,7 +186,7 @@ public class SendSelectActivity extends AppCompatActivity {
 
         initData();
 //        getNewData();
-        alertDialogUtil.showWifiSetting(this, "luke_office", max, new DialogCallBack() {
+        alertDialogUtil.showWifiSetting(this, "luke_office", "42D63C0496C3", new DialogCallBack() {
             @Override
             public void confirm(String data, Dialog dialog) {
 //                Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);

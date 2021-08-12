@@ -105,10 +105,10 @@
                 android:textColor="@color/red"/>
             <TextView
                 android:id="@+id/tvGPS"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:text="获取位置中"
-                android:gravity="center"
+                android:gravity="left|center_vertical"
                 android:textSize="14dp"
                 android:textColor="@color/red"/>
         </LinearLayout>

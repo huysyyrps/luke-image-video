@@ -84,6 +84,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -341,44 +342,24 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                 @Override
                 public void run() {
                     //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB2 &", new SSHCallBack() {
+                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB1", new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
-                            SSHExcuteCommandHelper.writeBefor("192.168.1.251", "echo -en \"AT+QGPSLOC=1\\r\\n\"> /dev/ttyUSB2", new SSHCallBack() {
-                                @Override
-                                public void confirm(String data) {
-                                    if (data != null && !data.equals("")) {
-                                        String[] GPSData = data.split(",");
-                                        (MainActivity.this).runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                tvGPS.setText(GPSData[1] + "," + GPSData[3]);
-                                            }
-                                        });
-                                    }
-                                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "kill %1", new SSHCallBack() {
-                                        @Override
-                                        public void confirm(String data) {
-                                            Log.e("MainAvtivity", data);
-                                        }
-
-                                        @Override
-                                        public void error(String s) {
-                                            Log.e("MainAvtivity", s);
-                                        }
-                                    });
+                            try {
+                                String [] GpsData = data.split(getResources().getString(R.string.special_data));
+                                if (GpsData.length!=0){
+                                    String lastData = GpsData[GpsData.length-1];
+                                    String [] NEData = lastData.split(",");
+                                    String firstN = NEData[1];
+                                    String firstE = NEData[3];
+                                    BigDecimal DataN = new BigDecimal(Double.valueOf(firstN)/100).setScale(6,BigDecimal.ROUND_HALF_UP);
+                                    BigDecimal DataE = new BigDecimal(Double.valueOf(firstE)/100).setScale(6,BigDecimal.ROUND_HALF_UP);
+                                    String s = DataE+","+DataN;
+                                    tvGPS.setText(s);
                                 }
-
-                                @Override
-                                public void error(String s) {
-                                    (MainActivity.this).runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            });
+                            }catch (Exception ex) {
+                                Log.e("XXX", ex.toString());
+                            }
                         }
 
                         @Override

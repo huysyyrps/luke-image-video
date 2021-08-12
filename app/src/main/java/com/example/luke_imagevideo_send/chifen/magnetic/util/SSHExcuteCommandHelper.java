@@ -59,14 +59,14 @@ public class SSHExcuteCommandHelper {
      * @return
      */
     public boolean canConnection() {
-        while (true){
-            if (session!=null){
+        while (true) {
+            if (session != null) {
                 try {
                     session.connect();
                     return true;
                 } catch (JSchException e) {
                     e.printStackTrace();
-                   break;
+                    break;
                 }
             }
         }
@@ -209,6 +209,7 @@ public class SSHExcuteCommandHelper {
                     break;
                 }
                 strBuffer.append(new String(tmp, 0, i));
+                disconnect();
                 return strBuffer.toString();
             }
             if (ssh.isClosed()) {
@@ -220,6 +221,7 @@ public class SSHExcuteCommandHelper {
             } catch (Exception ee) {
             }
         }
+        disconnect();
         return strBuffer.toString();
     }
 }

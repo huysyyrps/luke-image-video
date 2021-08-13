@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/frameLayout"
+    android:background="@color/black">
+
+    <com.example.luke_imagevideo_send.http.views.Header
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        app:header_title="@string/app_name"
+        app:header_is_left_iv_visiable="false">
+    </com.example.luke_imagevideo_send.http.views.Header>
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/linelayout_radion">
+    </WebView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时间:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="时间"
+                android:textColor="@color/red"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="GPS:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvGPS"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="获取位置中"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="工程名称:"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/red"/>
+                <TextView
+                    android:id="@+id/tvCompName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:maxLength="15"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="工件名称:"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/red"/>
+                <TextView
+                    android:id="@+id/tvWorkName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:maxLength="15"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="工件编号:"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/red"/>
+                <TextView
+                    android:id="@+id/tvWorkCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:maxLength="15"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <include
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        layout="@layout/mainitem_layout"
+        android:layout_gravity="left|bottom" />
+
+</FrameLayout>

@@ -87,6 +87,9 @@
             android:name=".chifen.magnetic.activity.MainActivity"
             android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
         <activity
+            android:name=".chifen.magnetic.activity.MainBroadcastActivity"
+            android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
+        <activity
             android:name=".chifen.camera.activity.PhotoActivity"
             android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
         <activity

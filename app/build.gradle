@@ -7,7 +7,7 @@ apply plugin: 'com.huawei.agconnect'
 MobSDK {
     appKey "31bc5cafc24e4"
     appSecret "93b27c040d3bd4eac391152e2fc1423a"
-    SMSSDK {gui false}
+    SMSSDK { gui false }
 }
 
 android {
@@ -29,6 +29,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+            }
+        }
     }
 
     compileOptions {
@@ -51,6 +56,11 @@ android {
         all {
             exclude module: 'httpclient'
             exclude module: 'commons-logging'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
         }
     }
 }
@@ -90,7 +100,7 @@ dependencies {
     implementation 'com.tonystark.android:socket:4.1.0'
     //如果您需要使用 OkSocketServer 功能在客户端或者Java程序,您还需要依赖下面的Server插件包和上面的一起依赖.
     implementation 'com.tonystark.android:socket-server:4.1.0'
-    implementation'com.github.LuckSiege.PictureSelector:picture_library:v2.5.6'
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.6'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     //动态底部弹出框

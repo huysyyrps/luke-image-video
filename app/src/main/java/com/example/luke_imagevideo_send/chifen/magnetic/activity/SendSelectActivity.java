@@ -22,7 +22,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.cehouyi.activity.MainCHYActivity;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.RecyclerViewDelegate;
@@ -244,32 +243,46 @@ public class SendSelectActivity extends AppCompatActivity {
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workName", etWorkName.getText().toString());
                 sharePreferencesUtils.setString(SendSelectActivity.this, "workCode", etWorkCode.getText().toString());
                 if (menuEntity.title.equals("本地存储")) {
-                    if (etProject.getText().toString().trim().equals("")) {
-                        Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-                    } else if (etWorkCode.getText().toString().trim().equals("")) {
-                        Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
-                    } else if (etWorkName.getText().toString().trim().equals("")) {
-                        Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-                    } else {
-                        sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
-                        intent = new Intent(SendSelectActivity.this, MainActivity.class);
-                        intent.putExtra("project", etProject.getText().toString().trim());
-                        intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
-                        intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
-                        etProject.setText("");
-                        etWorkCode.setText("");
-                        etWorkName.setText("");
-                        startActivity(intent);
-                    }
+                    SelectActivity("本地存储");
                 } else if (menuEntity.title.equals("实时上传")) {
-//                    intent = new Intent(SendSelectActivity.this, MainOutCHYActivity.class);
-                    intent = new Intent(SendSelectActivity.this, MainCHYActivity.class);
-                    startActivity(intent);
+                    SelectActivity("实时上传");
                 }
                 return false;
             }
         });
         sheet.toggle();
+    }
+
+    public void SelectActivity(String data){
+        if (etProject.getText().toString().trim().equals("")) {
+            Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
+        } else if (etWorkCode.getText().toString().trim().equals("")) {
+            Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
+        } else if (etWorkName.getText().toString().trim().equals("")) {
+            Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
+        } else {
+            if (data.equals("本地存储")){
+                sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
+                intent = new Intent(SendSelectActivity.this, MainActivity.class);
+                intent.putExtra("project", etProject.getText().toString().trim());
+                intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+                intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+                etProject.setText("");
+                etWorkCode.setText("");
+                etWorkName.setText("");
+                startActivity(intent);
+            }else  if (data.equals("实时上传")){
+                sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "实时上传");
+                intent = new Intent(SendSelectActivity.this, MainBroadcastActivity.class);
+                intent.putExtra("project", etProject.getText().toString().trim());
+                intent.putExtra("etWorkName", etWorkName.getText().toString().trim());
+                intent.putExtra("etWorkCode", etWorkCode.getText().toString().trim());
+                etProject.setText("");
+                etWorkCode.setText("");
+                etWorkName.setText("");
+                startActivity(intent);
+            }
+        }
     }
 
     //获取设备基础信息

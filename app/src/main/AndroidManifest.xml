@@ -8,9 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -24,14 +22,13 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.GPS_PROVIDER" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG"
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission
+        android:name="android.permission.OVERRIDE_WIFI_CONFIG"
         tools:ignore="ProtectedPermissions" />
-
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-
     <uses-permission
         android:name="android.permission.MANAGE_MEDIA_PROJECTION"
         tools:ignore="ProtectedPermissions" />
@@ -50,7 +47,14 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".chifen.camera.activity.DailyActivity"/>
+        <activity android:name=".weihantou_grade.GradeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".chifen.camera.activity.DailyActivity" />
         <activity android:name=".chifen.camera.activity.CXContextActivity" />
         <activity android:name=".chifen.camera.activity.CFContextActivity" />
         <activity android:name=".chifen.camera.activity.ContextListItemActivity" />
@@ -73,11 +77,7 @@
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".main.activity.WelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />

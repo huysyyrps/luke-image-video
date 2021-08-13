@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pipelevel">
+        <item>GC1</item>
+        <item>GC2 GC3 </item>
+    </string-array>
+
+    <string-array name="pipematerial">
+        <item>20#钢</item>
+        <item>奥氏体不锈钢</item>
+        <item>16MnR</item>
+    </string-array>
+
+    <string-array name="select">
+        <item>未焊透</item>
+        <item>局部减薄</item>
+    </string-array>
+</resources>

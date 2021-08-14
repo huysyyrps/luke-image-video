@@ -221,6 +221,7 @@
                 <EditText
                     android:id="@+id/etNum"
                     style="@style/EditText"
+                    android:inputType="number|numberDecimal"
                     android:hint="未焊透"/>
             </LinearLayout>
 

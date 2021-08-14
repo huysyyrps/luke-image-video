@@ -53,7 +53,10 @@ public class GradeActivity extends BaseActivity {
     TextView tvPL0;
     @BindView(R.id.tvLevel)
     TextView tvLevel;
+    boolean first = true;
     String pipeLeave = "",pipeMaterial = "",select = "";
+    String pipeThickness = "", pipeOD = "", userYear = "", nextYear = "", maxWorkMPa = "", defectLength = "", minThickness = "";
+    double maxWorkMPaData ,PL0NumData, defectLengthData, pipeODData, leftOther, CNumData, TNumData, pipeThicknessData, minThicknessData, DifferenceData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,13 +96,13 @@ public class GradeActivity extends BaseActivity {
         }else if (etMinThickness.getText().toString().trim().equals("")){
             Toast.makeText(this, "缺陷附近最小壁厚不能为空", Toast.LENGTH_SHORT).show();
         }else {
-            String pipeThickness = etPipeThickness.getText().toString().trim();
-            String pipeOD = etPipeOD.getText().toString().trim();
-            String userYear = etUserYear.getText().toString().trim();
-            String nextYear = etNextYear.getText().toString().trim();
-            String maxWorkMPa = etMaxWorkMPa.getText().toString().trim();
-            String defectLength = etDefectLength.getText().toString().trim();
-            String minThickness = etMinThickness.getText().toString().trim();
+            pipeThickness = etPipeThickness.getText().toString().trim();
+            pipeOD = etPipeOD.getText().toString().trim();
+            userYear = etUserYear.getText().toString().trim();
+            nextYear = etNextYear.getText().toString().trim();
+            maxWorkMPa = etMaxWorkMPa.getText().toString().trim();
+            defectLength = etDefectLength.getText().toString().trim();
+            minThickness = etMinThickness.getText().toString().trim();
 
             BigDecimal CData = new BigDecimal((Double.valueOf(pipeThickness)-Double.valueOf(minThickness))/Double.valueOf(userYear)*Double.valueOf(nextYear)).setScale(6,BigDecimal.ROUND_HALF_UP);
             tvC.setText(String.valueOf(CData));
@@ -124,112 +127,129 @@ public class GradeActivity extends BaseActivity {
             }
             tvPL0.setText(String.valueOf(PL0Data)+"");
 
-            double maxWorkMPaData = Double.valueOf(maxWorkMPa);
-            double PL0NumData = Double.valueOf(String.valueOf(PL0Data));
-            double defectLengthData = Double.valueOf(defectLength);
-            double pipeODData = Double.valueOf(pipeOD);
-            double leftOther = defectLengthData/pipeODData/3.141592;
-            double CNumData = Double.valueOf(String.valueOf(CData));
-            double TNumData = Double.valueOf(String.valueOf(TData));
-            if(pipeLeave.equals("GC2 GC3")){
-                if (maxWorkMPaData<PL0NumData*0.3){
-                    if (leftOther<=0.25){
-                        if (0.40*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.40*TNumData-CNumData&&CNumData>0.33*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.33*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.25<leftOther&&leftOther<=0.75){
-                        if (0.33*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.33*TNumData-CNumData&&CNumData>0.25*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.25*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.75<leftOther&&leftOther<=1.00){
-                        if (0.25*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.25*TNumData-CNumData&&CNumData>0.2*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.2*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }
-
-                }else if (PL0NumData*0.3<maxWorkMPaData&& maxWorkMPaData<PL0NumData*0.5){
-                    if (leftOther<=0.25){
-                        if (0.25*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.25*TNumData-CNumData&&CNumData>0.20*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.20*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.25<leftOther&&leftOther<=0.75||0.75<leftOther&&leftOther<=1.00){
-                        if (0.20*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.20*TNumData-CNumData&&CNumData>0.15*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.15*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }
-
-                }
-            }else if(pipeLeave.equals("GC1")){
-                if (maxWorkMPaData<PL0NumData*0.3){
-                    if (leftOther<=0.25){
-                        if (0.35*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.35*TNumData-CNumData&&CNumData>0.30*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.30*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.25<leftOther&&leftOther<=0.75){
-                        if (0.30*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.30*TNumData-CNumData&&CNumData>0.20*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.20*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.75<leftOther&&leftOther<=1.00){
-                        if (0.20*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.20*TNumData-CNumData&&CNumData>0.15*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.15*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }
-
-                }else if (PL0NumData*0.3<maxWorkMPaData&& maxWorkMPaData<PL0NumData*0.5){
-                    if (leftOther<=0.25){
-                        if (0.20*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.20*TNumData-CNumData&&CNumData>0.15*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.15*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }else if (0.25<leftOther&&leftOther<=0.75||0.75<leftOther&&leftOther<=1.00){
-                        if (0.15*TNumData-CNumData<=CNumData){
-                            tvLevel.setText("4");
-                        }if (CNumData<0.15*TNumData-CNumData&&CNumData>0.10*TNumData-CNumData){
-                            tvLevel.setText("3");
-                        }if (0.10*TNumData-CNumData>=CNumData){
-                            tvLevel.setText("2");
-                        }
-                    }
-
+            maxWorkMPaData = Double.valueOf(maxWorkMPa);
+            PL0NumData = Double.valueOf(String.valueOf(PL0Data));
+            defectLengthData = Double.valueOf(defectLength);
+            pipeODData = Double.valueOf(pipeOD);
+            leftOther = defectLengthData/pipeODData/3.141592;
+            CNumData = Double.valueOf(String.valueOf(CData));
+            TNumData = Double.valueOf(String.valueOf(TData));
+            pipeThicknessData = Double.valueOf(pipeThickness);
+            minThicknessData = Double.valueOf(minThickness);
+            if (select.equals("局部减薄")){
+                DifferenceData = pipeThicknessData - minThicknessData;
+                getLevel();
+            }else if (select.equals("未焊透")){
+                if (etNum.getText().toString().trim().equals("")){
+                    Toast.makeText(this, "请输入未焊透值", Toast.LENGTH_SHORT).show();
+                }else {
+                    DifferenceData = Double.valueOf(etNum.getText().toString().trim());
+                    getLevel();
                 }
             }
+            first = false;
         }
     }
+
+    public void getLevel(){
+        if(pipeLeave.equals("GC2 GC3")){
+            if (maxWorkMPaData<PL0NumData*0.3){
+                if (leftOther<=0.25){
+                    if (0.40*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.40*TNumData- this.CNumData && this.DifferenceData >0.33*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.33*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.25<leftOther&&leftOther<=0.75){
+                    if (0.33*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.33*TNumData- this.CNumData && this.DifferenceData >0.25*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.25*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.75<leftOther&&leftOther<=1.00){
+                    if (0.25*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.25*TNumData- this.CNumData && this.DifferenceData >0.2*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.2*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }
+
+            }else if (PL0NumData*0.3<maxWorkMPaData&& maxWorkMPaData<PL0NumData*0.5){
+                if (leftOther<=0.25){
+                    if (0.25*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.25*TNumData- this.CNumData && this.DifferenceData >0.20*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.20*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.25<leftOther&&leftOther<=0.75||0.75<leftOther&&leftOther<=1.00){
+                    if (0.20*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.20*TNumData- this.CNumData && this.DifferenceData >0.15*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.15*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }
+
+            }
+        }else if(pipeLeave.equals("GC1")){
+            if (maxWorkMPaData<PL0NumData*0.3){
+                if (leftOther<=0.25){
+                    if (0.35*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.35*TNumData- this.CNumData && this.DifferenceData >0.30*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.30*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.25<leftOther&&leftOther<=0.75){
+                    if (0.30*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.30*TNumData- this.CNumData && this.DifferenceData >0.20*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.20*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.75<leftOther&&leftOther<=1.00){
+                    if (0.20*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.20*TNumData- this.CNumData && this.DifferenceData >0.15*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.15*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }
+
+            }else if (PL0NumData*0.3<maxWorkMPaData&& maxWorkMPaData<PL0NumData*0.5){
+                if (leftOther<=0.25){
+                    if (0.20*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.20*TNumData- this.CNumData && this.DifferenceData >0.15*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.15*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }else if (0.25<leftOther&&leftOther<=0.75||0.75<leftOther&&leftOther<=1.00){
+                    if (0.15*TNumData- this.CNumData <= this.DifferenceData){
+                        tvLevel.setText("4");
+                    }if (this.DifferenceData <0.15*TNumData- this.CNumData && this.DifferenceData >0.10*TNumData- this.CNumData){
+                        tvLevel.setText("3");
+                    }if (0.10*TNumData- this.CNumData >= this.DifferenceData){
+                        tvLevel.setText("2");
+                    }
+                }
+
+            }
+        }
+    };
 
     /**
      * spinner点击事件
@@ -240,6 +260,9 @@ public class GradeActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String[] languages = getResources().getStringArray(R.array.pipelevel);
                 pipeLeave = languages[pos];
+                if (!first){
+                    setEditData();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -251,7 +274,9 @@ public class GradeActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String[] languages = getResources().getStringArray(R.array.pipematerial);
                 pipeMaterial = languages[pos];
-                setEditData();
+                if (!first){
+                    setEditData();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -263,6 +288,14 @@ public class GradeActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String[] languages = getResources().getStringArray(R.array.select);
                 select = languages[pos];
+                if (select.equals("局部减薄")){
+                    etNum.setEnabled(false);
+                }else if (select.equals("未焊透")){
+                    etNum.setEnabled(true);
+                }
+                if (!first){
+                    setEditData();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

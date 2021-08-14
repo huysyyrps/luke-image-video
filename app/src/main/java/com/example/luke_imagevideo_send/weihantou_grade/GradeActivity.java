@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.views.Header;
 
@@ -54,6 +55,7 @@ public class GradeActivity extends BaseActivity {
     @BindView(R.id.tvLevel)
     TextView tvLevel;
     boolean first = true;
+    AlertDialogUtil alertDialogUtil;
     String pipeLeave = "",pipeMaterial = "",select = "";
     String pipeThickness = "", pipeOD = "", userYear = "", nextYear = "", maxWorkMPa = "", defectLength = "", minThickness = "";
     double maxWorkMPaData ,PL0NumData, defectLengthData, pipeODData, leftOther, CNumData, TNumData, pipeThicknessData, minThicknessData, DifferenceData;
@@ -62,6 +64,7 @@ public class GradeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        alertDialogUtil = new AlertDialogUtil(GradeActivity.this);
         spinneronCliect();
     }
 
@@ -136,6 +139,11 @@ public class GradeActivity extends BaseActivity {
             TNumData = Double.valueOf(String.valueOf(TData));
             pipeThicknessData = Double.valueOf(pipeThickness);
             minThicknessData = Double.valueOf(minThickness);
+
+            if (maxWorkMPaData>=PL0NumData){
+                alertDialogUtil.showSmallDialog("请核对最大压力是否正确");
+            }
+
             if (select.equals("局部减薄")){
                 DifferenceData = pipeThicknessData - minThicknessData;
                 getLevel();
@@ -260,9 +268,6 @@ public class GradeActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String[] languages = getResources().getStringArray(R.array.pipelevel);
                 pipeLeave = languages[pos];
-                if (!first){
-                    setEditData();
-                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -274,9 +279,6 @@ public class GradeActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String[] languages = getResources().getStringArray(R.array.pipematerial);
                 pipeMaterial = languages[pos];
-                if (!first){
-                    setEditData();
-                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -292,9 +294,6 @@ public class GradeActivity extends BaseActivity {
                     etNum.setEnabled(false);
                 }else if (select.equals("未焊透")){
                     etNum.setEnabled(true);
-                }
-                if (!first){
-                    setEditData();
                 }
             }
             @Override

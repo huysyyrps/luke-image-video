@@ -5,7 +5,6 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -23,6 +22,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.GPS_PROVIDER" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-feature android:name="android.hardware.location.gps" />
     <uses-permission
         android:name="android.permission.OVERRIDE_WIFI_CONFIG"
         tools:ignore="ProtectedPermissions" />
@@ -47,13 +47,7 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".weihantou_grade.GradeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".weihantou_grade.GradeActivity"/>
         <activity android:name=".chifen.camera.activity.DailyActivity" />
         <activity android:name=".chifen.camera.activity.CXContextActivity" />
         <activity android:name=".chifen.camera.activity.CFContextActivity" />
@@ -79,7 +73,9 @@
         <activity android:name=".main.activity.WelcomeActivity">
 
         </activity>
-        <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
+        <activity android:name=".chifen.magnetic.activity.SendSelectActivity" >
+
+        </activity>
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".bluetooth.BluetoothListActivity" />
         <activity android:name=".main.activity.DefinedActivity" />
@@ -103,7 +99,13 @@
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
-        <activity android:name=".cehouyi.activity.MainCHYActivity" />
+        <activity android:name=".cehouyi.activity.MainCHYActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".cehouyi.activity.MainMenuOutActivity" />
         <activity android:name=".cehouyi.activity.JSCHActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />

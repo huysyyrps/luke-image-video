@@ -467,7 +467,7 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
 
     private void startPush() {
         pushEncode = new PushEncode(this);
-        pushEncode.initEncoder(true,mediaProjection, 1280,800,44100,2,16);
+        pushEncode.initEncoder(true,mediaProjection, 1280,720,44100,2,16);
         pushEncode.setOnMediaInfoListener(this);
         pushEncode.start();
     }

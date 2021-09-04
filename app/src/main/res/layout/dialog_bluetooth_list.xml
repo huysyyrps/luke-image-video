@@ -2,18 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:id="@+id/linBleList"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/tools"
     android:orientation="vertical">
-
-    <com.example.luke_imagevideo_send.http.views.Header
-        android:id="@+id/header"
-        style="@style/Header"
-        app:header_title="蓝牙列表"
-        app:header_is_right_tv_visiable="true"
-        app:header_title_right="@string/app_name">
-    </com.example.luke_imagevideo_send.http.views.Header>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,13 +25,17 @@
             android:id="@+id/gifView"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:background="@color/line"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="15dp"/>
-
     </LinearLayout>
+    <View
+        style="@style/HourLine"
+        android:layout_height="10dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
 </LinearLayout>

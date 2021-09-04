@@ -170,7 +170,7 @@ public abstract class BasePushEncoder {
             MediaFormat videoFormat = MediaFormat.createVideoFormat(mineType, width, height);
             videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
             //30帧
-            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25);
+            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 20);
             //RGBA
             videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * 4);
             videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
@@ -198,7 +198,6 @@ public abstract class BasePushEncoder {
             mSurface = null;
         }
     }
-
 
     private void initAudioEncoder(String mineType, int sampleRate, int channel) {
         try {

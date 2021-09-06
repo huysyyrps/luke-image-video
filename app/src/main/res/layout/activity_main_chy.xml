@@ -15,11 +15,10 @@
     </com.example.luke_imagevideo_send.http.views.Header>
 
     <include layout="@layout/dialog_bluetooth_list"
-        />
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -42,7 +41,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -64,12 +63,18 @@
                             android:gravity="center"
                             android:textColor="@color/text_green"
                             android:text="5920" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -90,6 +95,12 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:textColor="@color/text_green" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -109,7 +120,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -130,12 +141,18 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:textColor="@color/text_green" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -156,6 +173,12 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:textColor="@color/text_green" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -175,7 +198,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -197,12 +220,18 @@
                             android:gravity="center"
                             android:textColor="@color/text_green"
                             android:text="11:29:56" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -224,6 +253,12 @@
                             android:gravity="center"
                             android:text="mm"
                             android:textColor="@color/text_green" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -243,7 +278,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -265,12 +300,18 @@
                             android:gravity="center"
                             android:textColor="@color/text_green"
                             android:text="0.0" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -292,6 +333,12 @@
                             android:gravity="center"
                             android:text="0.0"
                             android:textColor="@color/text_green" />
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -311,7 +358,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -332,13 +379,14 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:textColor="@color/text_green"
-                            android:text="0.0" />
+                            android:text="0.0"
+                            android:layout_marginRight="25dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_weight="1.2"
                         android:layout_marginLeft="5dp"
                         android:orientation="horizontal"
@@ -359,7 +407,8 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="0.0"
-                            android:textColor="@color/text_green" />
+                            android:textColor="@color/text_green"
+                            android:layout_marginRight="25dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -392,14 +441,14 @@
                     android:orientation="horizontal">
 
                     <RadioButton
-                        android:id="@+id/rb7"
+                        android:id="@+id/rbMenu"
                         android:layout_weight="1"
                         style="@style/RadionButton"
-                        android:text="菜单" />
+                        android:text="数据集合" />
                     <View style="@style/VLine" />
 
                     <RadioButton
-                        android:id="@+id/rb5"
+                        android:id="@+id/rbSave"
                         style="@style/RadionButton"
                         android:text="保存" />
                 </LinearLayout>

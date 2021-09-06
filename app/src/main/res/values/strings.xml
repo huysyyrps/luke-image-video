@@ -83,4 +83,6 @@
     <string name="connecting">开始扫描蓝牙设备&#8230;</string>
     <string name="active_disconnected">蓝牙连接已断开</string>
     <string name="write_failure">命令执行失败</string>
+    <string name="f_top">阀值上限</string>
+    <string name="f_bot">阀值下限</string>
 </resources>

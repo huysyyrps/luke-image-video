@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.cehouyi.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -8,6 +9,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +17,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.callback.BleNotifyCallback;
@@ -43,13 +47,17 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerPositionAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.utils.DateSetting;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,10 +70,10 @@ import butterknife.OnClick;
 public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
     @BindView(R.id.header)
     Header header;
-    @BindView(R.id.rb5)
-    RadioButton rb5;
-    @BindView(R.id.rb7)
-    RadioButton rb7;
+    @BindView(R.id.rbSave)
+    RadioButton rbSave;
+    @BindView(R.id.rbMenu)
+    RadioButton rbMenu;
     @BindView(R.id.tvSS)
     TextView tvSS;
     @BindView(R.id.tvSMZT)
@@ -552,19 +560,22 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rb5, R.id.rb7, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvSMZT, R.id.tvFMZT, R.id.tvOHZT, R.id.tvTime, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot})
+    @OnClick({R.id.rbSave, R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvSMZT, R.id.tvFMZT, R.id.tvOHZT, R.id.tvTime, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.rb5:
+            case R.id.rbSave:
                 break;
-            case R.id.rb7:
+            case R.id.rbMenu:
                 exit = true;
-                Intent intent = new Intent(this, MainMenuActivity.class);
+                Intent intent = new Intent(this, ValueActivity.class);
                 if (valueList.size() != 0) {
                     myValueList.add(valueList);
+                    EventBus.getDefault().postSticky(myValueList);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(this, "暂无数据", Toast.LENGTH_SHORT).show();
                 }
-                EventBus.getDefault().postSticky(myValueList);
-                startActivity(intent);
+
                 break;
             case R.id.tvSS:
                 initSS();
@@ -589,6 +600,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 linearLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.tvTime:
+                selectTime();
                 break;
             case R.id.tvUnit:
                 tag = "UNIT";
@@ -596,8 +608,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 linearLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.tvFTop:
+                tag = "FTOP";
+                showFDialog();
                 break;
             case R.id.tvFBot:
+                tag = "FBOT";
+                showFDialog();
                 break;
             case R.id.tvSure:
                 linearLayout.setVisibility(View.GONE);
@@ -626,13 +642,44 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 }
                 if (tag.equals("UNIT")) {
                     if (onePicker.getValue() == 0) {
-                        tvFMZT.setText("MM");
+                        tvUnit.setText("MM");
                     } else {
                         tvUnit.setText("IN");
                     }
                 }
+                if (tag.equals("FTOP")) {
+                    tvOHZT.setText(String.valueOf(onePicker.getValue()));
+                }
                 break;
         }
+    }
+
+    private void showFDialog() {
+        new AlertDialogUtil(this).showDialogF(new DialogCallBackTwo() {
+            @Override
+            public void confirm(String name1, Dialog dialog, EditText editText) {
+                if (tag.equals("FTOP")) {
+                    if (name1 != null && !name1.trim().equals("")) {
+                        tvFTop.setText(name1);
+                        dialog.dismiss();
+                    }else {
+                        Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (tag.equals("FBOT")) {
+                    if (name1 != null && !name1.trim().equals("")) {
+                        tvFBot.setText(name1);
+                        dialog.dismiss();
+                    }else {
+                        Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void cancel(String name2, Dialog dialog) {
+            }
+        });
     }
 
     private void initSS() {
@@ -742,6 +789,39 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             //这里设置为不循环显示，默认值为true
             onePicker.setWrapSelectorWheel(false);
         }
+    }
+
+    private void selectTime() {
+        TimePickerView pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
+                dateFormat = new SimpleDateFormat("hh:mm:ss");
+                tvTime.setText(dateFormat.format(date));
+            }
+        })
+                .setType(new boolean[]{false, false, false, true, true, true})// 默认全部显示
+                .setCancelText("取消")
+                .setSubmitText("确定")
+                .setContentSize(16)//滚轮文字大小
+                .setTitleSize(16)//标题文字大小
+//    //.setTitleText("Title")//标题文字
+                .setOutSideCancelable(true)//点击屏幕，点在控件外部范围时，是否取消显示
+//    .isCyclic(true)//是否循环滚动
+                //.setTitleColor(Color.16dp)//标题文字颜色
+//                .setSubmitColor(Color.YELLOW)//确定按钮文字颜色
+                .setCancelColor(Color.RED)//取消按钮文字颜色
+                .setLineSpacingMultiplier(3)
+                .setTitleBgColor(getResources().getColor(R.color.shouye))//标题背景颜色 Night mode
+//    .setBgColor(0xFF333333)//滚轮背景颜色 Night mode
+////    .setDate(selectedDate)// 如果不设置的话，默认是系统时间*/
+////    .setRangDate(startDate,endDate)//起始终止年月日设定
+//    //.setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                //.isDialog(true)//是否显示为对话框样式
+                .build();
+
+        pvTime.show();
     }
 
     @Override

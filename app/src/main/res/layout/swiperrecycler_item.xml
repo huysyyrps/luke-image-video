@@ -12,9 +12,11 @@
             android:id="@+id/tv"
             style="@style/TextView"
             android:layout_height="match_parent"
+            android:layout_width="50dp"
             android:text="01"/>
         <View
             style="@style/VLine"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
     <View style="@style/HourLine"/>

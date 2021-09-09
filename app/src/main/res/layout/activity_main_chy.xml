@@ -15,10 +15,11 @@
     </com.example.luke_imagevideo_send.http.views.Header>
 
     <include layout="@layout/dialog_bluetooth_list"
-        android:visibility="gone" />
+         />
 
     <FrameLayout
         android:id="@+id/frameLayout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -86,52 +87,6 @@
                             android:layout_height="match_parent"
                             android:gravity="center|left"
                             android:paddingLeft="10dp"
-                            android:text="扫描状态:"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/tvSMZT"
-                            style="@style/TextView"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:textColor="@color/text_green" />
-                        <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="10dp"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@color/white"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="5dp">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="12dp"
-                        android:layout_weight="1.2"
-                        android:layout_marginLeft="5dp"
-                        android:orientation="horizontal"
-                        android:background="@drawable/linelayout_color_bigradion">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1.2"
-                            android:layout_height="match_parent"
-                            android:gravity="center|left"
-                            android:paddingLeft="10dp"
                             android:text="凤鸣状态:"
                             android:textColor="@color/white" />
 
@@ -148,38 +103,6 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="12dp"
-                        android:layout_weight="1.2"
-                        android:layout_marginLeft="5dp"
-                        android:orientation="horizontal"
-                        android:background="@drawable/linelayout_color_bigradion">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1.2"
-                            android:layout_height="match_parent"
-                            android:gravity="center|left"
-                            android:paddingLeft="10dp"
-                            android:text="耦合状态:"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/tvOHZT"
-                            style="@style/TextView"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:textColor="@color/text_green" />
-                        <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="10dp"/>
-                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -194,39 +117,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_margin="5dp">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="12dp"
-                        android:layout_weight="1.2"
-                        android:layout_marginLeft="5dp"
-                        android:orientation="horizontal"
-                        android:background="@drawable/linelayout_color_bigradion">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1.2"
-                            android:layout_height="match_parent"
-                            android:gravity="center|left"
-                            android:paddingLeft="10dp"
-                            android:text="当前时间:"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/tvTime"
-                            style="@style/TextView"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:textColor="@color/text_green"
-                            android:text="11:29:56" />
-                        <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="10dp"/>
-                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="40dp"
@@ -259,6 +149,33 @@
                             android:src="@drawable/ic_triangle"
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="10dp"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="12dp"
+                        android:layout_weight="1.2"
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/linelayout_color_bigradion">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.2"
+                            android:layout_height="match_parent"
+                            android:gravity="center|left"
+                            android:paddingLeft="10dp"
+                            android:text="耦合状态:"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tvOHZT"
+                            style="@style/TextView"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_marginRight="22dp"
+                            android:textColor="@color/text_green" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -419,7 +336,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:minHeight="180dp"
-                android:text="512"
+                android:text="0.00"
                 android:textSize="60dp"
                 android:background="@color/white"
                 android:gravity="center"
@@ -451,6 +368,14 @@
                         android:id="@+id/rbSave"
                         style="@style/RadionButton"
                         android:text="保存" />
+
+                    <View style="@style/VLine" />
+
+                    <RadioButton
+                        android:id="@+id/rbBack"
+                        style="@style/RadionButton"
+                        android:background="@drawable/bin"
+                        android:text="恢复出厂" />
                 </LinearLayout>
                 <View style="@style/Line" />
 

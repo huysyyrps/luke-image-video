@@ -33,4 +33,38 @@ public class BytesHexChange {
         }
         return d;
     }
+
+    public static String str2HexStr(String str) {
+
+        char[] chars = "0123456789ABCDEF".toCharArray();
+        StringBuilder sb = new StringBuilder("");
+        byte[] bs = str.getBytes();
+        int bit;
+
+        for (int i = bs.length - 1; i >= 0; i--) {
+            bit = (bs[i] & 0x0f0) >> 4;
+            sb.append(chars[bit]);
+            bit = bs[i] & 0x0f;
+            sb.append(chars[bit]);
+            sb.append(' ');
+        }
+        return sb.toString().trim();
+    }
+
+    public String strToUnicode(String strText) throws Exception {
+        char c;
+        StringBuilder str = new StringBuilder();
+        int intAsc;
+        String strHex;
+        for (int i = 0; i < strText.length(); i++) {
+            c = strText.charAt(i);
+            intAsc = (int) c;
+            strHex = Integer.toHexString(intAsc);
+            if (intAsc > 128)
+                str.append("\\u" + strHex);
+            else // 低位在前面补00
+                str.append("\\u00" + strHex);
+        }
+        return str.toString();
+    }
 }

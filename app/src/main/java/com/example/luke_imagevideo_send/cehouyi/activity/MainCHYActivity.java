@@ -9,10 +9,8 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bigkoo.pickerview.TimePickerView;
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.callback.BleNotifyCallback;
@@ -49,15 +46,12 @@ import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
-import com.example.luke_imagevideo_send.http.utils.DateSetting;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,10 +70,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     RadioButton rbMenu;
     @BindView(R.id.tvSS)
     TextView tvSS;
-    @BindView(R.id.tvSMZT)
-    TextView tvSMZT;
-    @BindView(R.id.tvTime)
-    TextView tvTime;
     @BindView(R.id.tvUnit)
     TextView tvUnit;
     @BindView(R.id.tvData)
@@ -120,14 +110,13 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvFMZT;
     @BindView(R.id.tvOHZT)
     TextView tvOHZT;
+    @BindView(R.id.rbBack)
+    RadioButton rbBack;
 
-    int i = 0;
-    int Max = 0, Min = 0;
-    Handler handler;
+    double Max = 0, Min = 0;
+    Handler handler = new Handler();
     boolean exit = false;
-    Threads thread = new Threads();
-    List<Integer> valueList = new ArrayList<>();
-    List<List<Integer>> myValueList = new ArrayList<>();
+    List<Double> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     List<BleDevice> bluetoothList = new ArrayList<>();
     private BluetoothAdapter mBluetoothAdapter;
@@ -140,6 +129,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     BluetoothGattCharacteristic characteristicNotify;
     Timer timer = new Timer();
     String getDate, tag;
+    double com = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -363,39 +353,16 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         timer.schedule(new TimerTask() {
             @Override
             public void run() {//时间
-                writeCommand(myBleDevice, characteristicWrite, "5b0004000000005d");
+                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
             }
         }, 100);
+
         timer.schedule(new TimerTask() {
             @Override
-            public void run() {//声速
+            public void run() {//时间
                 writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
             }
-        }, 400);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//阀值上限
-                writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
-            }
-        }, 700);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//阀值下限
-                writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
-            }
-        }, 1000);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//当前状态
-                writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
-            }
-        }, 1300);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//工件厚度
-                writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-            }
-        }, 1600);
+        }, 600);
     }
 
     /**
@@ -410,9 +377,8 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
 
             @Override
             public void onWriteFailure(final BleException exception) {
-                Looper.prepare();
-                Toast.makeText(MainCHYActivity.this, R.string.write_failure, Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                Message message = Message.obtain();
+                messageHandler.sendMessage(message);
             }
         });
     }
@@ -423,95 +389,133 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
      * @param data
      */
     private void makeBackData(String data) {
-        String s = data.substring(4, 6);
         if (data.substring(4, 6).equals("01")) {
-            String HD = data.substring(6, 14);
-            Log.e("mainchyactivity-HD", HD);
-        }
-        if (data.substring(4, 6).equals("04")) {
-            long hour = Long.parseLong(data.substring(8, 10), 16);
-            long min = Long.parseLong(data.substring(10, 12), 16);
-            long second = Long.parseLong(data.substring(12, 14), 16);
-            if (hour < 10) {
-                hour = Long.parseLong("0" + hour);
+            if (data.length() == 20) {
+                String HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                String OH = data.substring(16, 18);
+                if (tvUnit.getText().toString().equals("MM")) {
+                    tvData.setText((double) Long.parseLong(HD, 16) / 1000 + "");
+                } else if (tvUnit.getText().toString().equals("IN")) {
+                    double fals = ((double) Long.parseLong(HD, 16)) / 25400;
+                    BigDecimal bigDecimal = new BigDecimal(fals);
+                    float fals2 = bigDecimal.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue(); //这句使用于float
+                    tvData.setText(fals2 + "");
+                }
+                showChart(Double.valueOf(tvData.getText().toString()));
+                tvOHZT.setText(Long.parseLong(OH, 16) + "");
+                Log.e("mainchyactivity-HD", HD);
             }
-            if (min < 10) {
-                min = Long.parseLong("0" + min);
-            }
-            if (second < 10) {
-                second = Long.parseLong("0" + second);
-            }
-            getDate = hour + ":" + min + ":" + second;
-            initTime();
         }
         if (data.substring(4, 6).equals("05")) {
-            String L = data.substring(10, 14);
+            String L = data.substring(8, 10) + data.substring(6, 8);
             //把并接的16进制字符串转换成10进制long
             long ss = Long.parseLong(L, 16);
             tvSS.setText(String.valueOf(ss) + "m/s");
-            Log.e("mainchyactivity-ss", String.valueOf(ss));
+            if (tag != null && tag.equals("SS")) {
+                tag = "";
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                    }
+                }, 300);
+            } else {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
+                    }
+                }, 100);
+            }
+            Log.e("mainchyactivity-ss", data.substring(0, 16));
         }
         if (data.substring(4, 6).equals("06")) {
-            String FTop = data.substring(6, 14);
-            Log.e("mainchyactivity-FTop", FTop);
+            String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+            tvFTop.setText((double) Long.parseLong(L, 16) / 1000 + "");
+            if (tag != null && tag.equals("FTOP")) {
+                tag = "";
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                    }
+                }, 300);
+            } else {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
+                    }
+                }, 100);
+            }
+            Log.e("mainchyactivity-FTop", data.substring(0, 16));
         }
         if (data.substring(4, 6).equals("07")) {
-            String FBot = data.substring(6, 14);
-            Log.e("mainchyactivity-FBot", FBot);
+            String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+            tvFBot.setText((double) Long.parseLong(L, 16) / 1000 + "");
+            if (tag != null && tag.equals("FBOT")) {
+                tag = "";
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                    }
+                }, 300);
+            } else {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
+                    }
+                }, 100);
+            }
+            Log.e("mainchyactivity-FBot", data.substring(0, 16));
         }
-
         if (data.substring(4, 6).equals("08")) {
-            String FM = data.substring(8, 10);
-            String SM = data.substring(10, 12);
-            String OH = data.substring(12, 14);
-            Log.e("mainchyactivity-FM", FM);
-        }
-    }
-
-    // 初始化时间方法
-    public void initTime() {
-        // 时间变化
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                tvTime.setText((String) msg.obj);
-                int f = (int) ((Math.random()) * 20 + 50);
-                tvData.setText(f + "mm");
-                showChart(f);
+            Log.e("mainchyactivity-08", data.substring(0, 16));
+            if (Long.parseLong(data.substring(8, 10), 16) == 0) {
+                tvFMZT.setText("关");
+            } else if (Long.parseLong(data.substring(8, 10), 16) == 1) {
+                tvFMZT.setText("开");
             }
-        };
-        thread.start();
-    }
-
-    class Threads extends Thread {
-        @Override
-        public void run() {
-            try {
-                while (!exit) {
-                    String curryDate = new DateSetting().getDateToString(new DateSetting().getTime(getDate) + 1000);
-                    handler.sendMessage(handler.obtainMessage(100, curryDate));
-                    getDate = curryDate;
-                    Thread.sleep(1000);
+            if (Long.parseLong(data.substring(12, 14), 16) == 0) {
+                tvUnit.setText("IN");
+            } else if (Long.parseLong(data.substring(12, 14), 16) == 1) {
+                tvUnit.setText("MM");
+            }
+            tag = "";
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            }, 100);
         }
 
+        if (data.substring(4, 6).equals("0a")) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                }
+            }, 300);
+        }
     }
 
-    public void showChart(int f) {
-        if (valueList.size() < 30) {
+    public void showChart(double f) {
+        if (valueList.size() == 0 && com == 1) {
+            valueList.add(com);
+            valueList.add(f);
+        } else if (valueList.size() % 11 == 0) {
+            com++;
+            valueList.add(com);
             valueList.add(f);
         } else {
-            myValueList.add(valueList);
-            valueList = new ArrayList<>();
             valueList.add(f);
         }
-        if (myValueList.size() >= 100) {
+        if (valueList.size() >= 1000) {
             Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
         }
-        i++;
 
         if (tvMax.getText().toString().equals("0.0")) {
             tvMax.setText(f + "mm");
@@ -560,47 +564,107 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rbSave, R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvSMZT, R.id.tvFMZT, R.id.tvOHZT, R.id.tvTime, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot})
+    @OnClick({R.id.rbSave, R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot,R.id.rbBack})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tvSure:
+                linearLayout.setVisibility(View.GONE);
+                if (tag.equals("SS")) {
+                    String ssdata = String.valueOf(onePicker.getValue())
+                            + String.valueOf(tenPicker.getValue())
+                            + String.valueOf(hundredPicker.getValue())
+                            + String.valueOf(thousandPicker.getValue());
+                    tvSS.setText(ssdata + "m/s");
+                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {//时间
+                            String strHex2 = String.format("%04x", Integer.parseInt(ssdata)).toUpperCase();//高位补0
+                            strHex2 = strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                            writeCommand(myBleDevice, characteristicWrite, "5b0005" + strHex2 + "00005d");
+                        }
+                    }, 300);
+                }
+                if (tag.equals("FMZT")) {
+                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                    if (onePicker.getValue() == 0) {
+                        tvFMZT.setText("开");
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                if (tvUnit.getText().toString().equals("MM")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
+                                } else if (tvUnit.getText().toString().equals("IN")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
+                                }
+                            }
+                        }, 300);
+                    } else {
+                        tvFMZT.setText("关");
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                if (tvUnit.getText().toString().equals("MM")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
+                                } else if (tvUnit.getText().toString().equals("IN")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
+                                }
+                            }
+                        }, 300);
+                    }
+                }
+                if (tag.equals("UNIT")) {
+                    if (onePicker.getValue() == 0) {
+                        tvUnit.setText("MM");
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                if (tvFMZT.getText().toString().equals("开")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
+                                } else if (tvFMZT.getText().toString().equals("关")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
+                                }
+                            }
+                        }, 300);
+                    } else {
+                        tvUnit.setText("IN");
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                if (tvFMZT.getText().toString().equals("开")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
+                                } else if (tvFMZT.getText().toString().equals("关")) {
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
+                                }
+                            }
+                        }, 300);
+                    }
+                }
+                break;
             case R.id.rbSave:
                 break;
             case R.id.rbMenu:
                 exit = true;
                 Intent intent = new Intent(this, ValueActivity.class);
                 if (valueList.size() != 0) {
-                    myValueList.add(valueList);
-                    EventBus.getDefault().postSticky(myValueList);
+                    EventBus.getDefault().postSticky(valueList);
                     startActivity(intent);
-                }else {
+                } else {
                     Toast.makeText(this, "暂无数据", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
             case R.id.tvSS:
+                tag = "SS";
                 initSS();
                 linearLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.tvCancle:
                 linearLayout.setVisibility(View.GONE);
                 break;
-            case R.id.tvSMZT:
-                tag = "SMZT";
-                initZT();
-                linearLayout.setVisibility(View.VISIBLE);
-                break;
             case R.id.tvFMZT:
                 tag = "FMZT";
                 initZT();
                 linearLayout.setVisibility(View.VISIBLE);
-                break;
-            case R.id.tvOHZT:
-                tag = "OHZT";
-                initZT();
-                linearLayout.setVisibility(View.VISIBLE);
-                break;
-            case R.id.tvTime:
-                selectTime();
                 break;
             case R.id.tvUnit:
                 tag = "UNIT";
@@ -615,41 +679,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 tag = "FBOT";
                 showFDialog();
                 break;
-            case R.id.tvSure:
-                linearLayout.setVisibility(View.GONE);
-                if (tag.equals("SS")) {
-                    tvSS.setText(String.valueOf(onePicker.getValue())
-                            + String.valueOf(tenPicker.getValue())
-                            + String.valueOf(hundredPicker.getValue())
-                            + String.valueOf(thousandPicker.getValue()));
-                }
-                if (tag.equals("SMZT")) {
-                    if (onePicker.getValue() == 0) {
-                        tvSMZT.setText("开");
-                    } else {
-                        tvSMZT.setText("关");
+            case R.id.rbBack:
+                tag = "BACK";
+                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b000aaa55aa555d");
                     }
-                }
-                if (tag.equals("FMZT")) {
-                    if (onePicker.getValue() == 0) {
-                        tvFMZT.setText("开");
-                    } else {
-                        tvFMZT.setText("关");
-                    }
-                }
-                if (tag.equals("OHZT")) {
-                    tvOHZT.setText(String.valueOf(onePicker.getValue()));
-                }
-                if (tag.equals("UNIT")) {
-                    if (onePicker.getValue() == 0) {
-                        tvUnit.setText("MM");
-                    } else {
-                        tvUnit.setText("IN");
-                    }
-                }
-                if (tag.equals("FTOP")) {
-                    tvOHZT.setText(String.valueOf(onePicker.getValue()));
-                }
+                }, 300);
                 break;
         }
     }
@@ -661,16 +699,40 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 if (tag.equals("FTOP")) {
                     if (name1 != null && !name1.trim().equals("")) {
                         tvFTop.setText(name1);
+                        name1 = String.valueOf(Integer.parseInt(name1) * 1000);
                         dialog.dismiss();
-                    }else {
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                        String finalName = name1;
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
+                                strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                //5b0006000000005d
+                                writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+                            }
+                        }, 300);
+                    } else {
                         Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
                     }
                 }
                 if (tag.equals("FBOT")) {
                     if (name1 != null && !name1.trim().equals("")) {
                         tvFBot.setText(name1);
+                        name1 = String.valueOf(Integer.parseInt(name1) * 1000);
                         dialog.dismiss();
-                    }else {
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                        String finalName1 = name1;
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
+                                strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                //5b0006000000005d
+                                writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+                            }
+                        }, 300);
+                    } else {
                         Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -683,7 +745,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
     private void initSS() {
-        tag = "SS";
         String[] one = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         onePicker.setFormatter(this);
         onePicker.setOnValueChangedListener(this);
@@ -691,7 +752,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         onePicker.setDisplayedValues(one);
         onePicker.setMinValue(0);
         onePicker.setMaxValue(one.length - 1);
-        onePicker.setValue(1);
+        onePicker.setValue(5);
         //设置为对当前值不可编辑
         onePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
@@ -702,7 +763,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         tenPicker.setDisplayedValues(ten);
         tenPicker.setMinValue(0);
         tenPicker.setMaxValue(ten.length - 1);
-        tenPicker.setValue(4);
+        tenPicker.setValue(9);
         //设置为对当前值不可编辑
         tenPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
@@ -713,7 +774,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         hundredPicker.setDisplayedValues(hundred);
         hundredPicker.setMinValue(0);
         hundredPicker.setMaxValue(hundred.length - 1);
-        hundredPicker.setValue(5);
+        hundredPicker.setValue(2);
         //设置为对当前值不可编辑
         hundredPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
@@ -724,7 +785,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         thousandPicker.setDisplayedValues(thousand);
         thousandPicker.setMinValue(0);
         thousandPicker.setMaxValue(thousand.length - 1);
-        thousandPicker.setValue(2);
+        thousandPicker.setValue(0);
         //设置为对当前值不可编辑
         thousandPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
 
@@ -744,7 +805,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
     private void initZT() {
-        if (tag.equals("SMZT") || tag.equals("FMZT")) {
+        if (tag.equals("FMZT")) {
             String[] one = {"开", "关"};
             onePicker.setFormatter(this);
             onePicker.setOnValueChangedListener(this);
@@ -791,38 +852,13 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         }
     }
 
-    private void selectTime() {
-        TimePickerView pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date, View v) {
-                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
-                dateFormat = new SimpleDateFormat("hh:mm:ss");
-                tvTime.setText(dateFormat.format(date));
-            }
-        })
-                .setType(new boolean[]{false, false, false, true, true, true})// 默认全部显示
-                .setCancelText("取消")
-                .setSubmitText("确定")
-                .setContentSize(16)//滚轮文字大小
-                .setTitleSize(16)//标题文字大小
-//    //.setTitleText("Title")//标题文字
-                .setOutSideCancelable(true)//点击屏幕，点在控件外部范围时，是否取消显示
-//    .isCyclic(true)//是否循环滚动
-                //.setTitleColor(Color.16dp)//标题文字颜色
-//                .setSubmitColor(Color.YELLOW)//确定按钮文字颜色
-                .setCancelColor(Color.RED)//取消按钮文字颜色
-                .setLineSpacingMultiplier(3)
-                .setTitleBgColor(getResources().getColor(R.color.shouye))//标题背景颜色 Night mode
-//    .setBgColor(0xFF333333)//滚轮背景颜色 Night mode
-////    .setDate(selectedDate)// 如果不设置的话，默认是系统时间*/
-////    .setRangDate(startDate,endDate)//起始终止年月日设定
-//    //.setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
-                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
-                //.isDialog(true)//是否显示为对话框样式
-                .build();
-
-        pvTime.show();
-    }
+    Handler messageHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Toast.makeText(MainCHYActivity.this, R.string.write_failure, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void onDestroy() {

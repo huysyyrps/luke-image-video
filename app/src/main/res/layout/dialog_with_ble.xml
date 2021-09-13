@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/title"
-        android:text="@string/image_name"
+        android:text="@string/title_tips"
         android:textColor="#222222"
         android:gravity="center"
         android:layout_marginTop="20dp"

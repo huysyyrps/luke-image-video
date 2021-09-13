@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -44,6 +45,7 @@ import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerPositionAdapter;
 import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -65,7 +67,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     @BindView(R.id.header)
     Header header;
     @BindView(R.id.rbSave)
-    RadioButton rbSave;
+    CheckBox rbSave;
     @BindView(R.id.rbMenu)
     RadioButton rbMenu;
     @BindView(R.id.tvSS)
@@ -401,7 +403,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     float fals2 = bigDecimal.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue(); //这句使用于float
                     tvData.setText(fals2 + "");
                 }
-                showChart(Double.valueOf(tvData.getText().toString()));
+                if (rbSave.isChecked()){
+                    showChart(Double.valueOf(tvData.getText().toString()));
+                }
                 tvOHZT.setText(Long.parseLong(OH, 16) + "");
                 Log.e("mainchyactivity-HD", HD);
             }
@@ -564,7 +568,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rbSave, R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot,R.id.rbBack})
+    @OnClick({ R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot,R.id.rbBack})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSure:
@@ -641,8 +645,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 }
                 break;
-            case R.id.rbSave:
-                break;
             case R.id.rbMenu:
                 exit = true;
                 Intent intent = new Intent(this, ValueActivity.class);
@@ -681,13 +683,23 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 break;
             case R.id.rbBack:
                 tag = "BACK";
-                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                timer.schedule(new TimerTask() {
+                new AlertDialogUtil(this).showSmallDialog("您确定要回复出厂设置吗",new DialogCallBack() {
                     @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b000aaa55aa555d");
+                    public void confirm(String name, Dialog dialog) {
+                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {//时间
+                                writeCommand(myBleDevice, characteristicWrite, "5b000aaa55aa555d");
+                            }
+                        }, 300);
                     }
-                }, 300);
+
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
                 break;
         }
     }

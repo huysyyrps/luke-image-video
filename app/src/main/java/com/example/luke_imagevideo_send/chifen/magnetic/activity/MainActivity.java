@@ -75,7 +75,6 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.views.Header;
-import com.example.luke_imagevideo_send.modbus.ModbusManager;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.licheedev.modbus4android.BuildConfig;
@@ -1237,7 +1236,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     Setting setting = (Setting) backdata.getSerializableExtra("data");
                     Gson gson = new Gson();
                     String obj2 = gson.toJson(setting);
-                    ModbusManager.get().release();
                     new ModbusConnection().makeConnection(this);
                 }
                 break;
@@ -1270,7 +1268,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ModbusManager.get().release();
         stopRecorder();
         if (mVirtualDisplay != null) {
             mVirtualDisplay.setSurface(null);

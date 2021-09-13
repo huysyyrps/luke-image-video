@@ -31,7 +31,6 @@ import android.os.SystemClock;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -41,7 +40,6 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -56,7 +54,6 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
-import com.example.luke_imagevideo_send.cehouyi.util.ModbusConnection;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
 import com.example.luke_imagevideo_send.chifen.camera.util.CustomToast;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
@@ -99,7 +96,7 @@ import static android.media.MediaFormat.MIMETYPE_AUDIO_AAC;
 import static android.media.MediaFormat.MIMETYPE_VIDEO_AVC;
 import static android.os.Build.VERSION_CODES.M;
 
-public class MainActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.header)
     Header header;
@@ -133,42 +130,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
-
-    Bitmap mBitmap;
-    String name = "";
-
-    boolean loadError = false;
-    private static AlertDialogUtil alertDialogUtil;
-    private static final int REQUEST_MEDIA_PROJECTION = 1;
-    private static final int REQUEST_PERMISSIONS = 2;
-    @BindView(R.id.btnTop)
-    Button btnTop;
-    @BindView(R.id.btnLeft)
-    Button btnLeft;
-    @BindView(R.id.btnLight)
-    Button btnLight;
-    @BindView(R.id.btnRight)
-    Button btnRight;
-    @BindView(R.id.btnBotton)
-    Button btnBotton;
-    @BindView(R.id.tcCH)
-    TextView tcCH;
-    @BindView(R.id.tvSDJia)
-    TextView tvSDJia;
-    @BindView(R.id.tvSDJian)
-    TextView tvSDJian;
-    @BindView(R.id.tvCE)
-    TextView tvCE;
-    @BindView(R.id.tvDG)
-    TextView tvDG;
-    @BindView(R.id.ivBack)
-    ImageView ivBack;
-    @BindView(R.id.llItem)
-    LinearLayout llItem;
-    @BindView(R.id.tvOpen)
-    TextView tvOpen;
-    @BindView(R.id.tvClose)
-    TextView tvClose;
     @BindView(R.id.rbRefresh)
     RadioButton rbRefresh;
     @BindView(R.id.timer)
@@ -177,6 +138,14 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     LinearLayout linearLayoutStop;
     @BindView(R.id.ivTimer)
     ImageView ivTimer;
+
+    Bitmap mBitmap;
+    String name = "";
+
+    boolean loadError = false;
+    private static AlertDialogUtil alertDialogUtil;
+    private static final int REQUEST_MEDIA_PROJECTION = 1;
+    private static final int REQUEST_PERMISSIONS = 2;
     private MediaProjectionManager mMediaProjectionManager;
     private Notifications mNotifications;
     private ScreenRecorder mRecorder;
@@ -213,15 +182,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        btnTop.setOnLongClickListener(this);
-        btnBotton.setOnLongClickListener(this);
-        btnLeft.setOnLongClickListener(this);
-        btnRight.setOnLongClickListener(this);
-        btnTop.setOnTouchListener(this);
-        btnBotton.setOnTouchListener(this);
-        btnLeft.setOnTouchListener(this);
-        btnRight.setOnTouchListener(this);
-
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         mWindowWidth = mWindowManager.getDefaultDisplay().getWidth();
         mWindowHeight = mWindowManager.getDefaultDisplay().getHeight();
@@ -258,7 +218,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        new ModbusConnection().makeConnection(this);
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         mNotifications = new Notifications(getApplicationContext());
         if (mMediaProjection == null) {
@@ -403,9 +362,7 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
     protected void rightClient() {
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.linearLayoutStop
-            , R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvCE, R.id.tvDG, R.id.ivBack, R.id.tvOpen, R.id.tvClose, R.id.rbRefresh})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.linearLayoutStop, R.id.rbRefresh})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -533,57 +490,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
             case R.id.rbSetting:
                 intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, Constant.TAG_TWO);
-                break;
-            case R.id.btnTop:
-                onBtnClick("向上单击", "向上双击");
-                break;
-            case R.id.btnLeft:
-                onBtnClick("向左单击", "向左双击");
-                break;
-            case R.id.btnRight:
-                onBtnClick("向右单击", "向右双击");
-                break;
-            case R.id.btnBotton:
-                onBtnClick("向下单击", "向下双击");
-                break;
-            case R.id.btnLight:
-                if (llItem.getVisibility() == View.VISIBLE) {
-                    llItem.setVisibility(View.GONE);
-                } else {
-                    llItem.setVisibility(View.VISIBLE);
-                }
-                break;
-            case R.id.tcCH:
-                Toast.makeText(mNotifications, "磁化", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJia:
-                Toast.makeText(mNotifications, "速度+", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJian:
-                Toast.makeText(mNotifications, "速度—", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvCE:
-                Toast.makeText(mNotifications, "磁轭", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvDG:
-                if (tvDG.getText().equals("白光")) {
-                    tvDG.setText("黑光");
-                } else {
-                    tvDG.setText("白光");
-                }
-                break;
-            case R.id.tvOpen:
-                Toast.makeText(mNotifications, "灯光开", Toast.LENGTH_SHORT).show();
-                tvOpen.setVisibility(View.GONE);
-                tvClose.setVisibility(View.VISIBLE);
-                break;
-            case R.id.tvClose:
-                Toast.makeText(mNotifications, "灯光关", Toast.LENGTH_SHORT).show();
-                tvOpen.setVisibility(View.VISIBLE);
-                tvClose.setVisibility(View.GONE);
-                break;
-            case R.id.ivBack:
-                llItem.setVisibility(View.GONE);
                 break;
             case R.id.rbRefresh:
                 ShowDialog("/etc/init.d/mjpg-streamer restart");
@@ -783,86 +689,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     }
 
-    /**
-     * 按钮单击按监听
-     *
-     * @param
-     * @return
-     */
-    public void onBtnClick(String value1, String value2) {
-        clickNum++;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (clickNum == 1) {
-                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
-                } else if (clickNum == 2) {
-                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
-                }
-                //防止handler引起的内存泄漏
-                handler.removeCallbacksAndMessages(null);
-                clickNum = 0;
-            }
-        }, 800);
-    }
-
-    /**
-     * 按钮长按监听
-     *
-     * @param v
-     * @return
-     */
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnTop:
-                Toast.makeText(mNotifications, "向上长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向上长按松开";
-                break;
-            case R.id.btnBotton:
-                Toast.makeText(mNotifications, "向下长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向下长按松开";
-                break;
-            case R.id.btnLeft:
-                Toast.makeText(mNotifications, "向左长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向左长按松开";
-                break;
-            case R.id.btnRight:
-                Toast.makeText(mNotifications, "向右长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向右长按松开";
-                break;
-        }
-        return true;
-    }
-
-    /**
-     * 按钮松开监听
-     *
-     * @param v
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        switch (v.getId()) {
-            case R.id.btnTop:
-            case R.id.btnBotton:
-            case R.id.btnLeft:
-            case R.id.btnRight:
-                if (action == MotionEvent.ACTION_UP && tag.equals("longUp")) {
-                    Toast.makeText(mNotifications, log, Toast.LENGTH_SHORT).show();
-                    tag = "";
-                    log = "";
-                }
-                break;
-        }
-        return false;
-    }
 
     /**
      * 获取当前时间,用来给文件夹命名
@@ -1236,7 +1062,6 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
                     Setting setting = (Setting) backdata.getSerializableExtra("data");
                     Gson gson = new Gson();
                     String obj2 = gson.toJson(setting);
-                    new ModbusConnection().makeConnection(this);
                 }
                 break;
         }
@@ -1299,7 +1124,4 @@ public class MainActivity extends BaseActivity implements View.OnLongClickListen
         }
     };
 
-    @OnClick(R.id.linearLayoutStop)
-    public void onViewClicked() {
-    }
 }

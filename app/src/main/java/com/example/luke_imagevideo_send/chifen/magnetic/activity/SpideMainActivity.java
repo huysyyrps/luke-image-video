@@ -1,18 +1,18 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
@@ -26,21 +26,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.OnConntionListener;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.RtmpHelper;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.encoder.BasePushEncoder;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.encoder.PushEncode;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
+import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
+import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.ModbusInstanceCallBack;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
+import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.modbus.ModBusUtil;
+import com.google.gson.Gson;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.math.BigDecimal;
 
@@ -48,7 +49,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainBroadcastActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener, OnConntionListener, BasePushEncoder.OnMediaInfoListener{
+public class SpideMainActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener {
 
     @BindView(R.id.header)
     Header header;
@@ -68,6 +69,8 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     TextView tvWorkName;
     @BindView(R.id.tvWorkCode)
     TextView tvWorkCode;
+    @BindView(R.id.linearLayout1)
+    LinearLayout linearLayout1;
     @BindView(R.id.btnTop)
     Button btnTop;
     @BindView(R.id.btnLeft)
@@ -84,28 +87,30 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     TextView tvSDJia;
     @BindView(R.id.tvSDJian)
     TextView tvSDJian;
-    @BindView(R.id.linearLayout1)
-    LinearLayout linearLayout1;
     @BindView(R.id.tvDG)
     TextView tvDG;
     @BindView(R.id.ivBack)
     ImageView ivBack;
     @BindView(R.id.llItem)
     LinearLayout llItem;
-    private Notifications mNotifications;
+    @BindView(R.id.tvRefresh)
+    TextView tvRefresh;
+    @BindView(R.id.tvSetting)
+    TextView tvSetting;
+    @BindView(R.id.frameLayoutitem)
+    FrameLayout frameLayoutitem;
+    private Intent intent;
+    private String project = "", workName = "", workCode = "";
     private int clickNum = 0;
-    private RtmpHelper rtmpHelper;
-    private PushEncode pushEncode;
-    private boolean isStart;
-    MediaProjectionManager  projectionManager;
-    MediaProjection mediaProjection;
-    private Surface mSurface;
-    String url = "rtmp://221.2.36.238:6062/live";
     String tag = "", log = "";
+    boolean loadError = false;
+    String address = null;
+    private KProgressHUD progressHUD;
+    private WindowManager mWindowManager;
     private Handler handler = new Handler();
-    private String project = "", workName = "", workCode = "", address = "";
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    static String TAG = "SpideMainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +123,11 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
         btnBotton.setOnTouchListener(this);
         btnLeft.setOnTouchListener(this);
         btnRight.setOnTouchListener(this);
-        mNotifications = new Notifications(getApplicationContext());
+
+        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -129,18 +138,21 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-            linearLayout.setVisibility(View.GONE);
-        }
-        if (!project.trim().equals("")) {
-            tvCompName.setText(project);
-        }
-        if (!workName.trim().equals("")) {
-            tvWorkName.setText(workName);
-        }
-        if (!workCode.trim().equals("")) {
-            tvWorkCode.setText(workCode);
-        }
+//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+//            linearLayout1.setVisibility(View.GONE);
+//        }
+//        if (!project.trim().equals("")) {
+//            tvCompName.setText(project);
+//        }
+//        if (!workName.trim().equals("")) {
+//            tvWorkName.setText(workName);
+//        }
+//        if (!workCode.trim().equals("")) {
+//            tvWorkCode.setText(workCode);
+//        }
+        project = "1";
+        workName = "1";
+        workCode = "1";
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         // 设置全屏
@@ -170,6 +182,7 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
                 webView.setVisibility(View.GONE);
 //                imageView.setVisibility(View.GONE);
                 linearLayout.setVerticalGravity(View.GONE);
+                loadError = true;
             }
 
             @Override
@@ -198,34 +211,41 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         getGPS();
-        ScreenRecoder();
+        instanceModBus();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void ScreenRecoder (){
-        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-        startActivityForResult(projectionManager.createScreenCaptureIntent(), 1);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-            if (mediaProjection == null) {
-                Log.e("@@", "media projection is null");
-                return;
-            }
-            rtmpHelper = new RtmpHelper();
-            rtmpHelper.setOnConntionListener(this);
-            rtmpHelper.initLivePush(url);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("@@", "---------------->>>1" + e);
-        }
+    protected int provideContentViewId() {
+        return R.layout.activity_spidemain;
     }
 
+    @Override
+    protected boolean isHasHeader() {
+        return true;
+    }
+
+    @Override
+    protected void rightClient() {
+    }
+
+    /**
+     * modbus建立连接
+     */
+    private void instanceModBus() {
+        new ModBusUtil().modbusInstance(new ModbusInstanceCallBack() {
+            @Override
+            public void confirm(String string) {
+                Log.e(TAG, string);
+                frameLayoutitem.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void error(String string) {
+                Log.e(TAG, string);
+                frameLayoutitem.setVisibility(View.GONE);
+            }
+        });
+    }
 
     @Override
     protected void onStart() {
@@ -270,10 +290,10 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
 
                         @Override
                         public void error(String s) {
-                            (MainBroadcastActivity.this).runOnUiThread(new Runnable() {
+                            (SpideMainActivity.this).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainBroadcastActivity.this, s, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SpideMainActivity.this, s, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -286,28 +306,24 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         webView.loadUrl(address);
     }
 
-    @Override
-    protected int provideContentViewId() {
-        return R.layout.activity_mainbroatcast;
-    }
-
-    @Override
-    protected boolean isHasHeader() {
-        return true;
-    }
-
-    @Override
-    protected void rightClient() {}
-
-    @OnClick({R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvDG, R.id.ivBack})
+    @OnClick({R.id.tvSetting, R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
+            R.id.tvSDJia, R.id.tvSDJian, R.id.tvDG, R.id.ivBack, R.id.tvRefresh})
     public void onClick(View view1) {
         switch (view1.getId()) {
+            case R.id.tvSetting:
+                intent = new Intent(this, SettingActivity.class);
+                startActivityForResult(intent, Constant.TAG_TWO);
+                break;
             case R.id.btnTop:
                 onBtnClick("向上单击", "向上双击");
                 break;
@@ -328,13 +344,13 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
                 }
                 break;
             case R.id.tcCH:
-                Toast.makeText(mNotifications, "磁化", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "磁化", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tvSDJia:
-                Toast.makeText(mNotifications, "速度+", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "速度+", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tvSDJian:
-                Toast.makeText(mNotifications, "速度—", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "速度—", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tvDG:
                 if (tvDG.getText().equals("白光")) {
@@ -346,6 +362,41 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
             case R.id.ivBack:
                 llItem.setVisibility(View.GONE);
                 break;
+            case R.id.tvRefresh:
+                ShowDialog("/etc/init.d/mjpg-streamer restart");
+                break;
+        }
+    }
+
+
+    /**
+     * 重启服务刷新视频
+     *
+     * @param data1
+     */
+    private void ShowDialog(String data1) {
+        try {
+            address = new getIp().getConnectIp();
+            progressHUD = ProgressHUD.show(SpideMainActivity.this);
+            progressHUD.setLabel("重启中");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            handlerSetting.sendEmptyMessage(Constant.TAG_TWO);
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -361,9 +412,9 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
             @Override
             public void run() {
                 if (clickNum == 1) {
-                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SpideMainActivity.this, value1, Toast.LENGTH_SHORT).show();
                 } else if (clickNum == 2) {
-                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SpideMainActivity.this, value2, Toast.LENGTH_SHORT).show();
                 }
                 //防止handler引起的内存泄漏
                 handler.removeCallbacksAndMessages(null);
@@ -382,22 +433,22 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     public boolean onLongClick(View v) {
         switch (v.getId()) {
             case R.id.btnTop:
-                Toast.makeText(mNotifications, "向上长按", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SpideMainActivity.this, "向上长按", Toast.LENGTH_SHORT).show();
                 tag = "longUp";
                 log = "向上长按松开";
                 break;
             case R.id.btnBotton:
-                Toast.makeText(mNotifications, "向下长按", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SpideMainActivity.this, "向下长按", Toast.LENGTH_SHORT).show();
                 tag = "longUp";
                 log = "向下长按松开";
                 break;
             case R.id.btnLeft:
-                Toast.makeText(mNotifications, "向左长按", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SpideMainActivity.this, "向左长按", Toast.LENGTH_SHORT).show();
                 tag = "longUp";
                 log = "向左长按松开";
                 break;
             case R.id.btnRight:
-                Toast.makeText(mNotifications, "向右长按", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SpideMainActivity.this, "向右长按", Toast.LENGTH_SHORT).show();
                 tag = "longUp";
                 log = "向右长按松开";
                 break;
@@ -421,7 +472,7 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
             case R.id.btnLeft:
             case R.id.btnRight:
                 if (action == MotionEvent.ACTION_UP && tag.equals("longUp")) {
-                    Toast.makeText(mNotifications, log, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SpideMainActivity.this, log, Toast.LENGTH_SHORT).show();
                     tag = "";
                     log = "";
                 }
@@ -431,62 +482,33 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     }
 
     @Override
-    public void onConntecting() {
-        Log.e("chenzhu", "连接中...");
-    }
-
-    @Override
-    public void onConntectSuccess() {
-        Log.e("chenzhu", "onConntectSuccess...");
-        startPush();
-    }
-
-    @Override
-    public void onConntectFail(String msg) {
-        Log.e("chenzhu", "onConntectFail  " + msg);
-    }
-
-    private void startPush() {
-        pushEncode = new PushEncode(this);
-        pushEncode.initEncoder(true,mediaProjection, 1280,720,44100,2,16);
-        pushEncode.setOnMediaInfoListener(this);
-        pushEncode.start();
-    }
-
-    @Override
-    public void onMediaTime(int times) {
-
-    }
-
-    @Override
-    public void onSPSPPSInfo(byte[] sps, byte[] pps) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushSPSPPS(sps, pps);
-    }
-
-    @Override
-    public void onVideoDataInfo(byte[] data, boolean keyFrame) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushVideoData(data,keyFrame);
-    }
-
-    @Override
-    public void onAudioInfo(byte[] data) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushAudioData(data);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (pushEncode != null) {
-            pushEncode.stop();
-            pushEncode = null;
-        }
-
-        if(rtmpHelper!=null){
-            rtmpHelper.stop();
-            rtmpHelper =null;
+    protected void onActivityResult(int requestCode, int resultCode, Intent backdata) {
+        super.onActivityResult(requestCode, resultCode, backdata);
+        switch (requestCode) {
+            case Constant.TAG_TWO:
+                if (resultCode == Constant.TAG_ONE) {
+                    Setting setting = (Setting) backdata.getSerializableExtra("data");
+                    Gson gson = new Gson();
+                    String obj2 = gson.toJson(setting);
+                }
+                break;
         }
     }
+
+    Handler handlerSetting = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.TAG_ONE:
+                    Toast.makeText(SpideMainActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+                    address = "http://" + address + ":8080";
+                    webView.loadUrl(address);
+                    break;
+                case Constant.TAG_TWO:
+                    Toast.makeText(SpideMainActivity.this, "重启失败", Toast.LENGTH_SHORT).show();
+                    progressHUD.dismiss();
+            }
+        }
+    };
 }

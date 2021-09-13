@@ -73,6 +73,7 @@ dependencies {
     implementation files('libs\\core-3.0.0.jar')
     implementation files('libs\\commons-logging.jar')
     implementation files('libs\\jsch-0.1.54.jar')
+    implementation files('libs\\modbus4Android-1.2.jar')
 //    implementation project(path: ':picture_library')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

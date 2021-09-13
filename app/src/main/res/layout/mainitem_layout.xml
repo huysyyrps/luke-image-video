@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayoutitem"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:visibility="gone">
 
     <LinearLayout
         android:layout_width="200dp"
@@ -88,7 +90,6 @@
             android:gravity="center"
             android:text="磁化"
             android:textSize="16dp" />
-
         <View style="@style/VLine" />
 
         <TextView
@@ -100,7 +101,6 @@
             android:gravity="center"
             android:text="速度+"
             android:textSize="16dp" />
-
         <View style="@style/VLine" />
 
         <TextView
@@ -115,7 +115,7 @@
         <View style="@style/VLine" />
 
         <TextView
-            android:id="@+id/tvCE"
+            android:id="@+id/tvTQ"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
@@ -137,24 +137,25 @@
         <View style="@style/VLine" />
 
         <TextView
-            android:id="@+id/tvOpen"
+            android:id="@+id/tvSetting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="灯光（开）"
-            android:textSize="16dp" />
+            android:text="设置"
+            android:textSize="16dp"/>
+        <View style="@style/VLine" />
+
         <TextView
-            android:id="@+id/tvClose"
+            android:id="@+id/tvRefresh"
             android:layout_width="0dp"
-            android:visibility="gone"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="灯光（关）"
-            android:textSize="16dp" />
+            android:text="重启"
+            android:textSize="16dp"/>
         <View style="@style/VLine" />
 
         <ImageView

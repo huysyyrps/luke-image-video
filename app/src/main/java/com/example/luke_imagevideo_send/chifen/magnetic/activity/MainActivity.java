@@ -27,12 +27,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
-import android.os.SystemClock;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -40,7 +38,6 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -55,7 +52,6 @@ import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
-import com.example.luke_imagevideo_send.chifen.camera.util.CustomToast;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.AudioEncodeConfig;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.MainUI;
@@ -132,15 +128,13 @@ public class MainActivity extends BaseActivity {
     LinearLayout linearLayout1;
     @BindView(R.id.rbRefresh)
     RadioButton rbRefresh;
-    @BindView(R.id.timer)
-    Chronometer timer;
     @BindView(R.id.linearLayoutStop)
     LinearLayout linearLayoutStop;
     @BindView(R.id.ivTimer)
     ImageView ivTimer;
 
     Bitmap mBitmap;
-    String name = "";
+    String name = "",nameWrite = "";
 
     boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
@@ -162,7 +156,7 @@ public class MainActivity extends BaseActivity {
     File file = null;
     VideoEncodeConfig video;
     AudioEncodeConfig audio;
-    String tag = "", log = "";
+    String toastData = "";
     String address = null;
     SimpleDateFormat format;
     private ImageReader mImageReader;
@@ -173,7 +167,7 @@ public class MainActivity extends BaseActivity {
     private WindowManager mWindowManager;
     private boolean isScreenshot = false;
     private Handler handler = new Handler();
-    private CustomToast toast;
+    private Toast toast;
     private final int BREATH_INTERVAL_TIME = 1000; //设置呼吸灯时间间隔
     private AlphaAnimation animationFadeIn;
     private AlphaAnimation animationFadeOut;
@@ -197,9 +191,12 @@ public class MainActivity extends BaseActivity {
         }
 
         Intent intent = getIntent();
-        project = intent.getStringExtra("project");
-        workName = intent.getStringExtra("etWorkName");
-        workCode = intent.getStringExtra("etWorkCode");
+        project = "1";
+        workName = "1";
+        workCode = "1";
+//        project = intent.getStringExtra("project");
+//        workName = intent.getStringExtra("etWorkName");
+//        workCode = intent.getStringExtra("etWorkCode");
 //        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
 //            linearLayout1.setVisibility(View.GONE);
 //        }
@@ -368,6 +365,9 @@ public class MainActivity extends BaseActivity {
         switch (view1.getId()) {
             case R.id.rbCamera:
                 radioGroup.setVisibility(View.GONE);
+                if (toast != null) {
+                    toast.cancel();
+                }
                 new BottomUI().hideBottomUIMenu(this.getWindow());
                 name = getNowDate();
                 isScreenshot = true;
@@ -383,7 +383,6 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case R.id.rbVideo:
-                timer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 haveAudio = "noAudio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
                 name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
@@ -400,6 +399,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void save(String name1) {
                         if (!name1.equals("")) {
+                            nameWrite = name1;
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
                         new Thread(new Runnable() {
@@ -422,7 +422,6 @@ public class MainActivity extends BaseActivity {
                 });
                 break;
             case R.id.rbSound:
-                timer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 haveAudio = "Audio";
                 format = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
                 name = format.format(new Date()) + "(" + workCode + ")" + ".mp4";
@@ -439,6 +438,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void save(String name1) {
                         if (!name1.equals("")) {
+                            nameWrite = name1;
                             name = name1 + "(" + workCode + ")" + ".mp4";
                         }
                         new Thread(new Runnable() {
@@ -572,6 +572,7 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void error(String s) {
+                            toastData = s;
                             handlerSetting.sendEmptyMessage(Constant.TAG_TWO);
                         }
                     });
@@ -617,7 +618,7 @@ public class MainActivity extends BaseActivity {
                     if (!name1.equals("")) {
                         name = name1 + "(" + workCode + ")" + ".png";
                     }
-                    saveImg(name, MainActivity.this);
+                    saveImg(name1,name, MainActivity.this);
                 }
 
                 @Override
@@ -702,7 +703,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 保存图片方法
      */
-    public boolean saveImg(String name, Context context) {
+    public boolean saveImg(String name1, String name, Context context) {
         try {
             String dir = Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/" + workCode + "/";//图片保存的文件夹名
             File file = new File(Environment.getExternalStorageDirectory() + "/LUKEImage/" + project + "/" + "设备/" + workName + "/" + workCode + "/");
@@ -713,7 +714,7 @@ public class MainActivity extends BaseActivity {
             //将要保存的图片文件
             File mFile = new File(dir + name);
             if (mFile.exists()) {
-                selectDialog(mFile, name);
+                selectDialog(name1,mFile, name);
                 return false;
             }
             FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
@@ -722,11 +723,8 @@ public class MainActivity extends BaseActivity {
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri)); //发送广播通知更新图库，这样系统图库可以找到这张图片
             outputStream.flush();
             outputStream.close();
-            if (toast != null) {
-                toast.hide();
-            }
-            toast = new CustomToast(MainActivity.this, (ViewGroup) this.findViewById(R.id.toast_custom_parent));
-            toast.show("图片保存成功", 1000);
+            toast = Toast.makeText(MainActivity.this, "图片保存成功", Toast.LENGTH_SHORT);
+            toast.show();
 //            Toast.makeText(context, "图片保存成功", Toast.LENGTH_SHORT).show();
             radioGroup.setVisibility(View.VISIBLE);
             new BottomUI().BottomUIMenu(this.getWindow());
@@ -743,8 +741,8 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-    private void selectDialog(File mFile, String name) {
-        alertDialogUtil.showImageNameSelect(new DialogCallBackTwo() {
+    private void selectDialog(String name2, File mFile, String name) {
+        alertDialogUtil.showImageNameSelect(name2,new DialogCallBackTwo() {
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
                 if (name1.trim().equals("")) {
@@ -753,12 +751,12 @@ public class MainActivity extends BaseActivity {
                     editText.setHint(s);
                 } else {
                     if (name.equals(name1 + "(" + workCode + ")" + ".png")) {
-                        SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
-                        editText.setText("");
-                        editText.setHint(s);
+//                        SpannableString s = new SpannableString(name);//这里输入自己想要的提示文字
+                        editText.setText(name1);
+//                        editText.setHint(s);
                     } else {
                         dialog.dismiss();
-                        saveImg(name1 + "(" + workCode + ")" + ".png", MainActivity.this);
+                        saveImg(name1,name1 + "(" + workCode + ")" + ".png", MainActivity.this);
                     }
                 }
             }
@@ -770,11 +768,11 @@ public class MainActivity extends BaseActivity {
                 if (name.equals(name2 + "(" + workCode + ")" + ".png")) {
                     dialog.dismiss();
                     mFile.delete();
-                    saveImg(name, MainActivity.this);
+                    saveImg(name2,name, MainActivity.this);
                 } else if (name2.equals("")) {
                     dialog.dismiss();
                     mFile.delete();
-                    saveImg(name, MainActivity.this);
+                    saveImg(name2,name, MainActivity.this);
                 } else {
                     Toast.makeText(MainActivity.this, "不存在重复文件，请点击保存按钮", Toast.LENGTH_SHORT).show();
                 }
@@ -782,8 +780,8 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void selectVideoDialog(File mFile, String name2, View view1) {
-        alertDialogUtil.showImageNameSelect(new DialogCallBackTwo() {
+    private void selectVideoDialog(File mFile, String name2,String nameWrite, View view1) {
+        alertDialogUtil.showImageNameSelect(nameWrite,new DialogCallBackTwo() {
 
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
@@ -792,12 +790,12 @@ public class MainActivity extends BaseActivity {
                     editText.setText("");
                     editText.setHint(s);
                 } else {
-                    name1 = name1 + "(" + workCode + ")" + ".mp4";
                     if (name.equals(name1)) {
-                        SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
-                        editText.setText("");
-                        editText.setHint(s);
+//                        SpannableString s = new SpannableString("文件名已存在");//这里输入自己想要的提示文字
+                        editText.setText(name1);
+//                        editText.setHint(s);
                     } else {
+                        name1 = name1 + "(" + workCode + ")" + ".mp4";
                         dialog.dismiss();
                         name = name1;
                         startCapturing(mMediaProjection, view1);
@@ -940,18 +938,17 @@ public class MainActivity extends BaseActivity {
                             if (haveAudio.equals("Audio")) {
                                 //将要保存的图片文件
                                 if (file.exists()) {
-                                    selectVideoDialog(file, name, view1);
+                                    selectVideoDialog(file, name,nameWrite, view1);
                                     return;
                                 }
                             } else if (haveAudio.equals("noAudio")) {
                                 if (file.exists()) {
-                                    selectVideoDialog(file, name, view1);
+                                    selectVideoDialog(file, name, nameWrite, view1);
                                     return;
                                 }
                             }
                         }
                         checkTirem();
-                        timer.start();
                         mRecorder = newRecorder(mediaProjection, video, audio, file);
                         if (hasPermissions()) {
                             startRecorder();
@@ -1119,7 +1116,7 @@ public class MainActivity extends BaseActivity {
                     webView.loadUrl(address);
                     break;
                 case Constant.TAG_TWO:
-                    Toast.makeText(MainActivity.this, "重启失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, toastData, Toast.LENGTH_LONG).show();
                     progressHUD.dismiss();
             }
         }

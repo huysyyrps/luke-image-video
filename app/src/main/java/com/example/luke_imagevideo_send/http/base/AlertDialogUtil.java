@@ -286,7 +286,7 @@ public class AlertDialogUtil {
         }
     }
 
-    public void showImageNameSelect(final DialogCallBackTwo alertDialogCallBack) {
+    public void showImageNameSelect(String name, final DialogCallBackTwo alertDialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
             dialog.setCancelable(false);
@@ -297,6 +297,7 @@ public class AlertDialogUtil {
             EditText editText = (EditText) view.findViewById(R.id.edittext);
             TextView tvYes = (TextView) view.findViewById(R.id.yes);
             TextView tvCover = (TextView) view.findViewById(R.id.cover);
+            editText.setText(name);
             tvYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

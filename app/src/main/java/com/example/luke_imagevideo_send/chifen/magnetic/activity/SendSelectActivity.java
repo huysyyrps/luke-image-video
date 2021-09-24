@@ -261,11 +261,11 @@ public class SendSelectActivity extends AppCompatActivity {
     public void SelectActivity(String data){
         if (etProject.getText().toString().trim().equals("")) {
             Toast.makeText(SendSelectActivity.this, "请输入工程名称", Toast.LENGTH_SHORT).show();
-        } else if (etWorkCode.getText().toString().trim().equals("")) {
-            Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
         } else if (etWorkName.getText().toString().trim().equals("")) {
+            Toast.makeText(SendSelectActivity.this, "请输入工件名称", Toast.LENGTH_SHORT).show();
+        }else if (etWorkCode.getText().toString().trim().equals("")) {
             Toast.makeText(SendSelectActivity.this, "请输入工件编号", Toast.LENGTH_SHORT).show();
-        } else {
+        }  else {
             if (data.equals("本地存储")){
                 sharePreferencesUtils.setString(SendSelectActivity.this, "sendSelect", "本地存储");
                 intent = new Intent(SendSelectActivity.this, MainActivity.class);

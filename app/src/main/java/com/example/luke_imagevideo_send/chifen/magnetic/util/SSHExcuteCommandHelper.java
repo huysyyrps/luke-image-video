@@ -1,11 +1,8 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.util;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.luke_imagevideo_send.MyApplication;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
@@ -35,7 +32,7 @@ public class SSHExcuteCommandHelper {
      *             //     * @param pwd 密码
      *             //     * @param port ssh端口
      */
-    public SSHExcuteCommandHelper(String host) {
+    public SSHExcuteCommandHelper(String host,SSHCallBack sSHCallBack) {
         JSch jsch = new JSch();
         try {
             session = jsch.getSession("root", host, 22);
@@ -45,10 +42,11 @@ public class SSHExcuteCommandHelper {
             session.setConfig(config);
             session.setPassword("root");
         } catch (JSchException e) {
+            sSHCallBack.error("IP获取为空,请检查wifi板设备与手机是否建立网络连接");
             e.printStackTrace();
-            Looper.prepare();
-            Toast.makeText(MyApplication.getContext(), "IP获取为空,请检查wifi板设备与手机是否建立网络连接", Toast.LENGTH_LONG).show();
-            Looper.loop();
+//            Looper.prepare();
+//            Toast.makeText(MyApplication.getContext(), "IP获取为空,请检查wifi板设备与手机是否建立网络连接", Toast.LENGTH_LONG).show();
+//            Looper.loop();
             return;
         }
     }
@@ -146,7 +144,7 @@ public class SSHExcuteCommandHelper {
     }
 
     public static void writeBefor(String address, String data, SSHCallBack sSHCallBack) {
-        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address,sSHCallBack);
         boolean ss = execute.canConnection();
         if (ss) {
             //发送指令
@@ -163,7 +161,7 @@ public class SSHExcuteCommandHelper {
     }
 
     public static void writeBefor1(String address, String data, SSHCallBack sSHCallBack) {
-        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
+        SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address, sSHCallBack);
         boolean ss = execute.canConnection();
         if (ss) {
             //发送指令

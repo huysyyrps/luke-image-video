@@ -58,11 +58,11 @@ android {
             exclude module: 'commons-logging'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
+//    externalNativeBuild {
+//        cmake {
+//            path "CMakeLists.txt"
+//        }
+//    }
 }
 
 dependencies {
@@ -132,4 +132,6 @@ dependencies {
     implementation 'com.shark:screencapture:1.0.0'
     //时间选择器
     compile 'com.contrarywind:Android-PickerView:3.2.6'
+    compile 'cn.yc:YCThreadPoolLib:1.3.3'
+    implementation 'com.contrarywind:Android-PickerView:4.1.9'
 }

@@ -114,10 +114,15 @@ public class SendSelectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_select);
+        sharePreferencesUtils = new SharePreferencesUtils();
+        if (sharePreferencesUtils.getString(SendSelectActivity.this, "frames", "")!=null
+                &&sharePreferencesUtils.getString(SendSelectActivity.this, "frames", "").equals("")){
+            sharePreferencesUtils.setString(SendSelectActivity.this, "frames", "30");
+            sharePreferencesUtils.setString(SendSelectActivity.this, "resolving", "1280x640");
+        }
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         alertDialogUtil = new AlertDialogUtil(this);
-        sharePreferencesUtils = new SharePreferencesUtils();
         sid = sharePreferencesUtils.getString(this, "sid", "");
         pwd = sharePreferencesUtils.getString(this, "pwd", "");
         max = sharePreferencesUtils.getString(this, "max", "");

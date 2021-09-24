@@ -145,7 +145,7 @@ public class SSHExcuteCommandHelper {
         return "XXX";
     }
 
-    public static void writeBefor(String address, String data, final SSHCallBack SSHCallBack) {
+    public static void writeBefor(String address, String data, SSHCallBack sSHCallBack) {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
         if (ss) {
@@ -156,13 +156,13 @@ public class SSHExcuteCommandHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SSHCallBack.confirm(s);
+            sSHCallBack.confirm(s);
         } else {
-            SSHCallBack.error("连接失败,请检查设备热点链接是否成功");
+            sSHCallBack.error("连接失败,请检查设备热点连接是否成功");
         }
     }
 
-    public static void writeBefor1(String address, String data, final SSHCallBack SSHCallBack) {
+    public static void writeBefor1(String address, String data, SSHCallBack sSHCallBack) {
         SSHExcuteCommandHelper execute = new SSHExcuteCommandHelper(address);
         boolean ss = execute.canConnection();
         if (ss) {
@@ -173,9 +173,9 @@ public class SSHExcuteCommandHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SSHCallBack.confirm(s);
+            sSHCallBack.confirm(s);
         } else {
-            SSHCallBack.error("连接失败,请检查设备热点链接是否成功");
+            sSHCallBack.error("连接失败,请检查设备热点连接是否成功");
         }
     }
 

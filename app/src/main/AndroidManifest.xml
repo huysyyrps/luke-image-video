@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -22,13 +24,17 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.GPS_PROVIDER" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <uses-feature android:name="android.hardware.location.gps" />
+
     <uses-permission
         android:name="android.permission.OVERRIDE_WIFI_CONFIG"
         tools:ignore="ProtectedPermissions" />
+
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
+
     <uses-permission
         android:name="android.permission.MANAGE_MEDIA_PROJECTION"
         tools:ignore="ProtectedPermissions" />
@@ -69,23 +75,23 @@
         <activity android:name=".main.activity.CheckPassWordActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".main.activity.WelcomeActivity">
-
-        </activity>
+        <activity android:name=".main.activity.WelcomeActivity"></activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".main.activity.DefinedActivity" />
         <activity
             android:name=".chifen.magnetic.activity.MainActivity"
-            android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->
-        <activity android:name=".chifen.magnetic.activity.SpideMainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".chifen.magnetic.activity.SpideMainActivity"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".chifen.magnetic.activity.MainBroadcastActivity"
             android:screenOrientation="landscape" /> <!-- android:screenOrientation="landscape" -->

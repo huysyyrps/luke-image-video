@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,12 +8,10 @@ import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
@@ -20,110 +19,117 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luke_imagevideo_send.R;
-import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
-import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
-import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
+import com.example.luke_imagevideo_send.cehouyi.util.BytesHexChange;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.MyCallBack;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.RegionalChooseUtil;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.CircleMenu;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.CircleMenuAdapter;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.ItemInfo;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
-import com.example.luke_imagevideo_send.http.base.ModbusInstanceCallBack;
-import com.example.luke_imagevideo_send.http.base.SSHCallBack;
-import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
+import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.views.Header;
-import com.example.luke_imagevideo_send.modbus.ModBusUtil;
+import com.example.luke_imagevideo_send.modbus.Crc16Util;
+import com.example.luke_imagevideo_send.modbus.SocketForModbusTCP;
 import com.google.gson.Gson;
-import com.kaopiz.kprogresshud.KProgressHUD;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SpideMainActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener {
+public class SpideMainActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
 
     @BindView(R.id.header)
     Header header;
     @BindView(R.id.webView)
     WebView webView;
-    @BindView(R.id.tvTime)
-    TextView tvTime;
-    @BindView(R.id.tvGPS)
-    TextView tvGPS;
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
-    @BindView(R.id.tvCompName)
-    TextView tvCompName;
-    @BindView(R.id.tvWorkName)
-    TextView tvWorkName;
-    @BindView(R.id.tvWorkCode)
-    TextView tvWorkCode;
-    @BindView(R.id.linearLayout1)
-    LinearLayout linearLayout1;
-    @BindView(R.id.btnTop)
-    Button btnTop;
-    @BindView(R.id.btnLeft)
     Button btnLeft;
-    @BindView(R.id.btnLight)
-    Button btnLight;
-    @BindView(R.id.btnRight)
-    Button btnRight;
-    @BindView(R.id.btnBotton)
-    Button btnBotton;
-    @BindView(R.id.tcCH)
-    TextView tcCH;
-    @BindView(R.id.tvSDJia)
-    TextView tvSDJia;
-    @BindView(R.id.tvSDJian)
-    TextView tvSDJian;
-    @BindView(R.id.tvDG)
-    TextView tvDG;
-    @BindView(R.id.ivBack)
-    ImageView ivBack;
-    @BindView(R.id.llItem)
-    LinearLayout llItem;
-    @BindView(R.id.tvRefresh)
-    TextView tvRefresh;
-    @BindView(R.id.tvSetting)
-    TextView tvSetting;
+    @BindView(R.id.btnStop)
+    Button btnStop;
     @BindView(R.id.frameLayoutitem)
     FrameLayout frameLayoutitem;
-    private Intent intent;
-    private String project = "", workName = "", workCode = "";
-    private int clickNum = 0;
-    String tag = "", log = "";
+    @BindView(R.id.tvSpeed)
+    TextView tvSpeed;
+    @BindView(R.id.tvDistance)
+    TextView tvDistance;
+    @BindView(R.id.tvCHTime)
+    TextView tvCHTime;
+    @BindView(R.id.tvPatternSelect)
+    TextView tvPatternSelect;
+    @BindView(R.id.tvCEControl)
+    TextView tvCEControl;
+    @BindView(R.id.tvLightSelect)
+    TextView tvLightSelect;
+    @BindView(R.id.tvSearchlightControl)
+    TextView tvSearchlightControl;
+    @BindView(R.id.tvCHControl)
+    TextView tvCHControl;
+    @BindView(R.id.pickerData)
+    NumberPicker pickerData;
+    @BindView(R.id.tvCancle)
+    TextView tvCancle;
+    @BindView(R.id.tvSure)
+    TextView tvSure;
+    @BindView(R.id.llNumberPicker)
+    LinearLayout llNumberPicker;
+    @BindView(R.id.ivVisition)
+    ImageView ivVisition;
+    @BindView(R.id.ivGone)
+    ImageView ivGone;
+    @BindView(R.id.linSetting)
+    LinearLayout linSetting;
+    @BindView(R.id.tvSource)
+    TextView tvSource;
+    @BindView(R.id.tvCH)
+    TextView tvCH;
+    @BindView(R.id.tvLight)
+    TextView tvLight;
+    @BindView(R.id.tvActualDistance)
+    TextView tvActualDistance;
+    @BindView(R.id.cm_main)
+    CircleMenu mCircleMenu;
+
+    String tag = "";
     boolean loadError = false;
     String address = null;
-    private KProgressHUD progressHUD;
+    String[] one;
+    Timer timer = new Timer();
     private WindowManager mWindowManager;
-    private Handler handler = new Handler();
-
+    SocketForModbusTCP socketForModbusTCP;
+    private String[] itemName = new String[8];
+    private int[] mItemImgs = new int[8];
+    private CircleMenuAdapter circleMenuAdapternew;
+    List<ItemInfo> data = new ArrayList<>();
     static String TAG = "SpideMainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        btnTop.setOnLongClickListener(this);
-        btnBotton.setOnLongClickListener(this);
-        btnLeft.setOnLongClickListener(this);
-        btnRight.setOnLongClickListener(this);
-        btnTop.setOnTouchListener(this);
-        btnBotton.setOnTouchListener(this);
-        btnLeft.setOnTouchListener(this);
-        btnRight.setOnTouchListener(this);
 
+        setUiData();
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
@@ -134,25 +140,6 @@ public class SpideMainActivity extends BaseActivity implements View.OnLongClickL
             StrictMode.setVmPolicy(builder.build());
         }
 
-        Intent intent = getIntent();
-        project = intent.getStringExtra("project");
-        workName = intent.getStringExtra("etWorkName");
-        workCode = intent.getStringExtra("etWorkCode");
-//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-//            linearLayout1.setVisibility(View.GONE);
-//        }
-//        if (!project.trim().equals("")) {
-//            tvCompName.setText(project);
-//        }
-//        if (!workName.trim().equals("")) {
-//            tvWorkName.setText(workName);
-//        }
-//        if (!workCode.trim().equals("")) {
-//            tvWorkCode.setText(workCode);
-//        }
-        project = "1";
-        workName = "1";
-        workCode = "1";
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         // 设置全屏
@@ -210,7 +197,6 @@ public class SpideMainActivity extends BaseActivity implements View.OnLongClickL
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        getGPS();
         instanceModBus();
     }
 
@@ -228,81 +214,126 @@ public class SpideMainActivity extends BaseActivity implements View.OnLongClickL
     protected void rightClient() {
     }
 
+    private void setUiData() {
+        mItemImgs[0] = R.drawable.ic_right;
+        mItemImgs[1] = 1;
+        mItemImgs[2] = R.drawable.ic_botton;
+        mItemImgs[3] = 1;
+        mItemImgs[4] = R.drawable.ic_left;
+        mItemImgs[5] = R.drawable.ic_top_left;
+        mItemImgs[6] = R.drawable.ic_top;
+        mItemImgs[7] = R.drawable.ic_top_right;
+
+        itemName[0] = "右";
+        itemName[1] = "";
+        itemName[2] = "下";
+        itemName[3] = "";
+        itemName[4] = "左";
+        itemName[5] = "左上";
+        itemName[6] = "上";
+        itemName[7] = "右上";
+
+        ItemInfo item = null;
+        ItemInfo itemne = null;
+        for (int i = 0; i < itemName.length; i++) {
+            item = new ItemInfo(mItemImgs[i], itemName[i]);
+            data.add(item);
+        }
+        circleMenuAdapternew = new CircleMenuAdapter(this, data);
+        mCircleMenu.setAdapter(circleMenuAdapternew);
+        setClient();
+    }
+
+    private void setClient() {
+        mCircleMenu.setOnItemClickListener(new CircleMenu.OnMenuItemClickListener() {
+
+            @Override
+            public void onClick(View view, int position) {
+                if (itemName[position].equals("上")) {
+                    sendData("010600040001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040001")));
+                }
+                if (itemName[position].equals("左")) {
+                    sendData("010600040003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040003")));
+                }
+                if (itemName[position].equals("右")) {
+                    sendData("010600040004" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040004")));
+                }
+                if (itemName[position].equals("下")) {
+                    sendData("010600040002" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040002")));
+                }
+                if (itemName[position].equals("左上")) {
+                    sendData("010600040005" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040005")));
+                }
+                if (itemName[position].equals("右上")) {
+                    sendData("010600040006" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040006")));
+                }
+            }
+        });
+    }
+
     /**
      * modbus建立连接
      */
     private void instanceModBus() {
-        new ModBusUtil().modbusInstance(new ModbusInstanceCallBack() {
+        socketForModbusTCP = new SocketForModbusTCP("192.168.1.3", 502) {
             @Override
-            public void confirm(String string) {
-                Log.e(TAG, string);
-                frameLayoutitem.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void error(String string) {
-                Log.e(TAG, string);
-                frameLayoutitem.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //获取当前时间
-        new GetTime().initTime(new GetTimeCallBack() {
-            @Override
-            public void backTime(String time) {
-                tvTime.setText(time);
-            }
-        });
-    }
-
-    /**
-     * 获取定位信息
-     */
-    private void getGPS() {
-        try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB1", new SSHCallBack() {
-                        @Override
-                        public void confirm(String data) {
-                            try {
-                                String[] GpsData = data.split(getResources().getString(R.string.special_data));
-                                if (GpsData.length != 0) {
-                                    String lastData = GpsData[GpsData.length - 1];
-                                    String[] NEData = lastData.split(",");
-                                    String firstN = NEData[1];
-                                    String firstE = NEData[3];
-                                    BigDecimal DataN = new BigDecimal(Double.valueOf(firstN) / 100).setScale(6, BigDecimal.ROUND_HALF_UP);
-                                    BigDecimal DataE = new BigDecimal(Double.valueOf(firstE) / 100).setScale(6, BigDecimal.ROUND_HALF_UP);
-                                    String s = DataE + "," + DataN;
-                                    tvGPS.setText(s);
-                                }
-                            } catch (Exception ex) {
-                                Log.e("XXX", ex.toString());
-                            }
-                        }
-
-                        @Override
-                        public void error(String s) {
-                            (SpideMainActivity.this).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SpideMainActivity.this, s, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
+            protected void onDataReceived(byte[] readBuffer, int size) {
+                //todo 根据业务解析数据
+                String s = "";
+                for (int i=0;i<readBuffer.length;i++){
+                    s = s+readBuffer[i]+"\t\t\t";
                 }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                Looper.prepare();
+                Toast.makeText(SpideMainActivity.this, s, Toast.LENGTH_SHORT).show();
+                Looper.loop();
+            }
+        };
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {//时间
+                socketForModbusTCP.connect();
+            }
+        }, 100);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {//时间
+                String strHex1 = "010300000018" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010300000018"));
+                Log.e(TAG, strHex1);
+                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex1));
+            }
+        }, 300);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {//时间
+                String strHex2 = "010400000009" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010400000009"));
+                Log.e(TAG, strHex2);
+                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex2));
+            }
+        }, 600);
+//        new ModBusUtil().modbusInstance(new ModbusInstanceCallBack() {
+//            @Override
+//            public void confirm(Object string) {
+//                Log.e(TAG, string.toString());
+//                frameLayoutitem.setVisibility(View.VISIBLE);
+//                new ModBusUtil().modbusReadHoldingRegisters(1, 0, 1, new ModbusInstanceCallBack() {
+//                    @Override
+//                    public void confirm(Object string) {
+//                        Log.e(TAG, "readHoldingRegisters onSuccess " +string.toString());
+//                    }
+//
+//                    @Override
+//                    public void error(String string) {
+//                        Log.e(TAG, "readHoldingRegisters onFailed " + string.toString());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void error(String string) {
+//                Log.e(TAG, string);
+//                frameLayoutitem.setVisibility(View.GONE);
+//            }
+//        });
     }
 
     @Override
@@ -316,169 +347,291 @@ public class SpideMainActivity extends BaseActivity implements View.OnLongClickL
         webView.loadUrl(address);
     }
 
-    @OnClick({R.id.tvSetting, R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvDG, R.id.ivBack, R.id.tvRefresh})
+    @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime, R.id.tvPatternSelect,
+            R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl, R.id.tvCHControl,
+            R.id.pickerData, R.id.tvCancle, R.id.tvSure, R.id.ivVisition, R.id.ivGone, R.id.tvCH,
+            R.id.tvLight, R.id.tvSource})
     public void onClick(View view1) {
         switch (view1.getId()) {
-            case R.id.tvSetting:
-                intent = new Intent(this, SettingActivity.class);
-                startActivityForResult(intent, Constant.TAG_TWO);
+            case R.id.ivVisition:
+                linSetting.setVisibility(View.VISIBLE);
+                ivVisition.setVisibility(View.GONE);
                 break;
-            case R.id.btnTop:
-                onBtnClick("向上单击", "向上双击");
+            case R.id.ivGone:
+                linSetting.setVisibility(View.GONE);
+                ivVisition.setVisibility(View.VISIBLE);
                 break;
-            case R.id.btnLeft:
-                onBtnClick("向左单击", "向左双击");
+            case R.id.btnStop:
+                sendData("010600040007" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040007")));
                 break;
-            case R.id.btnRight:
-                onBtnClick("向右单击", "向右双击");
+            case R.id.tvSource://控制源
+                tag = "Source";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
                 break;
-            case R.id.btnBotton:
-                onBtnClick("向下单击", "向下双击");
+            case R.id.tvCH://磁化模式
+                tag = "CH";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
                 break;
-            case R.id.btnLight:
-                if (llItem.getVisibility() == View.VISIBLE) {
-                    llItem.setVisibility(View.GONE);
-                } else {
-                    llItem.setVisibility(View.VISIBLE);
+            case R.id.tvLight://黑白光模式
+                tag = "Light";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvSpeed://爬行速度
+                tag = "Speed";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvDistance://行走距离
+                tag = "Distance";
+                showFDialog();
+                break;
+            case R.id.tvCHTime://磁化时间
+                tag = "CHTime";
+                showFDialog();
+                break;
+            case R.id.tvPatternSelect://运行模式
+                RegionalChooseUtil.initJsonData(SpideMainActivity.this,"pxq");
+                RegionalChooseUtil.showPickerView(SpideMainActivity.this, new MyCallBack() {
+                    @Override
+                    public void callBack(Object object) {
+                        if (object.toString().equals("自动模式连续模式")) {
+                            tvPatternSelect.setText("自动\t连续");
+                            sendData("010600000001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600000001")));
+                            sendData1("010600010001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600010001")));
+                        } else if (object.toString().equals("自动模式断续模式")) {
+                            tvPatternSelect.setText("自动\t断续");
+                            sendData("010600000001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600000001")));
+                            sendData1("010600010003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600010003")));
+                        } else if (object.toString().equals("手动模式单击模式")) {
+                            tvPatternSelect.setText("手动\t单击");
+                            sendData("010600000003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600000003")));
+                            sendData1("010600010001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600010001")));
+                        } else if (object.toString().equals("手动模式双击模式")) {
+                            tvPatternSelect.setText("手动\t双击");
+                            sendData("010600000003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600000003")));
+                            sendData1("010600010003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600010003")));
+                        }
+                    }
+                });
+                break;
+            case R.id.tvCEControl://磁轭控制
+                tag = "CEControl";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvLightSelect://黑白选择
+                tag = "LightSelect";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvSearchlightControl://探照灯
+                tag = "SearchlightControl";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvCHControl://磁化控制
+                tag = "CHControl";
+                initPickerData();
+                llNumberPicker.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tvCancle:
+                llNumberPicker.setVisibility(View.GONE);
+                break;
+            case R.id.tvSure:
+                llNumberPicker.setVisibility(View.GONE);
+                if (tag.equals("CH")) {
+                    if (pickerData.getValue() == 0) {
+                        tvCH.setText("单击");
+                        sendData("010600020001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600020001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvCH.setText("双击");
+                        sendData("010600020003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600020003")));
+                    }
                 }
-                break;
-            case R.id.tcCH:
-                Toast.makeText(this, "磁化", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJia:
-                Toast.makeText(this, "速度+", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJian:
-                Toast.makeText(this, "速度—", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvDG:
-                if (tvDG.getText().equals("白光")) {
-                    tvDG.setText("黑光");
-                } else {
-                    tvDG.setText("白光");
+                if (tag.equals("Light")) {
+                    if (pickerData.getValue() == 0) {
+                        tvLight.setText("自动");
+                        sendData("010600030001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600030001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvLight.setText("手动");
+                        sendData("010600030003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600030003")));
+                    }
                 }
-                break;
-            case R.id.ivBack:
-                llItem.setVisibility(View.GONE);
-                break;
-            case R.id.tvRefresh:
-                ShowDialog("/etc/init.d/mjpg-streamer restart");
+                if (tag.equals("Source")) {
+                    one = new String[]{"手机使能", "遥控器使能", "键盘使能"};
+                    if (pickerData.getValue() == 0) {
+                        tvSource.setText("手机使能");
+                        sendData("010600080001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600080001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvSource.setText("遥控器使能");
+                        sendData("010600080002" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600080002")));
+                    } else if (pickerData.getValue() == 2) {
+                        tvSource.setText("键盘使能");
+                        sendData("010600080003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600080003")));
+                    }
+                }
+
+                if (tag.equals("Speed")) {
+                    String ssdata = String.valueOf(pickerData.getValue() * 0.5 + 0.5);
+                    tvSpeed.setText(ssdata + "mm/min");
+                    float data = Float.parseFloat(ssdata);
+                    sendData("01100018000204" + Integer.toHexString(Float.floatToRawIntBits(data)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100018000204")));
+                }
+
+                if (tag.equals("CEControl")) {
+                    if (pickerData.getValue() == 0) {
+                        tvCEControl.setText("抬起");
+                        sendData("010600050001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600050001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvCEControl.setText("落下");
+                        sendData("010600050003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600050003")));
+                    }
+                }
+                if (tag.equals("LightSelect")) {
+                    if (pickerData.getValue() == 0) {
+                        tvLightSelect.setText("黑光");
+                        sendData("010600060001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600060001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvLightSelect.setText("白光");
+                        sendData("010600060003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600060003")));
+                    }
+                }
+                if (tag.equals("SearchlightControl")) {
+                    if (pickerData.getValue() == 0) {
+                        tvSearchlightControl.setText("亮");
+                        sendData("010600070001" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600070001")));
+                    } else if (pickerData.getValue() == 1) {
+                        tvSearchlightControl.setText("灭");
+                        sendData("010600070003" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600070003")));
+                    }
+                }
+                if (tag.equals("CHControl")) {
+                    if (pickerData.getValue() == 0) {
+                        tvCHControl.setText("磁化");
+                    } else if (pickerData.getValue() == 1) {
+                        tvCHControl.setText("停止磁化");
+                    }
+                }
+
                 break;
         }
     }
 
-
-    /**
-     * 重启服务刷新视频
-     *
-     * @param data1
-     */
-    private void ShowDialog(String data1) {
-        try {
-            address = new getIp().getConnectIp();
-            progressHUD = ProgressHUD.show(SpideMainActivity.this);
-            progressHUD.setLabel("重启中");
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    SSHExcuteCommandHelper.writeBefor(address, data1, new SSHCallBack() {
-                        @Override
-                        public void confirm(String data) {
-                            handlerSetting.sendEmptyMessage(Constant.TAG_ONE);
-                        }
-
-                        @Override
-                        public void error(String s) {
-                            handlerSetting.sendEmptyMessage(Constant.TAG_TWO);
-                        }
-                    });
-                }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 按钮单击按监听
-     *
-     * @param
-     * @return
-     */
-    public void onBtnClick(String value1, String value2) {
-        clickNum++;
-        handler.postDelayed(new Runnable() {
+    public void sendData(String data) {
+        timer.schedule(new TimerTask() {
             @Override
-            public void run() {
-                if (clickNum == 1) {
-                    Toast.makeText(SpideMainActivity.this, value1, Toast.LENGTH_SHORT).show();
-                } else if (clickNum == 2) {
-                    Toast.makeText(SpideMainActivity.this, value2, Toast.LENGTH_SHORT).show();
-                }
-                //防止handler引起的内存泄漏
-                handler.removeCallbacksAndMessages(null);
-                clickNum = 0;
+            public void run() {//运行模式
+                Log.e(TAG, data);
+                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(data));
             }
-        }, 800);
+        }, 300);
     }
 
-    /**
-     * 按钮长按监听
-     *
-     * @param v
-     * @return
-     */
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnTop:
-                Toast.makeText(SpideMainActivity.this, "向上长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向上长按松开";
-                break;
-            case R.id.btnBotton:
-                Toast.makeText(SpideMainActivity.this, "向下长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向下长按松开";
-                break;
-            case R.id.btnLeft:
-                Toast.makeText(SpideMainActivity.this, "向左长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向左长按松开";
-                break;
-            case R.id.btnRight:
-                Toast.makeText(SpideMainActivity.this, "向右长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向右长按松开";
-                break;
+    public void sendData1(String data) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {//运行模式
+                Log.e(TAG, data);
+                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(data));
+            }
+        }, 600);
+    }
+
+    private void showFDialog() {
+        String hint = "";
+        if (tag.equals("Distance")) {
+            hint = "请输入行走距离";
+        } else if (tag.equals("CHTime")) {
+            hint = "请输入磁化时间";
         }
-        return true;
-    }
-
-    /**
-     * 按钮松开监听
-     *
-     * @param v
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        switch (v.getId()) {
-            case R.id.btnTop:
-            case R.id.btnBotton:
-            case R.id.btnLeft:
-            case R.id.btnRight:
-                if (action == MotionEvent.ACTION_UP && tag.equals("longUp")) {
-                    Toast.makeText(SpideMainActivity.this, log, Toast.LENGTH_SHORT).show();
-                    tag = "";
-                    log = "";
+        new AlertDialogUtil(this).showDialogF(hint, new DialogCallBackTwo() {
+            @Override
+            public void confirm(String name1, Dialog dialog, EditText editText) {
+                if (tag.equals("Distance")) {
+                    if (name1 != null && !name1.trim().equals("")) {
+                        tvDistance.setText(name1 + "mm");
+                        Double data = new Double(name1);
+                        if (data > 80.0 || data < 10.0) {
+                            Toast.makeText(SpideMainActivity.this, "行走距离范围：10.0~80.0，请重新输入", Toast.LENGTH_SHORT).show();
+                        } else {
+                            float distanceData = Float.parseFloat(name1);
+                            sendData("01100020000204" + Integer.toHexString(Float.floatToRawIntBits(distanceData)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100020000204")));
+                            dialog.dismiss();
+                        }
+                    } else {
+                        Toast.makeText(SpideMainActivity.this, "请输入行走距离", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                break;
+                if (tag.equals("CHTime")) {
+                    if (name1 != null && !name1.trim().equals("")) {
+                        tvCHTime.setText(name1 + "s");
+                        Double data = new Double(name1);
+                        if (data > 30.0 || data < 1.0) {
+                            Toast.makeText(SpideMainActivity.this, "磁化时间范围：1.0~30.0，请重新输入", Toast.LENGTH_SHORT).show();
+                        } else {
+                            float timeData = Float.parseFloat(name1);
+                            sendData("01100022000204" + Integer.toHexString(Float.floatToRawIntBits(timeData)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100022000204")));
+                            dialog.dismiss();
+                        }
+                    } else {
+                        Toast.makeText(SpideMainActivity.this, "请输入磁化时间", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void cancel(String name2, Dialog dialog) {
+            }
+        });
+    }
+
+    public void initPickerData() {
+        if (tag.equals("Speed")) {
+            one = new String[]{"0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"};
         }
-        return false;
+        if (tag.equals("Distance")) {
+            one = new String[]{"10.0", "20.0", "30.0", "40.0", "50.0", "60.0", "70.0", "80.0"};
+        }
+        if (tag.equals("CHTime")) {
+            one = new String[]{"1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0",
+                    "11.0", "12.0", "13.0", "14.0", "15.0", "16.0", "17.0", "18.0", "19.0", "20.0",
+                    "21.0", "22.0", "23.0", "24.0", "25.0", "26.0", "27.0", "28.0", "29.0", "30.0",};
+        }
+        if (tag.equals("CEControl")) {
+            one = new String[]{"抬起", "落下"};
+        }
+        if (tag.equals("LightSelect")) {
+            one = new String[]{"黑光", "白光"};
+        }
+        if (tag.equals("SearchlightControl")) {
+            one = new String[]{"亮", "灭"};
+        }
+        if (tag.equals("CHControl")) {
+            one = new String[]{"磁化", "停止磁化"};
+        }
+        if (tag.equals("CH")) {
+            one = new String[]{"单击", "双击"};
+        }
+        if (tag.equals("Light")) {
+            one = new String[]{"自动", "手动"};
+        }
+        if (tag.equals("Source")) {
+            one = new String[]{"手机使能", "遥控器使能", "键盘使能"};
+        }
+        pickerData.setFormatter(this);
+        pickerData.setOnScrollListener(this);
+        pickerData.setDisplayedValues(null);
+        pickerData.setMinValue(0);
+        pickerData.setMaxValue(one.length - 1);
+        pickerData.setDisplayedValues(one);
+        pickerData.setValue(0);
+        pickerData.setOnValueChangedListener(this);
+        pickerData.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
+        //这里设置为不循环显示，默认值为true
+        pickerData.setWrapSelectorWheel(false);
     }
 
     @Override
@@ -495,20 +648,40 @@ public class SpideMainActivity extends BaseActivity implements View.OnLongClickL
         }
     }
 
-    Handler handlerSetting = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.TAG_ONE:
-                    Toast.makeText(SpideMainActivity.this, "重启成功", Toast.LENGTH_SHORT).show();
-                    progressHUD.dismiss();
-                    address = "http://" + address + ":8080";
-                    webView.loadUrl(address);
-                    break;
-                case Constant.TAG_TWO:
-                    Toast.makeText(SpideMainActivity.this, "重启失败", Toast.LENGTH_SHORT).show();
-                    progressHUD.dismiss();
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        ModbusReq.getInstance().destory();
+    }
+
+    @Override
+    public String format(int value) {
+        Log.i("XXX", "format: value" + value);
+        String tmpStr = String.valueOf(value);
+        if (value < 10) {
+            tmpStr = "0" + tmpStr;
         }
-    };
+        return tmpStr;
+    }
+
+    @Override
+    public void onScrollStateChange(NumberPicker view, int scrollState) {
+        switch (scrollState) {
+            case NumberPicker.OnScrollListener.SCROLL_STATE_FLING:
+                Log.i("XXX", "onScrollStateChange: 后续滑动(飞呀飞，根本停下来)");
+                break;
+            case NumberPicker.OnScrollListener.SCROLL_STATE_IDLE:
+                Log.i("XXX", "onScrollStateChange: 不滑动");
+                break;
+            case NumberPicker.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                Log.i("XXX", "onScrollStateChange: 滑动中");
+                break;
+        }
+    }
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        Log.i("XXX", "onValueChange: 原来的值 " + oldVal + "--新值: " + newVal);
+    }
+
 }

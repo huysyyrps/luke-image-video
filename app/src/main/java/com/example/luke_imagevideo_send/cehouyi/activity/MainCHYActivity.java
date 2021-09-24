@@ -705,7 +705,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
     private void showFDialog() {
-        new AlertDialogUtil(this).showDialogF(new DialogCallBackTwo() {
+        new AlertDialogUtil(this).showDialogF("请输入阀值",new DialogCallBackTwo() {
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
                 if (tag.equals("FTOP")) {

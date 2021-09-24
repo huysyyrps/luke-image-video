@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.text.InputFilter;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.bean.DictUnit;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.DecimalDigitsInputFilter;
 
 import java.util.List;
 
@@ -312,7 +315,7 @@ public class AlertDialogUtil {
         }
     }
 
-    public void showDialogF(final DialogCallBackTwo alertDialogCallBack) {
+    public void showDialogF(String hint, final DialogCallBackTwo alertDialogCallBack) {
         if (dialog == null || !dialog.isShowing()) {
             dialog = new Dialog(context);
             dialog.setCancelable(false);
@@ -321,6 +324,9 @@ public class AlertDialogUtil {
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.dialog_with_ble, null, false);
             EditText editText = (EditText) view.findViewById(R.id.edittext);
+            editText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(2), new InputFilter.LengthFilter(8)});
+            SpannableString s = new SpannableString(hint);//这里输入自己想要的提示文字
+            editText.setHint(s);
             TextView tvYes = (TextView) view.findViewById(R.id.yes);
             TextView tvCover = (TextView) view.findViewById(R.id.cover);
             tvYes.setOnClickListener(new View.OnClickListener() {

@@ -147,11 +147,4 @@
 
     </LinearLayout>
 
-    <include
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        layout="@layout/mainitem_layout"
-        android:layout_gravity="left|bottom" />
-
 </FrameLayout>

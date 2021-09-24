@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,9 +18,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,9 +43,8 @@ import java.math.BigDecimal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainBroadcastActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener, OnConntionListener, BasePushEncoder.OnMediaInfoListener{
+public class MainBroadcastActivity extends BaseActivity implements  OnConntionListener, BasePushEncoder.OnMediaInfoListener{
 
     @BindView(R.id.header)
     Header header;
@@ -68,28 +64,8 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     TextView tvWorkName;
     @BindView(R.id.tvWorkCode)
     TextView tvWorkCode;
-    @BindView(R.id.btnTop)
-    Button btnTop;
-    @BindView(R.id.btnLeft)
-    Button btnLeft;
-    @BindView(R.id.btnLight)
-    Button btnLight;
-    @BindView(R.id.btnRight)
-    Button btnRight;
-    @BindView(R.id.btnBotton)
-    Button btnBotton;
-    @BindView(R.id.tcCH)
-    TextView tcCH;
-    @BindView(R.id.tvSDJia)
-    TextView tvSDJia;
-    @BindView(R.id.tvSDJian)
-    TextView tvSDJian;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
-    @BindView(R.id.tvDG)
-    TextView tvDG;
-    @BindView(R.id.ivBack)
-    ImageView ivBack;
     @BindView(R.id.llItem)
     LinearLayout llItem;
     private Notifications mNotifications;
@@ -110,14 +86,6 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        btnTop.setOnLongClickListener(this);
-        btnBotton.setOnLongClickListener(this);
-        btnLeft.setOnLongClickListener(this);
-        btnRight.setOnLongClickListener(this);
-        btnTop.setOnTouchListener(this);
-        btnBotton.setOnTouchListener(this);
-        btnLeft.setOnTouchListener(this);
-        btnRight.setOnTouchListener(this);
         mNotifications = new Notifications(getApplicationContext());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -303,132 +271,6 @@ public class MainBroadcastActivity extends BaseActivity implements View.OnLongCl
 
     @Override
     protected void rightClient() {}
-
-    @OnClick({R.id.btnTop, R.id.btnLeft, R.id.btnLight, R.id.btnRight, R.id.btnBotton, R.id.tcCH,
-            R.id.tvSDJia, R.id.tvSDJian, R.id.tvDG, R.id.ivBack})
-    public void onClick(View view1) {
-        switch (view1.getId()) {
-            case R.id.btnTop:
-                onBtnClick("向上单击", "向上双击");
-                break;
-            case R.id.btnLeft:
-                onBtnClick("向左单击", "向左双击");
-                break;
-            case R.id.btnRight:
-                onBtnClick("向右单击", "向右双击");
-                break;
-            case R.id.btnBotton:
-                onBtnClick("向下单击", "向下双击");
-                break;
-            case R.id.btnLight:
-                if (llItem.getVisibility() == View.VISIBLE) {
-                    llItem.setVisibility(View.GONE);
-                } else {
-                    llItem.setVisibility(View.VISIBLE);
-                }
-                break;
-            case R.id.tcCH:
-                Toast.makeText(mNotifications, "磁化", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJia:
-                Toast.makeText(mNotifications, "速度+", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvSDJian:
-                Toast.makeText(mNotifications, "速度—", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tvDG:
-                if (tvDG.getText().equals("白光")) {
-                    tvDG.setText("黑光");
-                } else {
-                    tvDG.setText("白光");
-                }
-                break;
-            case R.id.ivBack:
-                llItem.setVisibility(View.GONE);
-                break;
-        }
-    }
-
-    /**
-     * 按钮单击按监听
-     *
-     * @param
-     * @return
-     */
-    public void onBtnClick(String value1, String value2) {
-        clickNum++;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (clickNum == 1) {
-                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
-                } else if (clickNum == 2) {
-                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
-                }
-                //防止handler引起的内存泄漏
-                handler.removeCallbacksAndMessages(null);
-                clickNum = 0;
-            }
-        }, 800);
-    }
-
-    /**
-     * 按钮长按监听
-     *
-     * @param v
-     * @return
-     */
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnTop:
-                Toast.makeText(mNotifications, "向上长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向上长按松开";
-                break;
-            case R.id.btnBotton:
-                Toast.makeText(mNotifications, "向下长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向下长按松开";
-                break;
-            case R.id.btnLeft:
-                Toast.makeText(mNotifications, "向左长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向左长按松开";
-                break;
-            case R.id.btnRight:
-                Toast.makeText(mNotifications, "向右长按", Toast.LENGTH_SHORT).show();
-                tag = "longUp";
-                log = "向右长按松开";
-                break;
-        }
-        return true;
-    }
-
-    /**
-     * 按钮松开监听
-     *
-     * @param v
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        switch (v.getId()) {
-            case R.id.btnTop:
-            case R.id.btnBotton:
-            case R.id.btnLeft:
-            case R.id.btnRight:
-                if (action == MotionEvent.ACTION_UP && tag.equals("longUp")) {
-                    Toast.makeText(mNotifications, log, Toast.LENGTH_SHORT).show();
-                    tag = "";
-                    log = "";
-                }
-                break;
-        }
-        return false;
-    }
 
     @Override
     public void onConntecting() {

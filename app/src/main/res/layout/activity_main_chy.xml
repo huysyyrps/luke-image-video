@@ -15,11 +15,11 @@
     </com.example.luke_imagevideo_send.http.views.Header>
 
     <include layout="@layout/dialog_bluetooth_list"
-        android:visibility="gone"/>
+        />
 
     <FrameLayout
         android:id="@+id/frameLayout"
-
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout

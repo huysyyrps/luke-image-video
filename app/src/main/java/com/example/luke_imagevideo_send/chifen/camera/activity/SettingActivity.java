@@ -18,12 +18,12 @@ import android.widget.Toast;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.chifen.camera.util.DownloadManager;
 import com.example.luke_imagevideo_send.chifen.magnetic.bean.Setting;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.MyCallBack;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.RegionalChooseUtil;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
-import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
-import com.example.luke_imagevideo_send.http.base.MenuAlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
@@ -84,7 +84,6 @@ public class SettingActivity extends BaseActivity {
     SharePreferencesUtils sharePreferencesUtils;
     Setting.DataBean dataBean = new Setting.DataBean();
     List<String> listZS = new ArrayList<>();
-    List<String> listXS = new ArrayList<>();
     private KProgressHUD progressHUD;
 
     @Override
@@ -144,10 +143,6 @@ public class SettingActivity extends BaseActivity {
         listZS.add("20");
         listZS.add("25");
         listZS.add("30");
-
-        listXS.add("640x480");
-        listXS.add("960x540");
-        listXS.add("1280x640");
     }
 
     /**
@@ -297,18 +292,23 @@ public class SettingActivity extends BaseActivity {
                 //        finish();
                 break;
             case R.id.llZSSetting:
-                new AlertDialogUtil(SettingActivity.this).showListStringDialog("设置选项", listZS, new MenuAlertDialogCallBack() {
+                RegionalChooseUtil.initJsonData(SettingActivity.this,"frames");
+                RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
                     @Override
-                    public void confirm(String filed, String name) {
-                        ShowDialog("uci set mjpg-streamer.core.fps=" + name, "uci commit", "/etc/init.d/mjpg-streamer restart");
+                    public void callBack(Object object) {
+                        ShowDialog("uci set mjpg-streamer.core.fps=" + object.toString(), "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        new SharePreferencesUtils().setString(SettingActivity.this, "frames", object.toString());
                     }
                 });
+
                 break;
             case R.id.llXSSetting:
-                new AlertDialogUtil(SettingActivity.this).showListStringDialog("设置选项", listXS, new MenuAlertDialogCallBack() {
+                RegionalChooseUtil.initJsonData(SettingActivity.this,"resolving");
+                RegionalChooseUtil.showPickerView(SettingActivity.this, new MyCallBack() {
                     @Override
-                    public void confirm(String filed, String name) {
-                        ShowDialog("uci set mjpg-streamer.core.resolution=" + name, "uci commit", "/etc/init.d/mjpg-streamer restart");
+                    public void callBack(Object object) {
+                        ShowDialog("uci set mjpg-streamer.core.resolution=" + object.toString(), "uci commit", "/etc/init.d/mjpg-streamer restart");
+                        new SharePreferencesUtils().setString(SettingActivity.this, "resolving", object.toString());
                     }
                 });
                 break;
@@ -412,12 +412,12 @@ public class SettingActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.TAG_ONE:
-                    Toast.makeText(SettingActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
                     progressHUD.dismiss();
                     finish();
                     break;
                 case Constant.TAG_TWO:
-                    Toast.makeText(SettingActivity.this, "操作失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "设置失败", Toast.LENGTH_SHORT).show();
                     progressHUD.dismiss();
             }
         }

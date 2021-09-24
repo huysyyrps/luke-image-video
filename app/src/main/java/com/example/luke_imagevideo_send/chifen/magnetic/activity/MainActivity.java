@@ -200,18 +200,18 @@ public class MainActivity extends BaseActivity {
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-            linearLayout1.setVisibility(View.GONE);
-        }
-        if (!project.trim().equals("")) {
-            tvCompName.setText(project);
-        }
-        if (!workName.trim().equals("")) {
-            tvWorkName.setText(workName);
-        }
-        if (!workCode.trim().equals("")) {
-            tvWorkCode.setText(workCode);
-        }
+//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+//            linearLayout1.setVisibility(View.GONE);
+//        }
+//        if (!project.trim().equals("")) {
+//            tvCompName.setText(project);
+//        }
+//        if (!workName.trim().equals("")) {
+//            tvWorkName.setText(workName);
+//        }
+//        if (!workCode.trim().equals("")) {
+//            tvWorkCode.setText(workCode);
+//        }
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         alertDialogUtil = new AlertDialogUtil(this);
@@ -296,11 +296,12 @@ public class MainActivity extends BaseActivity {
      */
     private void getGPS() {
         try {
+            address = new getIp().getConnectIp();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB1", new SSHCallBack() {
+                    SSHExcuteCommandHelper.writeBefor(address, "cat /dev/ttyUSB1", new SSHCallBack() {
                         @Override
                         public void confirm(String data) {
                             try {
@@ -325,7 +326,7 @@ public class MainActivity extends BaseActivity {
                             (MainActivity.this).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
                                 }
                             });
                         }

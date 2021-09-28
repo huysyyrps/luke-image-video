@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -114,6 +113,7 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
     String tag = "";
     boolean loadError = false;
     String address = null;
+    String address1 = null;
     String[] one;
     Timer timer = new Timer();
     private WindowManager mWindowManager;
@@ -149,6 +149,7 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
         webView.getSettings().setJavaScriptEnabled(true);
         try {
             address = new getIp().getConnectIp();
+            address1 = new getIp().getConnectIp();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -275,41 +276,173 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
      * modbus建立连接
      */
     private void instanceModBus() {
-        socketForModbusTCP = new SocketForModbusTCP("192.168.1.3", 502) {
-            @Override
-            protected void onDataReceived(byte[] readBuffer, int size) {
-                //todo 根据业务解析数据
-                String s = "";
-                for (int i=0;i<readBuffer.length;i++){
-                    s = s+readBuffer[i]+"\t\t\t";
+        if (address1==null){
+            Toast.makeText(this, "ip为空", Toast.LENGTH_SHORT).show();
+        }else {
+            socketForModbusTCP = new SocketForModbusTCP(address1, 502) {
+                @Override
+                protected void onDataReceived(byte[] readBuffer, int size) {
+                    //todo 根据业务解析数据
+                    if (readBuffer[1]==3){
+                        if (readBuffer[2]==48&&readBuffer.length==53){
+                            byte[] byteActualDistance = new byte[4];
+                            byteActualDistance[0] = readBuffer[35];
+                            byteActualDistance[1] = readBuffer[36];
+                            byteActualDistance[2] = readBuffer[37];
+                            byteActualDistance[3] = readBuffer[38];
+                            String actualDistanceHex = new BytesHexChange().ByteArrToHex(byteActualDistance);
+                            actualDistanceHex = actualDistanceHex.substring(4,8)+actualDistanceHex.substring(0,4);
+                            int ieee754ActualDistanceHex = Integer.parseInt(actualDistanceHex, 16);
+                            float realActualDistanceHex = Float.intBitsToFloat(ieee754ActualDistanceHex);
+                            tvActualDistance.setText(realActualDistanceHex+"mm");
+
+                            byte[] byteSpeed = new byte[4];
+                            byteSpeed[0] = readBuffer[39];
+                            byteSpeed[1] = readBuffer[40];
+                            byteSpeed[2] = readBuffer[41];
+                            byteSpeed[3] = readBuffer[42];
+                            String speenHex = new BytesHexChange().ByteArrToHex(byteSpeed);
+                            speenHex = speenHex.substring(4,8)+speenHex.substring(0,4);
+                            int ieee754Speed = Integer.parseInt(speenHex, 16);
+                            float realApeed = Float.intBitsToFloat(ieee754Speed);
+                            tvSpeed.setText(realApeed+"mm/min");
+
+                            byte[] byteDistance = new byte[4];
+                            byteDistance[0] = readBuffer[43];
+                            byteDistance[1] = readBuffer[44];
+                            byteDistance[2] = readBuffer[45];
+                            byteDistance[3] = readBuffer[46];
+                            String distanceHex = new BytesHexChange().ByteArrToHex(byteDistance);
+                            distanceHex = distanceHex.substring(4,8)+distanceHex.substring(0,4);
+                            int ieee754Distance = Integer.parseInt(distanceHex, 16);
+                            float realDistance = Float.intBitsToFloat(ieee754Distance);
+                            tvDistance.setText(realDistance+"mm");
+
+                            byte[] byteCHTime = new byte[4];
+                            byteCHTime[0] = readBuffer[47];
+                            byteCHTime[1] = readBuffer[48];
+                            byteCHTime[2] = readBuffer[49];
+                            byteCHTime[3] = readBuffer[50];
+                            String cHTimeHex = new BytesHexChange().ByteArrToHex(byteCHTime);
+                            cHTimeHex = cHTimeHex.substring(4,8)+cHTimeHex.substring(0,4);
+                            int ieee754CHTime = Integer.parseInt(cHTimeHex, 16);
+                            float realCHTime = Float.intBitsToFloat(ieee754CHTime);
+                            tvCHTime.setText(realCHTime+"s");
+                        }
+                    }
+                    if (readBuffer[1]==4) {
+                        if (readBuffer[2]==18&&readBuffer.length==23){
+                            byte[] byteOperation = new byte[2];
+                            String OCMode = "";
+                            byteOperation[0] = readBuffer[3];
+                            byteOperation[1] = readBuffer[4];
+                            String operationHex = new BytesHexChange().ByteArrToHex(byteOperation);
+                            if (operationHex.equals("0001")){
+                                OCMode = "自动\t\t";
+                            }else if (operationHex.equals("0003")){
+                                OCMode = "手动\t\t";
+                            }
+
+                            byte[] byteCrawl = new byte[2];
+                            byteCrawl[0] = readBuffer[5];
+                            byteCrawl[1] = readBuffer[6];
+                            String crawlHex = new BytesHexChange().ByteArrToHex(byteCrawl);
+                            if (crawlHex.equals("0001")){
+                                OCMode = OCMode+"连续";
+                            }else if (crawlHex.equals("0003")){
+                                OCMode = OCMode+"断续";
+                            }
+                            tvPatternSelect.setText(OCMode);
+
+                            byte[] byteCHMode = new byte[2];
+                            byteCHMode[0] = readBuffer[7];
+                            byteCHMode[1] = readBuffer[8];
+                            String cHModeHex = new BytesHexChange().ByteArrToHex(byteCHMode);
+                            if (cHModeHex.equals("0001")){
+                                tvCH.setText("单击");
+                            }else if (cHModeHex.equals("0003")){
+                                tvCH.setText("双击");
+                            }
+
+                            byte[] byteLight = new byte[2];
+                            byteLight[0] = readBuffer[9];
+                            byteLight[1] = readBuffer[10];
+                            String lightHex = new BytesHexChange().ByteArrToHex(byteLight);
+                            if (lightHex.equals("0001")){
+                                tvLight.setText("自动");
+                            }else if (lightHex.equals("0003")){
+                                tvLight.setText("手动");
+                            }
+
+                            byte[] byteCEControl = new byte[2];
+                            byteCEControl[0] = readBuffer[11];
+                            byteCEControl[1] = readBuffer[12];
+                            String cEControlHex = new BytesHexChange().ByteArrToHex(byteCEControl);
+                            if (cEControlHex.equals("0001")){
+                                tvLight.setText("抬起");
+                            }else if (cEControlHex.equals("0003")){
+                                tvLight.setText("落下");
+                            }
+
+                            byte[] byteLightSelect = new byte[2];
+                            byteLightSelect[0] = readBuffer[13];
+                            byteLightSelect[1] = readBuffer[14];
+                            String lightSelectHex = new BytesHexChange().ByteArrToHex(byteLightSelect);
+                            if (lightSelectHex.equals("0001")){
+                                tvLightSelect.setText("黑光");
+                            }else if (lightSelectHex.equals("0003")){
+                                tvLightSelect.setText("白光");
+                            }
+
+                            byte[] byteSearchlight = new byte[2];
+                            byteSearchlight[0] = readBuffer[15];
+                            byteSearchlight[1] = readBuffer[16];
+                            String searchlightHex = new BytesHexChange().ByteArrToHex(byteSearchlight);
+                            if (searchlightHex.equals("0001")){
+                                tvSearchlightControl.setText("亮");
+                            }else if (searchlightHex.equals("0003")){
+                                tvSearchlightControl.setText("灭");
+                            }
+
+                            byte[] byteSource = new byte[2];
+                            byteSource[0] = readBuffer[17];
+                            byteSource[1] = readBuffer[18];
+                            String sourceHex = new BytesHexChange().ByteArrToHex(byteSource);
+                            if (sourceHex.equals("0001")){
+                                tvSource.setText("手机使能");
+                            }else if (sourceHex.equals("0002")){
+                                tvSource.setText("遥控器使能");
+                            }else if (sourceHex.equals("0003")){
+                                tvSource.setText("键盘使能");
+                            }
+                        }
+                    }
                 }
-                Looper.prepare();
-                Toast.makeText(SpideMainActivity.this, s, Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }
-        };
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//时间
-                socketForModbusTCP.connect();
-            }
-        }, 100);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//时间
-                String strHex1 = "010300000018" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010300000018"));
-                Log.e(TAG, strHex1);
-                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex1));
-            }
-        }, 300);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {//时间
-                String strHex2 = "010400000009" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010400000009"));
-                Log.e(TAG, strHex2);
-                socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex2));
-            }
-        }, 600);
+            };
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    socketForModbusTCP.connect();
+                }
+            }, 100);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    String strHex1 = "010300000018" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010300000018"));
+                    Log.e(TAG, strHex1);
+                    socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex1));
+                }
+            }, 300);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    String strHex2 = "010400000009" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010400000009"));
+                    Log.e(TAG, strHex2);
+                    socketForModbusTCP.send(new BytesHexChange().HexToByteArr(strHex2));
+                }
+            }, 600);
+        }
+
 //        new ModBusUtil().modbusInstance(new ModbusInstanceCallBack() {
 //            @Override
 //            public void confirm(Object string) {
@@ -478,7 +611,9 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
                     String ssdata = String.valueOf(pickerData.getValue() * 0.5 + 0.5);
                     tvSpeed.setText(ssdata + "mm/min");
                     float data = Float.parseFloat(ssdata);
-                    sendData("01100018000204" + Integer.toHexString(Float.floatToRawIntBits(data)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100018000204")));
+                    String s = Integer.toHexString(Float.floatToRawIntBits(data)).substring(4,8)
+                            +Integer.toHexString(Float.floatToRawIntBits(data)).substring(0,4);
+                    sendData("01100018000204" + s + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100018000204" + s)));
                 }
 
                 if (tag.equals("CEControl")) {
@@ -558,7 +693,9 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
                             Toast.makeText(SpideMainActivity.this, "行走距离范围：10.0~80.0，请重新输入", Toast.LENGTH_SHORT).show();
                         } else {
                             float distanceData = Float.parseFloat(name1);
-                            sendData("01100020000204" + Integer.toHexString(Float.floatToRawIntBits(distanceData)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100020000204")));
+                            String s = Integer.toHexString(Float.floatToRawIntBits(distanceData)).substring(4,8)
+                                    +Integer.toHexString(Float.floatToRawIntBits(distanceData)).substring(0,4);
+                            sendData("01100020000204" + s + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100020000204" + s)));
                             dialog.dismiss();
                         }
                     } else {
@@ -573,7 +710,9 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.OnVa
                             Toast.makeText(SpideMainActivity.this, "磁化时间范围：1.0~30.0，请重新输入", Toast.LENGTH_SHORT).show();
                         } else {
                             float timeData = Float.parseFloat(name1);
-                            sendData("01100022000204" + Integer.toHexString(Float.floatToRawIntBits(timeData)) + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100022000204")));
+                            String s = Integer.toHexString(Float.floatToRawIntBits(timeData)).substring(4,8)
+                                    +Integer.toHexString(Float.floatToRawIntBits(timeData)).substring(0,4);
+                            sendData("01100022000204" + s + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100022000204" + s)));
                             dialog.dismiss();
                         }
                     } else {

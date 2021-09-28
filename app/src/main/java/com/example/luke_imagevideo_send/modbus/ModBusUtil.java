@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.modbus;
 
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.ModbusInstanceCallBack;
 import com.zgkxzx.modbus4And.requset.ModbusParam;
 import com.zgkxzx.modbus4And.requset.ModbusReq;
@@ -10,9 +11,10 @@ public class ModBusUtil {
      * 初始化
      * @param modbusInstanceCallBack
      */
-    public void modbusInstance(ModbusInstanceCallBack modbusInstanceCallBack){
+    public void modbusInstance(ModbusInstanceCallBack modbusInstanceCallBack) throws Exception {
+        String address1 = new getIp().getConnectIp();
         ModbusReq.getInstance().setParam(new ModbusParam()
-                .setHost("192.168.1.5")
+                .setHost(address1)
                 .setPort(502)
                 .setEncapsulated(false)
                 .setKeepAlive(true)

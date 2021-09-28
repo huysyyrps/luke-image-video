@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.luke_imagevideo_send.modbus.ByteUtil.Byte2Hex;
+
 public class BytesHexChange {
     public final String HEX = "0123456789abcdef";
 
@@ -158,6 +160,43 @@ public class BytesHexChange {
         }
         return result;
     }
+    /**
+     * 字节数组转float
+     * 采用IEEE 754标准
+     * @param bytes
+     * @return
+     */
+    public static float bytes2Float(byte[] bytes){
+        //获取 字节数组转化成的2进制字符串
+        String BinaryStr = bytes2BinaryStr(bytes);
+        //符号位S
+        Long s = Long.parseLong(BinaryStr.substring(0, 1));
+        //指数位E
+        Long e = Long.parseLong(BinaryStr.substring(1, 9),2);
+        //位数M
+        String M = BinaryStr.substring(9);
+        float m = 0,a,b;
+        for(int i=0;i<M.length();i++){
+            a = Integer.valueOf(M.charAt(i)+"");
+            b = (float) Math.pow(2, i+1);
+            m =m + (a/b);
+        }
+        Float f = (float) ((Math.pow(-1, s)) * (1+m) * (Math.pow(2,(e-127))));
+        return f;
+    }
+    /**
+     * 将字节数组转换成2进制字符串
+     * @param bytes
+     * @return
+     */
+    public static String bytes2BinaryStr(byte[] bytes){
+        StringBuffer binaryStr = new StringBuffer();
+        for(int i=0;i<bytes.length;i++){
+            String str = Integer.toBinaryString((bytes[i] & 0xFF) + 0x100).substring(1);
+            binaryStr.append(str);
+        }
+        return binaryStr.toString();
+    }
 
     private static float calc(float f, Set<Float> set, List<Integer> list) {
         if (f == 0 || set.contains(f))
@@ -188,5 +227,56 @@ public class BytesHexChange {
             bytes[i] = (byte) (n & 0xff);
         }
         return new String(bytes);
+    }
+
+
+    /** 16进制中的字符集 */
+    private static final String HEX_CHAR = "0123456789ABCDEF";
+
+    /** 16进制中的字符集对应的字节数组 */
+    private static final byte[] HEX_STRING_BYTE = HEX_CHAR.getBytes();
+    public static byte[] byte2hex(byte[] b) {
+        int length = b.length;
+        byte[] b2 = new byte[length << 1];
+        int pos;
+        for(int i=0; i<length; i++) {
+            pos = 2*i;
+            b2[pos] = HEX_STRING_BYTE[(b[i] & 0xf0) >> 4];
+            b2[pos+1] = HEX_STRING_BYTE[b[i] & 0x0f];
+        }
+        return b2;
+    }
+
+    /**
+     * 16进制字节数组转换为10进制字节数组
+     *
+     * 两个16进制字节对应一个10进制字节，则将第一个16进制字节对应成16进制字符表中的位置(0~15)并向左移动4位，
+     * 再与第二个16进制字节对应成16进制字符表中的位置(0~15)进行或运算，则得到对应的10进制字节
+     * @param b 10进制字节数组
+     * @return 16进制字节数组
+     */
+    public static byte[] hex2byte(byte[] b) {
+        if(b.length%2 != 0) {
+            throw new IllegalArgumentException("byte array length is not even!");
+        }
+
+        int length = b.length >> 1;
+        byte[] b2 = new byte[length];
+        int pos;
+        for(int i=0; i<length; i++) {
+            pos = i << 1;
+            b2[i] = (byte) (HEX_CHAR.indexOf( b[pos] ) << 4 | HEX_CHAR.indexOf( b[pos+1] ) );
+        }
+        return b2;
+    }
+
+    public static String ByteArrToHex(byte[] inBytArr) {
+        StringBuilder strBuilder = new StringBuilder();
+        int j = inBytArr.length;
+        for (int i = 0; i < j; i++) {
+            strBuilder.append(Byte2Hex(Byte.valueOf(inBytArr[i])));
+            strBuilder.append("");
+        }
+        return strBuilder.toString();
     }
 }

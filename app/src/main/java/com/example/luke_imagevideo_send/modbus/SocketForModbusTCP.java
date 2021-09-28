@@ -73,6 +73,17 @@ public abstract class SocketForModbusTCP {
                     if (SocketForModbusTCP.this.mInputStream == null) {
                         return;
                     }
+//                    ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+//                    byte[] buffer1 = new byte[1024];
+//                    int len = -1;
+//                    while ((len = mInputStream.read(buffer1)) != -1) {
+//                        outSteam.write(buffer1, 0, len);
+//                    }
+//                    outSteam.close();
+//                    mInputStream.close();
+//                    byte[] buffer12 =  outSteam.toByteArray();
+//                    Log.e("XXX","XXX");
+
                     int available = SocketForModbusTCP.this.mInputStream.available();
                     if (available > 0) {
                         byte[] buffer = new byte[available];

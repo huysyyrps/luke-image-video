@@ -3,6 +3,8 @@ package com.example.luke_imagevideo_send.modbus;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.example.luke_imagevideo_send.http.base.ModbusInstanceCallBack;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,7 +28,7 @@ public abstract class SocketForModbusTCP {
         this.port = port;
     }
 
-    public void connect() {
+    public void connect(ModbusInstanceCallBack modbusInstanceCallBack) {
 
         try {
             this.mSocket = new Socket();
@@ -40,8 +42,10 @@ public abstract class SocketForModbusTCP {
             this.mReadThread = new ReadThread();
             this.mReadThread.start();
             this._isConnected = true;
+            modbusInstanceCallBack.confirm("");
         } catch (IOException e) {
             e.printStackTrace();
+            modbusInstanceCallBack.error(e.toString());
         }
     }
 

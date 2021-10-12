@@ -761,9 +761,10 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         onePicker.setFormatter(this);
         onePicker.setOnValueChangedListener(this);
         onePicker.setOnScrollListener(this);
+        onePicker.setDisplayedValues(null);
+        onePicker.setMaxValue(one.length - 1);
         onePicker.setDisplayedValues(one);
         onePicker.setMinValue(0);
-        onePicker.setMaxValue(one.length - 1);
         onePicker.setValue(5);
         //设置为对当前值不可编辑
         onePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
@@ -772,9 +773,10 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         tenPicker.setFormatter(this);
         tenPicker.setOnValueChangedListener(this);
         tenPicker.setOnScrollListener(this);
+        tenPicker.setDisplayedValues(null);
+        tenPicker.setMaxValue(ten.length - 1);
         tenPicker.setDisplayedValues(ten);
         tenPicker.setMinValue(0);
-        tenPicker.setMaxValue(ten.length - 1);
         tenPicker.setValue(9);
         //设置为对当前值不可编辑
         tenPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
@@ -783,9 +785,10 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         hundredPicker.setFormatter(this);
         hundredPicker.setOnValueChangedListener(this);
         hundredPicker.setOnScrollListener(this);
+        hundredPicker.setDisplayedValues(null);
+        hundredPicker.setMaxValue(hundred.length - 1);
         hundredPicker.setDisplayedValues(hundred);
         hundredPicker.setMinValue(0);
-        hundredPicker.setMaxValue(hundred.length - 1);
         hundredPicker.setValue(2);
         //设置为对当前值不可编辑
         hundredPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
@@ -794,9 +797,10 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         thousandPicker.setFormatter(this);
         thousandPicker.setOnValueChangedListener(this);
         thousandPicker.setOnScrollListener(this);
+        thousandPicker.setDisplayedValues(null);
+        thousandPicker.setMaxValue(thousand.length - 1);
         thousandPicker.setDisplayedValues(thousand);
         thousandPicker.setMinValue(0);
-        thousandPicker.setMaxValue(thousand.length - 1);
         thousandPicker.setValue(0);
         //设置为对当前值不可编辑
         thousandPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
@@ -822,9 +826,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             onePicker.setFormatter(this);
             onePicker.setOnValueChangedListener(this);
             onePicker.setOnScrollListener(this);
+            onePicker.setMaxValue(one.length - 1);
             onePicker.setDisplayedValues(one);
             onePicker.setMinValue(0);
-            onePicker.setMaxValue(one.length - 1);
             onePicker.setValue(0);
             tenPicker.setVisibility(View.GONE);
             hundredPicker.setVisibility(View.GONE);
@@ -837,9 +841,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             onePicker.setFormatter(this);
             onePicker.setOnValueChangedListener(this);
             onePicker.setOnScrollListener(this);
+            onePicker.setMaxValue(one.length - 1);
             onePicker.setDisplayedValues(one);
             onePicker.setMinValue(0);
-            onePicker.setMaxValue(one.length - 1);
             onePicker.setValue(0);
             tenPicker.setVisibility(View.GONE);
             hundredPicker.setVisibility(View.GONE);
@@ -852,9 +856,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             onePicker.setFormatter(this);
             onePicker.setOnValueChangedListener(this);
             onePicker.setOnScrollListener(this);
+            onePicker.setMaxValue(one.length - 1);
             onePicker.setDisplayedValues(one);
             onePicker.setMinValue(0);
-            onePicker.setMaxValue(one.length - 1);
             onePicker.setValue(0);
             tenPicker.setVisibility(View.GONE);
             hundredPicker.setVisibility(View.GONE);

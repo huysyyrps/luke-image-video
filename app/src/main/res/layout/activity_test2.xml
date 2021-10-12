@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:id="@+id/frameLayout"
-    android:background="@color/black">
-
-    <com.example.luke_imagevideo_send.http.views.Header
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        app:header_title="@string/app_name"
-        app:header_is_left_iv_visiable="false">
-    </com.example.luke_imagevideo_send.http.views.Header>
-
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/linelayout_radion">
-    </WebView>
+    tools:context=".TestActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -28,8 +12,8 @@
         android:layout_height="150dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:layout_marginRight="5dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
         <ImageView
             android:id="@+id/ivVisition"
             android:layout_width="30dp"
@@ -41,13 +25,12 @@
             android:id="@+id/linSetting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:background="@drawable/linelayout_sy_radion"
                 android:layout_marginRight="10dp"
                 android:orientation="vertical">
                 <LinearLayout
@@ -63,75 +46,75 @@
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="爬行速度  :"/>
+                            android:text="爬行速度:"
+                            android:layout_width="wrap_content"/>
                         <TextView
                             android:id="@+id/tvSpeed"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
 
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="行走距离  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="行走距离:"/>
                         <TextView
                             android:id="@+id/tvDistance"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="磁化时间  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="磁化时间:"/>
                         <TextView
                             android:id="@+id/tvCHTime"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="实际距离  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="实际距离:"/>
                         <TextView
                             android:id="@+id/tvActualDistance"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="手机"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -142,7 +125,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:gravity="center|left"
-                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:background="@drawable/linelayout_sy_radion"
                 android:layout_marginRight="10dp"
                 android:orientation="vertical">
                 <LinearLayout
@@ -152,82 +135,82 @@
                     android:orientation="vertical"
                     android:layout_margin="5dp">
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="磁化模式  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="磁化模式:"/>
                         <TextView
                             android:id="@+id/tvCH"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="时间"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="黑白模式  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="黑白模式:"/>
                         <TextView
                             android:id="@+id/tvLight"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="时间"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="控  制  源  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="控制源\t\t:"/>
                         <TextView
                             android:id="@+id/tvSource"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="手机"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="运行模式  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="运行模式:"/>
                         <TextView
                             android:id="@+id/tvPatternSelect"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
@@ -238,7 +221,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:background="@drawable/linelayout_sy_radion"
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -247,159 +230,97 @@
                     android:orientation="vertical"
                     android:layout_margin="5dp">
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="磁轭控制  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="磁轭控制:"/>
                         <TextView
                             android:id="@+id/tvCEControl"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度" />
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
+
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="黑白选择  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="黑白选择:"/>
                         <TextView
                             android:id="@+id/tvLightSelect"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
+
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="探  照  灯  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="探照灯\t\t:"/>
                         <TextView
                             android:id="@+id/tvSearchlightControl"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
+
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <TextView
                             style="@style/SpideTextView"
-                            android:text="磁化控制  :"/>
+                            android:layout_width="wrap_content"
+                            android:text="磁化控制:"/>
                         <TextView
                             android:id="@+id/tvCHControl"
                             style="@style/SpideTextView"
-                            android:layout_marginLeft="0dp"
                             android:text="爬行速度"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            android:src="@drawable/ic_triangle_red1"
+                            android:src="@drawable/ic_triangle_red"
                             android:layout_gravity="center|right"
                             android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-    <FrameLayout
-        android:id="@+id/rlGone"
-        android:layout_width="wrap_content"
-        android:layout_height="145dp"
-        android:layout_gravity="right"
-        android:visibility="gone">
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="bottom|right"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_gone"/>
-    </FrameLayout>
 
-    <include
-        android:id="@+id/frameLayoutitem"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        layout="@layout/mainitem_layout"
-        android:layout_gravity="left|bottom" />
-
-    <LinearLayout
-        android:id="@+id/llNumberPicker"
-        android:layout_width="match_parent"
-        android:layout_height="225dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:visibility="gone">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:orientation="horizontal"
-            android:background="@color/shouye"
-            android:layout_alignTop="@+id/llNumberPicker">
-            <TextView
-                android:id="@+id/tvCancle"
-                style="@style/NumberPicker"
-                android:layout_height="match_parent"
-                android:text="取消"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textColor="@color/color_bg_selected1"
-                android:background="@color/shouye"/>
-            <TextView
-                style="@style/NumberPicker"
-                android:layout_height="match_parent"
-                android:background="@color/shouye"/>
-            <TextView
-                style="@style/NumberPicker"
-                android:layout_height="match_parent"
-                android:background="@color/shouye"/>
-            <TextView
-                android:id="@+id/tvSure"
-                style="@style/NumberPicker"
-                android:layout_height="match_parent"
-                android:text="确定"
-                android:textStyle="bold"
-                android:textColor="@color/color_bg_selected1"
-                android:gravity="center"
-                android:background="@color/shouye"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:orientation="horizontal">
-            <com.example.luke_imagevideo_send.chifen.magnetic.view.CustomNumberPicker
-                android:id="@+id/pickerData"
-                style="@style/NumberPicker"/>
+            <ImageView
+                android:id="@+id/ivGone"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_gone"/>
         </LinearLayout>
     </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

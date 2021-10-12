@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -37,6 +39,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.RegionalChooseUtil;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.CircleMenu;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.CircleMenuAdapter;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.CustomNumberPicker;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.ItemInfo;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -89,7 +92,7 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
     @BindView(R.id.tvCHControl)
     TextView tvCHControl;
     @BindView(R.id.pickerData)
-    NumberPicker pickerData;
+    CustomNumberPicker pickerData;
     @BindView(R.id.tvCancle)
     TextView tvCancle;
     @BindView(R.id.tvSure)
@@ -98,8 +101,8 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
     LinearLayout llNumberPicker;
     @BindView(R.id.ivVisition)
     ImageView ivVisition;
-    @BindView(R.id.ivGone)
-    ImageView ivGone;
+    @BindView(R.id.rlGone)
+    FrameLayout rlGone;
     @BindView(R.id.linSetting)
     LinearLayout linSetting;
     @BindView(R.id.tvSource)
@@ -121,8 +124,8 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
     Timer timer = new Timer();
     private WindowManager mWindowManager;
     SocketForModbusTCP socketForModbusTCP;
-    private String[] itemName = new String[8];
-    private int[] mItemImgs = new int[8];
+    private String[] itemName = new String[4];
+    private int[] mItemImgs = new int[4];
     private CircleMenuAdapter circleMenuAdapternew;
     List<ItemInfo> data = new ArrayList<>();
     static String TAG = "SpideMainActivity";
@@ -131,7 +134,7 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
+        pickerData.setNumberPickerDividerColor(pickerData);
         setUiData();
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -220,22 +223,14 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
 
     private void setUiData() {
         mItemImgs[0] = R.drawable.ic_right;
-        mItemImgs[1] = 1;
-        mItemImgs[2] = R.drawable.ic_botton;
-        mItemImgs[3] = 1;
-        mItemImgs[4] = R.drawable.ic_left;
-        mItemImgs[5] = R.drawable.ic_top_left;
-        mItemImgs[6] = R.drawable.ic_top;
-        mItemImgs[7] = R.drawable.ic_top_right;
+        mItemImgs[1] = R.drawable.ic_botton;
+        mItemImgs[2] = R.drawable.ic_left;
+        mItemImgs[3] = R.drawable.ic_top;
 
         itemName[0] = "右";
-        itemName[1] = "";
-        itemName[2] = "下";
-        itemName[3] = "";
-        itemName[4] = "左";
-        itemName[5] = "左上";
-        itemName[6] = "上";
-        itemName[7] = "右上";
+        itemName[1] = "下";
+        itemName[2] = "左";
+        itemName[3] = "上";
 
         ItemInfo item = null;
         ItemInfo itemne = null;
@@ -250,7 +245,6 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
 
     private void setClient() {
         mCircleMenu.setOnItemClickListener(new CircleMenu.OnMenuItemClickListener() {
-
             @Override
             public void onClick(View view, int position) {
                 if (itemName[position].equals("上")) {
@@ -265,12 +259,12 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
                 if (itemName[position].equals("下")) {
                     sendData("010600040002" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040002")),300);
                 }
-                if (itemName[position].equals("左上")) {
-                    sendData("010600040005" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040005")),300);
-                }
-                if (itemName[position].equals("右上")) {
-                    sendData("010600040006" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040006")),300);
-                }
+//                if (itemName[position].equals("左上")) {
+//                    sendData("010600040005" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040005")),300);
+//                }
+//                if (itemName[position].equals("右上")) {
+//                    sendData("010600040006" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040006")),300);
+//                }
             }
         });
     }
@@ -431,19 +425,20 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
                     socketForModbusTCP.connect(new ModbusInstanceCallBack() {
                         @Override
                         public void confirm(Object string) {
-                            String strHex1 = "010300000018" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010300000018"));
+                            String strHex1 = "0103000000018" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("0103000000018"));
                             sendData(strHex1,300);
                         }
 
                         @Override
                         public void error(String string) {
-                            Looper.prepare();
-                            Toast.makeText(SpideMainActivity.this, string, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
+                            Message message = new Message();
+                            message.what = Constant.TAG_ONE;
+                            message.obj = string;
+                            handler.sendMessage(message);
                         }
                     });
                 }
-            }, 10);
+            }, 300);
         }
 
 //        new ModBusUtil().modbusInstance(new ModbusInstanceCallBack() {
@@ -485,17 +480,19 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
 
     @OnClick({R.id.btnStop, R.id.tvSpeed, R.id.tvDistance, R.id.tvCHTime, R.id.tvPatternSelect,
             R.id.tvCEControl, R.id.tvLightSelect, R.id.tvSearchlightControl, R.id.tvCHControl,
-            R.id.pickerData, R.id.tvCancle, R.id.tvSure, R.id.ivVisition, R.id.ivGone, R.id.tvCH,
+            R.id.pickerData, R.id.tvCancle, R.id.tvSure, R.id.ivVisition, R.id.tvCH,R.id.rlGone,
             R.id.tvLight, R.id.tvSource})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.ivVisition:
                 linSetting.setVisibility(View.VISIBLE);
                 ivVisition.setVisibility(View.GONE);
+                rlGone.setVisibility(View.VISIBLE);
                 break;
-            case R.id.ivGone:
+            case R.id.rlGone:
                 linSetting.setVisibility(View.GONE);
                 ivVisition.setVisibility(View.VISIBLE);
+                rlGone.setVisibility(View.GONE);
                 break;
             case R.id.btnStop:
                 sendData("010600040007" + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("010600040007")),300);
@@ -614,8 +611,8 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
                     String ssdata = String.valueOf(pickerData.getValue() * 0.5 + 0.5);
                     tvSpeed.setText(ssdata + "mm/min");
                     float data = Float.parseFloat(ssdata);
-                    String s = Integer.toHexString(Float.floatToRawIntBits(data)).substring(4,8)
-                            +Integer.toHexString(Float.floatToRawIntBits(data)).substring(0,4);
+                    String s = Integer.toHexString(Float.floatToRawIntBits(data)).substring(4,8) +Integer.toHexString(Float.floatToRawIntBits(data)).substring(0,4);
+                    String data1 = "01100018000204" + s + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100018000204" + s));
                     sendData("01100018000204" + s + new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("01100018000204" + s)),300);
                 }
 
@@ -653,7 +650,6 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
                         tvCHControl.setText("停止磁化");
                     }
                 }
-
                 break;
         }
     }
@@ -666,9 +662,10 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
                 if (socketForModbusTCP!=null){
                     socketForModbusTCP.send(new BytesHexChange().HexToByteArr(data));
                 }else {
-                    Looper.prepare();
-                    Toast.makeText(SpideMainActivity.this, "未建立连接", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
+                    Message message = new Message();
+                    message.what = Constant.TAG_ONE;
+                    message.obj = "未建立连接";
+                    handler.sendMessage(message);
                 }
             }
         }, time);
@@ -702,11 +699,11 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
             public void confirm(String name1, Dialog dialog, EditText editText) {
                 if (tag.equals("Distance")) {
                     if (name1 != null && !name1.trim().equals("")) {
-                        tvDistance.setText(name1 + "mm");
                         Double data = new Double(name1);
                         if (data > 80.0 || data < 10.0) {
                             Toast.makeText(SpideMainActivity.this, "行走距离范围：10.0~80.0，请重新输入", Toast.LENGTH_SHORT).show();
                         } else {
+                            tvDistance.setText(name1 + "mm");
                             float distanceData = Float.parseFloat(name1);
                             String s = Integer.toHexString(Float.floatToRawIntBits(distanceData)).substring(4,8)
                                     +Integer.toHexString(Float.floatToRawIntBits(distanceData)).substring(0,4);
@@ -822,4 +819,16 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
         finish();
         return super.onKeyDown(keyCode, event);
     }
+
+    //消息处理者,创建一个Handler的子类对象,目的是重写Handler的处理消息的方法(handleMessage())
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case Constant.TAG_ONE:
+                    Toast.makeText(SpideMainActivity.this, String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

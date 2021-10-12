@@ -19,7 +19,7 @@
 
         <Button
             android:id="@+id/btnStop"
-            android:layout_width="43dp"
+            android:layout_width="49dp"
             android:layout_height="49dp"
             android:layout_gravity="center"
             android:layout_centerInParent="true"

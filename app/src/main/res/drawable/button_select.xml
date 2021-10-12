@@ -3,6 +3,6 @@
 
     <item android:state_pressed="true" android:drawable="@drawable/color2"></item> <!-- 未点击时的颜色 -->
 
-    <item android:state_pressed="false" android:drawable="@drawable/color1"></item> <!-- 点击后的颜色 -->
+    <item android:state_pressed="false" android:drawable="@color/translucent_color"></item> <!-- 点击后的颜色 -->
 
 </selector>

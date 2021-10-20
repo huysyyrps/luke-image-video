@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.location.LocationManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaCodecInfo;
@@ -59,11 +60,13 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getGPS;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
@@ -191,24 +194,24 @@ public class MainActivity extends BaseActivity {
         }
 
         Intent intent = getIntent();
-        project = "1";
-        workName = "1";
-        workCode = "1";
-//        project = intent.getStringExtra("project");
-//        workName = intent.getStringExtra("etWorkName");
-//        workCode = intent.getStringExtra("etWorkCode");
-//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-//            linearLayout1.setVisibility(View.GONE);
-//        }
-//        if (!project.trim().equals("")) {
-//            tvCompName.setText(project);
-//        }
-//        if (!workName.trim().equals("")) {
-//            tvWorkName.setText(workName);
-//        }
-//        if (!workCode.trim().equals("")) {
-//            tvWorkCode.setText(workCode);
-//        }
+//        project = "1";
+//        workName = "1";
+//        workCode = "1";
+        project = intent.getStringExtra("project");
+        workName = intent.getStringExtra("etWorkName");
+        workCode = intent.getStringExtra("etWorkCode");
+        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+            linearLayout1.setVisibility(View.GONE);
+        }
+        if (!project.trim().equals("")) {
+            tvCompName.setText(project);
+        }
+        if (!workName.trim().equals("")) {
+            tvWorkName.setText(workName);
+        }
+        if (!workCode.trim().equals("")) {
+            tvWorkCode.setText(workCode);
+        }
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
         alertDialogUtil = new AlertDialogUtil(this);
@@ -312,6 +315,8 @@ public class MainActivity extends BaseActivity {
                                     BigDecimal DataE = new BigDecimal(Double.valueOf(firstE)/100).setScale(6,BigDecimal.ROUND_HALF_UP);
                                     String s = DataE+","+DataN;
                                     tvGPS.setText(s);
+                                }else {
+                                    getGPSData();
                                 }
                             }catch (Exception ex) {
                                 Log.e("XXX", ex.toString());
@@ -324,6 +329,7 @@ public class MainActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+                                    getGPSData();
                                 }
                             });
                         }
@@ -333,6 +339,21 @@ public class MainActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getGPSData(){
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        new getGPS().initGPS(MainActivity.this,locationManager,tvGPS, new DialogCallBack() {
+            @Override
+            public void confirm(String name, Dialog dialog) {
+
+            }
+
+            @Override
+            public void cancel() {
+                Toast.makeText(MainActivity.this, "请开启GPS模块", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

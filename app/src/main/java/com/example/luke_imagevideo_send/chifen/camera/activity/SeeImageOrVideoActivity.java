@@ -119,7 +119,6 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
 
         } else {
             finish();
-            System.exit(0);
         }
     }
 
@@ -327,4 +326,5 @@ public class SeeImageOrVideoActivity extends BaseActivity implements View.OnClic
     public void closeThisActivity() {
         finish();
     }
+
 }

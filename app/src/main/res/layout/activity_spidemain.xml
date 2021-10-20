@@ -68,7 +68,7 @@
                             android:id="@+id/tvSpeed"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="2m/min"/>
 
                         <ImageView
                             android:layout_width="12dp"
@@ -90,7 +90,7 @@
                             android:id="@+id/tvDistance"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="5.2m"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -111,7 +111,7 @@
                             android:id="@+id/tvCHTime"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="3s"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -132,7 +132,15 @@
                             android:id="@+id/tvActualDistance"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="手机"/>
+                            android:layout_gravity="center|right"
+                            android:text="32m"/>
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_triangle_red1"
+                            android:layout_gravity="center|right"
+                            android:visibility="invisible"
+                            android:layout_marginRight="10dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -163,7 +171,7 @@
                             android:id="@+id/tvCH"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="时间"/>
+                            android:text="手动模式"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -183,7 +191,7 @@
                             android:id="@+id/tvLight"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="时间"/>
+                            android:text="白光模式"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -203,7 +211,7 @@
                             android:id="@+id/tvSource"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="手机"/>
+                            android:text="遥控使能"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -223,7 +231,7 @@
                             android:id="@+id/tvPatternSelect"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="手动模式"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -258,7 +266,7 @@
                             android:id="@+id/tvCEControl"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度" />
+                            android:text="落下" />
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -278,7 +286,7 @@
                             android:id="@+id/tvLightSelect"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="白光"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -298,7 +306,7 @@
                             android:id="@+id/tvSearchlightControl"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="开启"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
@@ -318,7 +326,7 @@
                             android:id="@+id/tvCHControl"
                             style="@style/SpideTextView"
                             android:layout_marginLeft="0dp"
-                            android:text="爬行速度"/>
+                            android:text="停止"/>
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="12dp"

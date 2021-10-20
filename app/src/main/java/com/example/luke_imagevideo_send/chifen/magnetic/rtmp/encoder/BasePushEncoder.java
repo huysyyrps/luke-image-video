@@ -7,6 +7,7 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.projection.MediaProjection;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -170,18 +171,18 @@ public abstract class BasePushEncoder {
             MediaFormat videoFormat = MediaFormat.createVideoFormat(mineType, width, height);
             videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
             //30帧
-            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 20);
+            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 14);
             //RGBA
-            videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * 4);
+            videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, 400000);
             videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
             //设置压缩等级  默认是baseline
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                videoFormat.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileMain);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    videoFormat.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel3);
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                videoFormat.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileMain);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    videoFormat.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel3);
+                }
+            }
             mVideoEncodec.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mVideoBuffInfo = new MediaCodec.BufferInfo();
             mSurface = mVideoEncodec.createInputSurface();
@@ -203,9 +204,9 @@ public abstract class BasePushEncoder {
         try {
             mAudioEncodec = MediaCodec.createEncoderByType(mineType);
             MediaFormat audioFormat = MediaFormat.createAudioFormat(mineType, sampleRate, channel);
-            audioFormat.setInteger(MediaFormat.KEY_BIT_RATE, 80000);
+            audioFormat.setInteger(MediaFormat.KEY_BIT_RATE, 44100);
             audioFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-            audioFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 4096 * 10);
+            audioFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 4096 * 5);
             mAudioEncodec.configure(audioFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
             mAudioBuffInfo = new MediaCodec.BufferInfo();

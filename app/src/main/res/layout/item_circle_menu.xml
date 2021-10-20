@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    android:background="@drawable/button_select">
+    android:orientation="vertical">
+<!--
+    android:background="@drawable/button_select"-->
     <!--<circle.MyImageView-->
     <ImageView
         android:id="@+id/iv_circle_menu_item"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:background="@drawable/button_select"
         android:contentDescription="@string/app_name" />
     <TextView
         android:id="@+id/tv_circle_menu_item"

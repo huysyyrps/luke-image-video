@@ -37,7 +37,7 @@ public class ValueActivity extends BaseActivity {
     Button btnSave;
     @BindView(R.id.btnCancle)
     Button btnCancle;
-    List<Double> valueList = new ArrayList<>();
+    List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
 
     @Override
@@ -66,16 +66,16 @@ public class ValueActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onGetStickyEvent(List<Double> myValueList) {
+    public void onGetStickyEvent(List<String> myValueList) {
         this.valueList = myValueList;
     }
 
 
     //设置spinner数据
     public void setSpinnerData() {
-        baseRecyclerAdapter = new BaseRecyclerPositionAdapter<Double>(ValueActivity.this, R.layout.swiperrecycler_item, valueList) {
+        baseRecyclerAdapter = new BaseRecyclerPositionAdapter<String>(ValueActivity.this, R.layout.swiperrecycler_item, valueList) {
             @Override
-            public void convert(BaseViewHolder holder, final Double o, int position) {
+            public void convert(BaseViewHolder holder, final String o, int position) {
                 if (position == 0) {
                     holder.setText(R.id.tv, 1 + "");
                 } else if (position % 11 == 0) {
@@ -116,7 +116,12 @@ public class ValueActivity extends BaseActivity {
                             new AlertDialogUtil(ValueActivity.this).showSmallDialog("您确定要删除这条数据吗", new DialogCallBack() {
                                 @Override
                                 public void confirm(String name, Dialog dialog) {
-                                    valueList.remove(position);
+                                    if (position%11==1){
+                                        valueList.remove(position) ;
+                                        valueList.remove(position-1) ;
+                                    }else {
+                                        valueList.set(position,"") ;
+                                    }
                                     baseRecyclerAdapter.notifyDataSetChanged();
                                 }
 

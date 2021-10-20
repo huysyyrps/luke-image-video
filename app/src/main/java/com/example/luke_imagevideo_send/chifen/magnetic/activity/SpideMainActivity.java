@@ -70,7 +70,6 @@ public class SpideMainActivity extends BaseActivity implements NumberPicker.Form
     LinearLayout linearLayout;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
-    Button btnLeft;
     @BindView(R.id.btnStop)
     Button btnStop;
     @BindView(R.id.frameLayoutitem)

@@ -48,6 +48,7 @@ public class PermissionActivity extends BaseActivity {
                         Log.e("TAG", "close0");
 //                        Intent intent = new Intent(PermissionActivity.this,CaptureActivity.class);
                         Intent intent = new Intent(PermissionActivity.this, DefinedActivity.class);
+//                        Intent intent = new Intent(PermissionActivity.this, SpideMainActivity.class);
                         startActivity(intent);
                         finish();
                     }

@@ -44,7 +44,7 @@ import java.math.BigDecimal;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainBroadcastActivity extends BaseActivity implements  OnConntionListener, BasePushEncoder.OnMediaInfoListener{
+public class MainBroadcastActivity extends BaseActivity implements OnConntionListener, BasePushEncoder.OnMediaInfoListener{
 
     @BindView(R.id.header)
     Header header;
@@ -66,8 +66,6 @@ public class MainBroadcastActivity extends BaseActivity implements  OnConntionLi
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
-    @BindView(R.id.llItem)
-    LinearLayout llItem;
     private Notifications mNotifications;
     private int clickNum = 0;
     private RtmpHelper rtmpHelper;
@@ -94,9 +92,15 @@ public class MainBroadcastActivity extends BaseActivity implements  OnConntionLi
         }
 
         Intent intent = getIntent();
-        project = intent.getStringExtra("project");
-        workName = intent.getStringExtra("etWorkName");
-        workCode = intent.getStringExtra("etWorkCode");
+//        project = intent.getStringExtra("project");
+//        workName = intent.getStringExtra("etWorkName");
+//        workCode = intent.getStringExtra("etWorkCode");
+//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+//            linearLayout.setVisibility(View.GONE);
+//        }
+        project = "1";
+        workName = "1";
+        workCode = "1";
         if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
             linearLayout.setVisibility(View.GONE);
         }
@@ -272,6 +276,31 @@ public class MainBroadcastActivity extends BaseActivity implements  OnConntionLi
     @Override
     protected void rightClient() {}
 
+
+    /**
+     * 按钮单击按监听
+     *
+     * @param
+     * @return
+     */
+    public void onBtnClick(String value1, String value2) {
+        clickNum++;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (clickNum == 1) {
+                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
+                } else if (clickNum == 2) {
+                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
+                }
+                //防止handler引起的内存泄漏
+                handler.removeCallbacksAndMessages(null);
+                clickNum = 0;
+            }
+        }, 800);
+    }
+
+
     @Override
     public void onConntecting() {
         Log.e("chenzhu", "连接中...");
@@ -290,7 +319,7 @@ public class MainBroadcastActivity extends BaseActivity implements  OnConntionLi
 
     private void startPush() {
         pushEncode = new PushEncode(this);
-        pushEncode.initEncoder(true,mediaProjection, 1280,720,44100,2,16);
+        pushEncode.initEncoder(true,mediaProjection, 1080,640,44100,2,16);
         pushEncode.setOnMediaInfoListener(this);
         pushEncode.start();
     }

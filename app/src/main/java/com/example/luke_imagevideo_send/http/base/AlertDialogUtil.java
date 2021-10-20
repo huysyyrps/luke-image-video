@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -333,7 +334,11 @@ public class AlertDialogUtil {
             tvYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    alertDialogCallBack.confirm(editText.getText().toString(),dialog,editText);
+                    if (editText.getText().toString().equals(".")){
+                        Toast.makeText(context, "请输入正确数值", Toast.LENGTH_SHORT).show();
+                    }else {
+                        alertDialogCallBack.confirm(editText.getText().toString(),dialog,editText);
+                    }
                 }
             });
 

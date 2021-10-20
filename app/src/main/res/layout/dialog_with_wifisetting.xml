@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/linelayout_color_radion"
+            android:background="@color/color_bg_selected"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:text="aacesdsafcvs"
@@ -42,7 +42,7 @@
             android:id="@+id/btnCapySSID"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@drawable/linelayout_color_radion"
+            android:background="@drawable/button_selectssid"
             android:text="复制名称"
             android:textColor="@color/white" />
 
@@ -51,7 +51,7 @@
             android:id="@+id/tvPWD"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@drawable/linelayout_color_radion"
+            android:background="@color/color_bg_selected"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:layout_marginBottom="5dp"
@@ -64,7 +64,7 @@
             android:id="@+id/btnCapyPWD"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@drawable/linelayout_color_radion"
+            android:background="@drawable/button_selectssid"
             android:text="复制密码"
             android:textColor="@color/white" />
 

@@ -40,6 +40,7 @@ import com.cunoraz.gifview.library.GifView;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BytesHexChange;
 import com.example.luke_imagevideo_send.cehouyi.util.PickerDivider;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.CallPolice;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.BaseRecyclerPositionAdapter;
@@ -49,10 +50,11 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.jiangdg.singalviewlib.SignalView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -110,17 +112,17 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvFBot;
     @BindView(R.id.tvFMZT)
     TextView tvFMZT;
-    @BindView(R.id.tvOHZT)
-    TextView tvOHZT;
     @BindView(R.id.rbBack)
     RadioButton rbBack;
 
     double Max = 0, Min = 0;
     Handler handler = new Handler();
     boolean exit = false;
-    List<Double> valueList = new ArrayList<>();
+    List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     List<BleDevice> bluetoothList = new ArrayList<>();
+    @BindView(R.id.signaView)
+    SignalView signaView;
     private BluetoothAdapter mBluetoothAdapter;
     BleDevice myBleDevice;
     String ecServerId = "0000FFF0-0000-1000-8000-00805F9B34FB";
@@ -130,7 +132,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     BluetoothGattCharacteristic characteristicRead;
     BluetoothGattCharacteristic characteristicNotify;
     Timer timer = new Timer();
-    String getDate, tag;
+    String getDate, tag = "";
+    String unit = "", nowData = "";
+    Dialog myDialog;
     double com = 1;
 
     @Override
@@ -321,7 +325,18 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     bluetoothList.remove(bleDevice);
                     baseRecyclerAdapter.notifyDataSetChanged();
                 }
+                if (myDialog!=null){
+                    myDialog.dismiss();
+                }
                 Toast.makeText(MainCHYActivity.this, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
+                linBleList.setVisibility(View.VISIBLE);
+                frameLayout.setVisibility(View.GONE);
+                header.setRightTv(true);
+                bluetoothList.clear();
+                baseRecyclerAdapter.notifyDataSetChanged();
+                gifView.play();
+                gifView.setVisibility(View.VISIBLE);
+                startScan();
             }
         });
     }
@@ -354,15 +369,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     private void sendData() {
         timer.schedule(new TimerTask() {
             @Override
-            public void run() {//时间
+            public void run() {
                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
             }
         }, 100);
 
         timer.schedule(new TimerTask() {
             @Override
-            public void run() {//时间
-                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+            public void run() {
+                writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
             }
         }, 600);
     }
@@ -391,150 +406,358 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
      * @param data
      */
     private void makeBackData(String data) {
-        if (data.substring(4, 6).equals("01")) {
-            if (data.length() == 20) {
-                String HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
-                String OH = data.substring(16, 18);
+        Log.e("mainchyactivity----", data);
+        if (data.equals("5b000b004e00005d")) {
+            Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
+        } else {
+            if (data.substring(4, 6).equals("01")) {
+                if (data.length() == 20) {
+                    String HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                    String OH = data.substring(16, 18);
+                    if (tvUnit.getText().toString().equals("MM")) {
+                        DecimalFormat df = new DecimalFormat("###.00");
+                        makeFData(tvData, df, HD, "dataMM");
+                    } else if (tvUnit.getText().toString().equals("IN")) {
+                        DecimalFormat df = new DecimalFormat("###.000");
+                        makeFData(tvData, df, HD, "dataIN");
+                    }
+                    if (rbSave.isChecked()) {
+                        showChart(tvData.getText().toString());
+                    }
+                    signaView.setSignalValue((int) (8 - Long.parseLong(OH, 16)));
+                    Log.e("mainchyactivity-HD", HD);
+                    unit = tvUnit.getText().toString();
+                    nowData = tvData.getText().toString();
+                }
+            }
+            if (data.substring(4, 6).equals("05")) {
+                String L = data.substring(8, 10) + data.substring(6, 8);
+                DecimalFormat df = new DecimalFormat("###.0000");
+                makeFData(tvSS, df, L, tag);
+                //把并接的16进制字符串转换成10进制long
+                long ss = Long.parseLong(L, 16);
                 if (tvUnit.getText().toString().equals("MM")) {
-                    tvData.setText((double) Long.parseLong(HD, 16) / 1000 + "");
+                    tvSS.setText(String.valueOf(ss));
+                } else {
+                    makeFData(tvSS, df, L, "ss");
+                }
+                if (tag.equals("SS")) {
+                    tag = "";
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {//时间
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                        }
+                    }, 300);
+                } else if (tag.equals("") || tag.equals("UNIT")) {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {//时间
+                            writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
+                        }
+                    }, 100);
+                }
+                Log.e("mainchyactivity-ss", data.substring(0, 16));
+            }
+            if (data.substring(4, 6).equals("06")) {
+                String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                if (tvUnit.getText().toString().equals("MM")) {
+                    DecimalFormat df = new DecimalFormat("###.00");
+                    makeFData(tvFTop, df, L, "utilMF");
                 } else if (tvUnit.getText().toString().equals("IN")) {
-                    double fals = ((double) Long.parseLong(HD, 16)) / 25400;
-                    BigDecimal bigDecimal = new BigDecimal(fals);
-                    float fals2 = bigDecimal.setScale(3, BigDecimal.ROUND_HALF_UP).floatValue(); //这句使用于float
-                    tvData.setText(fals2 + "");
+                    DecimalFormat df = new DecimalFormat("###.000");
+                    makeFData(tvFTop, df, L, "utilIF");
                 }
-                if (rbSave.isChecked()){
-                    showChart(Double.valueOf(tvData.getText().toString()));
+                if (tag != null && tag.equals("FTOP")) {
+                    tag = "";
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                        }
+                    }, 300);
+                } else {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
+                        }
+                    }, 300);
                 }
-                tvOHZT.setText(Long.parseLong(OH, 16) + "");
-                Log.e("mainchyactivity-HD", HD);
+                Log.e("mainchyactivity-FTop", data.substring(0, 16));
             }
-        }
-        if (data.substring(4, 6).equals("05")) {
-            String L = data.substring(8, 10) + data.substring(6, 8);
-            //把并接的16进制字符串转换成10进制long
-            long ss = Long.parseLong(L, 16);
-            tvSS.setText(String.valueOf(ss) + "m/s");
-            if (tag != null && tag.equals("SS")) {
-                tag = "";
+            if (data.substring(4, 6).equals("07")) {
+                String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                if (tvUnit.getText().toString().equals("MM")) {
+                    DecimalFormat df = new DecimalFormat("###.00");
+                    makeFData(tvFBot, df, L, "utilMF");
+                } else if (tvUnit.getText().toString().equals("IN")) {
+                    DecimalFormat df = new DecimalFormat("###.000");
+                    makeFData(tvFBot, df, L, "utilIF");
+                }
                 timer.schedule(new TimerTask() {
                     @Override
-                    public void run() {//时间
+                    public void run() {
                         writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
                     }
-                }, 300);
-            } else {
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
-                    }
                 }, 100);
+                Log.e("mainchyactivity-FBot", data.substring(0, 16));
             }
-            Log.e("mainchyactivity-ss", data.substring(0, 16));
-        }
-        if (data.substring(4, 6).equals("06")) {
-            String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
-            tvFTop.setText((double) Long.parseLong(L, 16) / 1000 + "");
-            if (tag != null && tag.equals("FTOP")) {
-                tag = "";
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                    }
-                }, 300);
-            } else {
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
-                    }
-                }, 100);
-            }
-            Log.e("mainchyactivity-FTop", data.substring(0, 16));
-        }
-        if (data.substring(4, 6).equals("07")) {
-            String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
-            tvFBot.setText((double) Long.parseLong(L, 16) / 1000 + "");
-            if (tag != null && tag.equals("FBOT")) {
-                tag = "";
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                    }
-                }, 300);
-            } else {
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
-                    }
-                }, 100);
-            }
-            Log.e("mainchyactivity-FBot", data.substring(0, 16));
-        }
-        if (data.substring(4, 6).equals("08")) {
-            Log.e("mainchyactivity-08", data.substring(0, 16));
-            if (Long.parseLong(data.substring(8, 10), 16) == 0) {
-                tvFMZT.setText("关");
-            } else if (Long.parseLong(data.substring(8, 10), 16) == 1) {
-                tvFMZT.setText("开");
-            }
-            if (Long.parseLong(data.substring(12, 14), 16) == 0) {
-                tvUnit.setText("IN");
-            } else if (Long.parseLong(data.substring(12, 14), 16) == 1) {
-                tvUnit.setText("MM");
-            }
-            tag = "";
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {//时间
-                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+            if (data.substring(4, 6).equals("08")) {
+                String s = tvUnit.getText().toString();
+                Log.e("mainchyactivity-08", data.substring(0, 16));
+                if (Long.parseLong(data.substring(8, 10), 16) == 0) {
+                    tvFMZT.setText("关");
+                } else if (Long.parseLong(data.substring(8, 10), 16) == 1) {
+                    tvFMZT.setText("开");
                 }
-            }, 100);
-        }
+                if (Long.parseLong(data.substring(12, 14), 16) == 0) {
+                    tvUnit.setText("IN");
+                    if (unit.equals("IN")) {
+                        tvData.setText(nowData);
+                    } else {
+                        if (!tvData.getText().toString().equals("0.00")) {
+                            String fals = String.valueOf(Double.valueOf(tvData.getText().toString()) / 25.4);
+                            if (fals.split("\\.")[1].length() > 2) {
+                                tvData.setText(fals.substring(0, fals.split("\\.")[0].length() + 4));
+                            } else {
+                                tvData.setText(fals);
+                            }
+                        }
+                    }
 
-        if (data.substring(4, 6).equals("0a")) {
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {//时间
-                    writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                    if (tag.equals("UNIT") || tag.equals("")) {
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                            }
+                        }, 100);
+                    } else {
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                            }
+                        }, 100);
+                    }
+                } else if (Long.parseLong(data.substring(12, 14), 16) == 1) {
+                    tvUnit.setText("MM");
+                    if (unit.equals("MM")) {
+                        tvData.setText(nowData);
+                    } else {
+                        if (!tvData.getText().toString().equals("0.00")) {
+                            String fals = String.valueOf(Double.valueOf(tvData.getText().toString()) * 25.4);
+                            if (fals.split("\\.")[1].length() > 2) {
+                                tvData.setText(fals.substring(0, fals.split("\\.")[0].length() + 3));
+                            } else {
+                                tvData.setText(fals);
+                            }
+                        }
+                    }
+                    if (tag.equals("UNIT") || tag.equals("")) {
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                            }
+                        }, 100);
+                    } else {
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                            }
+                        }, 100);
+                    }
                 }
-            }, 300);
+            }
+            if (data.substring(4, 6).equals("0a")) {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                    }
+                }, 300);
+            }
         }
     }
 
-    public void showChart(double f) {
-        if (valueList.size() == 0 && com == 1) {
-            valueList.add(com);
-            valueList.add(f);
-        } else if (valueList.size() % 11 == 0) {
-            com++;
-            valueList.add(com);
-            valueList.add(f);
-        } else {
-            valueList.add(f);
+    private void makeFData(TextView tvF, DecimalFormat df, String L, String tag) {
+        if (tag.equals("dataMM")) {
+            String FTopData = "";
+            if (df.format((double) Long.parseLong(L, 16) / 1000).substring(0, 1).equals("\\.")) {
+                FTopData = "0" + (double) Long.parseLong(L, 16) / 1000 + "";
+            } else {
+                FTopData = (double) Long.parseLong(L, 16) / 1000 + "";
+            }
+            if (FTopData.split("\\.")[1].length() >= 2) {
+                String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 3);
+                if (Double.valueOf(data) > Double.valueOf(tvFTop.getText().toString())
+                        || Double.valueOf(data) < Double.valueOf(tvFBot.getText().toString())) {
+                    tvF.setTextColor(getResources().getColor(R.color.red));
+                    if (tvFMZT.getText().toString().equals("开")) {
+                        new CallPolice().sendPolice(MainCHYActivity.this);
+                    }
+                } else {
+                    tvF.setTextColor(getResources().getColor(R.color.black));
+                }
+                tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 3));
+                tvData.setText(data);
+            } else {
+                if (Double.valueOf(FTopData) > Double.valueOf(tvFTop.getText().toString())
+                        || Double.valueOf(FTopData) < Double.valueOf(tvFBot.getText().toString())) {
+                    tvF.setTextColor(getResources().getColor(R.color.red));
+                    if (tvFMZT.getText().toString().equals("开")) {
+                        new CallPolice().sendPolice(MainCHYActivity.this);
+                    }
+                } else {
+                    tvF.setTextColor(getResources().getColor(R.color.black));
+                }
+                tvF.setText(FTopData+"0");
+            }
         }
-        if (valueList.size() >= 1000) {
-            Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
+        if (tag.equals("dataIN")) {
+            String FTopData = "";
+            if (df.format((double) Long.parseLong(L, 16) / 25400).substring(0, 1).equals(".")) {
+                FTopData = "0" + (double) Long.parseLong(L, 16) / 25400 + "";
+            } else {
+                FTopData = (double) Long.parseLong(L, 16) / 25400 + "";
+            }
+            String[] all = FTopData.split("\\.");
+            if (FTopData.split("\\.")[1].length() > 3) {
+                String s = FTopData.split("\\.")[0];
+                if (s.equals("00")) {
+                    String data = FTopData.substring(1, FTopData.split("\\.")[0].length() + 4);
+                    if (Double.valueOf(data) > Double.valueOf(tvFTop.getText().toString())
+                            || Double.valueOf(data) < Double.valueOf(tvFBot.getText().toString())) {
+                        tvF.setTextColor(getResources().getColor(R.color.red));
+                        if (tvFMZT.getText().toString().equals("开")) {
+                            new CallPolice().sendPolice(MainCHYActivity.this);
+                        }
+                    } else {
+                        tvF.setTextColor(getResources().getColor(R.color.black));
+                    }
+                    tvF.setText(data);
+                } else {
+                    String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 4);
+                    if (Double.valueOf(data) > Double.valueOf(tvFTop.getText().toString())
+                            || Double.valueOf(data) < Double.valueOf(tvFBot.getText().toString())) {
+                        tvF.setTextColor(getResources().getColor(R.color.red));
+                        if (tvFMZT.getText().toString().equals("开")) {
+                            new CallPolice().sendPolice(MainCHYActivity.this);
+                        }
+                    } else {
+                        tvF.setTextColor(getResources().getColor(R.color.black));
+                    }
+                    tvF.setText(data);
+                }
+            } else {
+                if (Double.valueOf(FTopData) > Double.valueOf(tvFTop.getText().toString())
+                        || Double.valueOf(FTopData) < Double.valueOf(tvFBot.getText().toString())) {
+                    tvF.setTextColor(getResources().getColor(R.color.red));
+                    if (tvFMZT.getText().toString().equals("开")) {
+                        new CallPolice().sendPolice(MainCHYActivity.this);
+                    }
+                } else {
+                    tvF.setTextColor(getResources().getColor(R.color.black));
+                }
+                tvF.setText(FTopData+"0");
+            }
+        }
+        if (tag.equals("ss")) {
+            String FTopData = "";
+            if (df.format((double) Long.parseLong(L, 16) / 25400).substring(0, 1).equals(".")) {
+                FTopData = "0" + (double) Long.parseLong(L, 16) / 25400 + "";
+            } else {
+                FTopData = (double) Long.parseLong(L, 16) / 25400 + "";
+            }
+            String[] all = FTopData.split("\\.");
+            if (FTopData.split("\\.")[1].length() > 3) {
+                String s = FTopData.split("\\.")[0];
+                if (tag.equals("utilIF")) {
+                    if (s.equals("00")) {
+                        tvF.setText(FTopData.substring(1, FTopData.split("\\.")[0].length() + 4));
+                    } else {
+                        tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 4));
+                    }
+                } else {
+                    if (s.equals("00")) {
+                        tvF.setText(FTopData.substring(1, FTopData.split("\\.")[0].length() + 5));
+                    } else {
+                        tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 5));
+                    }
+                }
+            } else {
+                tvF.setText(FTopData);
+            }
         }
 
-        if (tvMax.getText().toString().equals("0.0")) {
-            tvMax.setText(f + "mm");
-            Max = f;
-        } else if (f > Max) {
-            tvMax.setText(f + "mm");
-            Max = f;
+        if (tag.equals("utilMF")) {
+            String FTopData = "";
+            if (df.format((double) Long.parseLong(L, 16) / 1000).substring(0, 1).equals("\\.")) {
+                FTopData = "0" + (double) Long.parseLong(L, 16) / 1000 + "";
+            } else {
+                FTopData = (double) Long.parseLong(L, 16) / 1000 + "";
+            }
+            if (FTopData.split("\\.")[1].length() >= 2) {
+                String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 3);
+                tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 3));
+            } else {
+                tvF.setText(FTopData+"0");
+            }
         }
-        if (tvMin.getText().toString().equals("0.0")) {
-            tvMin.setText(f + "mm");
-            Min = f;
-        } else if (f < Min) {
-            tvMin.setText(f + "mm");
-            Min = f;
+        if (tag.equals("utilIF")) {
+            String FTopData = "";
+            if (df.format((double) Long.parseLong(L, 16) / 25400).substring(0, 1).equals(".")) {
+                FTopData = "0" + (double) Long.parseLong(L, 16) / 25400 + "";
+            } else {
+                FTopData = (double) Long.parseLong(L, 16) / 25400 + "";
+            }
+            String[] all = FTopData.split("\\.");
+            if (FTopData.split("\\.")[1].length() > 3) {
+                String s = FTopData.split("\\.")[0];
+                if (tag.equals("utilIF")) {
+                    if (s.equals("00")) {
+                        tvF.setText(FTopData.substring(1, FTopData.split("\\.")[0].length() + 4));
+                    } else {
+                        tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 4));
+                    }
+                }
+            } else {
+                tvF.setText(FTopData+"0");
+            }
         }
+    }
+
+    public void showChart(String f) {
+        if (valueList.size() >= 1100) {
+            Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
+        }else if (valueList.size() == 0 && com == 1) {
+            valueList.add(com+"");
+            valueList.add(f+"");
+        } else if (valueList.size() % 11 == 0) {
+            com++;
+            valueList.add(com+"");
+            valueList.add(f+"");
+        } else {
+            valueList.add(f+"");
+        }
+
+//        if (tvMax.getText().toString().equals("0.0")) {
+//            tvMax.setText(f + "");
+//            Max = f;
+//        } else if (f > Max) {
+//            tvMax.setText(f + "");
+//            Max = f;
+//        }
+//        if (tvMin.getText().toString().equals("0.0")) {
+//            tvMin.setText(f + "");
+//            Min = f;
+//        } else if (f < Min) {
+//            tvMin.setText(f + "");
+//            Min = f;
+//        }
     }
 
     @Override
@@ -568,17 +791,17 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({ R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot,R.id.rbBack})
+    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSure:
                 linearLayout.setVisibility(View.GONE);
                 if (tag.equals("SS")) {
-                    String ssdata = String.valueOf(onePicker.getValue())
+                    String ssdata = String.valueOf(onePicker.getValue() + 1)
                             + String.valueOf(tenPicker.getValue())
                             + String.valueOf(hundredPicker.getValue())
                             + String.valueOf(thousandPicker.getValue());
-                    tvSS.setText(ssdata + "m/s");
+                    tvSS.setText(ssdata);
                     writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
                     timer.schedule(new TimerTask() {
                         @Override
@@ -618,11 +841,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 }
                 if (tag.equals("UNIT")) {
+                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
                     if (onePicker.getValue() == 0) {
                         tvUnit.setText("MM");
                         timer.schedule(new TimerTask() {
                             @Override
-                            public void run() {//时间
+                            public void run() {
                                 if (tvFMZT.getText().toString().equals("开")) {
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
                                 } else if (tvFMZT.getText().toString().equals("关")) {
@@ -630,11 +854,17 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                                 }
                             }
                         }, 300);
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
+//                            }
+//                        }, 300);
                     } else {
                         tvUnit.setText("IN");
                         timer.schedule(new TimerTask() {
                             @Override
-                            public void run() {//时间
+                            public void run() {
                                 if (tvFMZT.getText().toString().equals("开")) {
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
                                 } else if (tvFMZT.getText().toString().equals("关")) {
@@ -642,6 +872,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                                 }
                             }
                         }, 300);
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
+//                            }
+//                        }, 300);
                     }
                 }
                 break;
@@ -675,15 +911,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 break;
             case R.id.tvFTop:
                 tag = "FTOP";
-                showFDialog();
+                showFDialog("请输入阈值上限");
                 break;
             case R.id.tvFBot:
                 tag = "FBOT";
-                showFDialog();
+                showFDialog("请输入阈值下限");
                 break;
             case R.id.rbBack:
                 tag = "BACK";
-                new AlertDialogUtil(this).showSmallDialog("您确定要回复出厂设置吗",new DialogCallBack() {
+                new AlertDialogUtil(this).showSmallDialog("您确定要回复出厂设置吗", new DialogCallBack() {
                     @Override
                     public void confirm(String name, Dialog dialog) {
                         writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -704,48 +940,73 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         }
     }
 
-    private void showFDialog() {
-        new AlertDialogUtil(this).showDialogF("请输入阀值",new DialogCallBackTwo() {
+    private void showFDialog(String title) {
+        new AlertDialogUtil(this).showDialogF(title, new DialogCallBackTwo() {
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
+                myDialog = dialog;
                 if (tag.equals("FTOP")) {
                     if (name1 != null && !name1.trim().equals("")) {
-                        tvFTop.setText(name1);
-                        name1 = String.valueOf(Integer.parseInt(name1) * 1000);
-                        dialog.dismiss();
-                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                        String finalName = name1;
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {//时间
-                                String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
-                                strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                                //5b0006000000005d
-                                writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+//                        tvFTop.setText(name1);
+                        if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
+                            Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
+                        }else if (tvUnit.getText().toString().equals("MM")){
+                            if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
                             }
-                        }, 300);
+                        }else if (tvUnit.getText().toString().equals("IN")){
+                            if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
+                            }
+                        }  else {
+                            name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                            dialog.dismiss();
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                            String finalName = name1;
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
+                                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                    //5b0006000000005d
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+                                }
+                            }, 300);
+                        }
                     } else {
-                        Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainCHYActivity.this, title, Toast.LENGTH_SHORT).show();
                     }
                 }
                 if (tag.equals("FBOT")) {
                     if (name1 != null && !name1.trim().equals("")) {
-                        tvFBot.setText(name1);
-                        name1 = String.valueOf(Integer.parseInt(name1) * 1000);
-                        dialog.dismiss();
-                        writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                        String finalName1 = name1;
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {//时间
-                                String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
-                                strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                                //5b0006000000005d
-                                writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+//                        tvFBot.setText(name1);
+                        if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
+                            Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
+                        }else if (tvUnit.getText().toString().equals("MM")){
+                            if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
                             }
-                        }, 300);
+                        }else if (tvUnit.getText().toString().equals("IN")){
+                            if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                            dialog.dismiss();
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                            String finalName1 = name1;
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
+                                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                    //5b0006000000005d
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+                                }
+                            }, 300);
+                        }
                     } else {
-                        Toast.makeText(MainCHYActivity.this, "请输入阀值", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainCHYActivity.this, title, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -757,7 +1018,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
     private void initSS() {
-        String[] one = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        String[] one = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         onePicker.setFormatter(this);
         onePicker.setOnValueChangedListener(this);
         onePicker.setOnScrollListener(this);

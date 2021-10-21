@@ -407,8 +407,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
      */
     private void makeBackData(String data) {
         Log.e("mainchyactivity----", data);
-        if (data.equals("5b000b004e00005d")) {
+        //测厚仪在设置界面APP不允许操作
+        if (data.equals("5b000b004e00005d")||data.equals("5b000b0055000000")||data.equals("5b000b0155000000")) {
             Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                }
+            }, 300);
         } else {
             if (data.substring(4, 6).equals("01")) {
                 if (data.length() == 20) {
@@ -422,7 +429,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         makeFData(tvData, df, HD, "dataIN");
                     }
                     if (rbSave.isChecked()) {
-                        showChart(tvData.getText().toString());
+                        showChart(HD);
                     }
                     signaView.setSignalValue((int) (8 - Long.parseLong(OH, 16)));
                     Log.e("mainchyactivity-HD", HD);
@@ -573,10 +580,14 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 }
             }
             if (data.substring(4, 6).equals("0a")) {
+                valueList.clear();
+                signaView.setSignalValue(0);
+                tvData.setText("0.00");
+                tag = "";
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {//时间
-                        writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                        writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
                     }
                 }, 300);
             }
@@ -603,7 +614,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     tvF.setTextColor(getResources().getColor(R.color.black));
                 }
                 tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 3));
-                tvData.setText(data);
             } else {
                 if (Double.valueOf(FTopData) > Double.valueOf(tvFTop.getText().toString())
                         || Double.valueOf(FTopData) < Double.valueOf(tvFBot.getText().toString())) {
@@ -743,7 +753,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         } else {
             valueList.add(f+"");
         }
-
 //        if (tvMax.getText().toString().equals("0.0")) {
 //            tvMax.setText(f + "");
 //            Max = f;
@@ -884,6 +893,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             case R.id.rbMenu:
                 exit = true;
                 Intent intent = new Intent(this, ValueActivity.class);
+                intent.putExtra("unit",tvUnit.getText().toString());
                 if (valueList.size() != 0) {
                     EventBus.getDefault().postSticky(valueList);
                     startActivity(intent);
@@ -919,7 +929,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 break;
             case R.id.rbBack:
                 tag = "BACK";
-                new AlertDialogUtil(this).showSmallDialog("您确定要回复出厂设置吗", new DialogCallBack() {
+                new AlertDialogUtil(this).showSmallDialog("您确定要恢复出厂设置吗？", new DialogCallBack() {
                     @Override
                     public void confirm(String name, Dialog dialog) {
                         writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -948,30 +958,46 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 if (tag.equals("FTOP")) {
                     if (name1 != null && !name1.trim().equals("")) {
 //                        tvFTop.setText(name1);
-                        if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
-                            Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
-                        }else if (tvUnit.getText().toString().equals("MM")){
+                        if (tvUnit.getText().toString().equals("MM")){
                             if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
+                            }else if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
+                                Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
+                            }else {
+                                name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                                dialog.dismiss();
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                                String finalName = name1;
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {//时间
+                                        String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
+                                        strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                        //5b0006000000005d
+                                        writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+                                    }
+                                }, 300);
                             }
                         }else if (tvUnit.getText().toString().equals("IN")){
                             if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
+                            }else if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
+                                Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
+                            }else {
+                                name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                                dialog.dismiss();
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                                String finalName = name1;
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {//时间
+                                        String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
+                                        strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                        //5b0006000000005d
+                                        writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+                                    }
+                                }, 300);
                             }
-                        }  else {
-                            name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
-                            dialog.dismiss();
-                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                            String finalName = name1;
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {//时间
-                                    String strHex2 = String.format("%08x", Integer.parseInt(finalName)).toUpperCase();//高位补0
-                                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                                    //5b0006000000005d
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
-                                }
-                            }, 300);
                         }
                     } else {
                         Toast.makeText(MainCHYActivity.this, title, Toast.LENGTH_SHORT).show();
@@ -980,30 +1006,46 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 if (tag.equals("FBOT")) {
                     if (name1 != null && !name1.trim().equals("")) {
 //                        tvFBot.setText(name1);
-                        if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
-                            Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
-                        }else if (tvUnit.getText().toString().equals("MM")){
+                        if (tvUnit.getText().toString().equals("MM")){
                             if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
+                            }else if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
+                            }else {
+                                name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                                dialog.dismiss();
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                                String finalName1 = name1;
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {//时间
+                                        String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
+                                        strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                        //5b0006000000005d
+                                        writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+                                    }
+                                }, 300);
                             }
                         }else if (tvUnit.getText().toString().equals("IN")){
                             if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
+                            }else if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
+                                Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
+                            }else {
+                                name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
+                                dialog.dismiss();
+                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                                String finalName1 = name1;
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {//时间
+                                        String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
+                                        strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                                        //5b0006000000005d
+                                        writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+                                    }
+                                }, 300);
                             }
-                        } else {
-                            name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
-                            dialog.dismiss();
-                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                            String finalName1 = name1;
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {//时间
-                                    String strHex2 = String.format("%08x", Integer.parseInt(finalName1)).toUpperCase();//高位补0
-                                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                                    //5b0006000000005d
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
-                                }
-                            }, 300);
                         }
                     } else {
                         Toast.makeText(MainCHYActivity.this, title, Toast.LENGTH_SHORT).show();

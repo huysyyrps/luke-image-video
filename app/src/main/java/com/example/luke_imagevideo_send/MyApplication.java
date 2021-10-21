@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.igexin.sdk.IUserLoggerInterface;
+import com.igexin.sdk.PushManager;
 import com.mob.MobSDK;
 
 import cn.ycbjie.ycthreadpoollib.PoolThread;
@@ -29,6 +31,13 @@ public class MyApplication extends Application {
         MobSDK.submitPolicyGrantResult(true, null);
         myApp = this;
         context = getApplicationContext();
+        PushManager.getInstance().initialize(this);
+        PushManager.getInstance().setDebugLogger(this, new IUserLoggerInterface() {
+            @Override
+            public void log(String s) {
+                Log.e("PUSH_LOG",s);
+            }
+        });
         //初始化线程池管理器
         initThreadPool();
     }

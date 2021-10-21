@@ -64,13 +64,23 @@
         <activity android:name=".cehouyi.activity.ThresholdActivity" />
         <activity android:name=".cehouyi.activity.MainMenuActivity" />
         <activity android:name=".main.activity.TestActivity" />
-
+        <meta-data
+            android:name="PUSH_APPID"
+            android:value="zvIKfKdtcF68V5cKaC2cz3" />
         <meta-data
             android:name="Mob-AppKey"
             android:value="31bc5cafc24e4" />
         <meta-data
             android:name="Mob-AppSecret"
             android:value="93b27c040d3bd4eac391152e2fc1423a" />
+        <!-- 请根据您当前自定义的 PushService 名称路径进行配置-->
+        <service
+            android:name=".DemoPushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice"/>
+        <service
+            android:name=".DemoIntentService" />
 
         <activity android:name=".main.activity.AgreeActivity" />
         <activity android:name=".main.activity.LoginActivity" />

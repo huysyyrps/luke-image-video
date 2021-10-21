@@ -1,6 +1,7 @@
 package com.example.luke_imagevideo_send.cehouyi.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class ValueActivity extends BaseActivity {
     Button btnSave;
     @BindView(R.id.btnCancle)
     Button btnCancle;
+    String unit = "";
     List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
 
@@ -46,6 +49,8 @@ public class ValueActivity extends BaseActivity {
         ButterKnife.bind(this);
         // 注册订阅者
         EventBus.getDefault().register(this);
+        Intent intent = getIntent();
+        unit = intent.getStringExtra("unit");
         recyclerView.setLayoutManager(new GridLayoutManager(this, 11));
         setSpinnerData();
     }
@@ -81,7 +86,42 @@ public class ValueActivity extends BaseActivity {
                 } else if (position % 11 == 0) {
                     holder.setText(R.id.tv, position / 11 + 1 + "");
                 } else {
-                    holder.setText(R.id.tv, o + "");
+                    if (unit.equals("MM")){
+                        DecimalFormat df = new DecimalFormat("###.00");
+                        String FTopData = "";
+                        if (df.format((double) Long.parseLong(o, 16) / 1000).substring(0, 1).equals("\\.")) {
+                            FTopData = "0" + (double) Long.parseLong(o, 16) / 1000 + "";
+                        } else {
+                            FTopData = (double) Long.parseLong(o, 16) / 1000 + "";
+                        }
+                        if (FTopData.split("\\.")[1].length() >= 2) {
+                            String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 3);
+                            holder.setText(R.id.tv,data);
+                        } else {
+                            holder.setText(R.id.tv,FTopData+"0");
+                        }
+                    }
+                    if (unit.equals("IN")) {
+                        String FTopData = "";
+                        DecimalFormat df = new DecimalFormat("###.000");
+                        if (df.format((double) Long.parseLong(o, 16) / 25400).substring(0, 1).equals(".")) {
+                            FTopData = "0" + (double) Long.parseLong(o, 16) / 25400 + "";
+                        } else {
+                            FTopData = (double) Long.parseLong(o, 16) / 25400 + "";
+                        }
+                        if (FTopData.split("\\.")[1].length() > 3) {
+                            String s = FTopData.split("\\.")[0];
+                            if (s.equals("00")) {
+                                String data = FTopData.substring(1, FTopData.split("\\.")[0].length() + 4);
+                                holder.setText(R.id.tv,data);
+                            } else {
+                                String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 4);
+                                holder.setText(R.id.tv,data);
+                            }
+                        } else {
+                            holder.setText(R.id.tv,FTopData+"0");
+                        }
+                    }
                 }
 
                 holder.setOnClickListener(R.id.llItem, new View.OnClickListener() {

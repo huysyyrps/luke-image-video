@@ -73,7 +73,7 @@ public class DefinedActivity extends BaseActivity implements DefinedContract.Vie
                         if (result[0].getOriginalValue()!=null){
                             String[] data=result[0].getOriginalValue().split("/");
                             sharePreferencesUtils.setString(DefinedActivity.this, "max", data[2]);
-                            definedPresenter.getDefined(data[0]);
+//                            definedPresenter.getDefined(data[0]);
                             startActivity(new Intent(DefinedActivity.this, SendSelectActivity.class));
                             finish();
                             tag = "second";

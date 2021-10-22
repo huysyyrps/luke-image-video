@@ -1,7 +1,6 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
@@ -195,12 +194,6 @@ public class SendSelectActivity extends AppCompatActivity {
             public void confirm(String data, Dialog dialog) {
 //                Intent intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
 //                startActivity(intent);
-                Intent intent = new Intent();
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                intent.setAction("android.intent.action.MAIN");
-                ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.Settings$HotspotSettingsActivity");
-                intent.setComponent(cn);
-                startActivity(intent);
             }
 
             @Override

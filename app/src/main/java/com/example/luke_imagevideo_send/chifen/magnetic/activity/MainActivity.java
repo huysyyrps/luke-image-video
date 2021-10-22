@@ -1,5 +1,6 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +15,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
 import android.media.ImageReader;
@@ -29,6 +32,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +51,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
@@ -83,6 +89,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -316,10 +323,18 @@ public class MainActivity extends BaseActivity {
                                     String s = DataE+","+DataN;
                                     tvGPS.setText(s);
                                 }else {
-                                    getGPSData();
+//                                    getGPSData();
+                                    Location location = getLastKnownLocation();
+                                    tvGPS.setText(location.getLongitude()+",\t\t"+location.getLatitude());
+                                    Log.e("XXXXXXX", "有位置权限-纬度:" + location.getLatitude() + " 经度:" + location.getLongitude());
                                 }
                             }catch (Exception ex) {
-                                Log.e("XXX", ex.toString());
+//                                getGPSData();
+
+                                // 使用
+                                Location location = getLastKnownLocation();
+                                tvGPS.setText(location.getLongitude()+",\t\t"+location.getLatitude());
+                                Log.e("XXXXXXX", "有位置权限-纬度:" + location.getLatitude() + " 经度:" + location.getLongitude());
                             }
                         }
 
@@ -364,7 +379,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        webView.loadUrl(address);
+//        webView.loadUrl(address);
     }
 
     @Override
@@ -1143,4 +1158,38 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+    private Location getLastKnownLocation() {
+        //获取地理位置管理器
+        LocationManager mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO:去请求权限后再获取
+            return null;
+        }
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = l;
+            }
+        }
+// 在一些手机5.0(api21)获取为空后，采用下面去兼容获取。
+        if (bestLocation==null){
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            criteria.setAltitudeRequired(false);
+            criteria.setBearingRequired(false);
+            criteria.setCostAllowed(true);
+            criteria.setPowerRequirement(Criteria.POWER_LOW);
+            String provider = mLocationManager.getBestProvider(criteria, true);
+            if (!TextUtils.isEmpty(provider)){
+                bestLocation = mLocationManager.getLastKnownLocation(provider);
+            }
+        }
+        return bestLocation;
+    }
 }

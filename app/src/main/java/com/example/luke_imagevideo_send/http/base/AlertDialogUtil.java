@@ -378,6 +378,7 @@ public class AlertDialogUtil {
                 public void onClick(View v) {
                     ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                     cm.setText(ssid);
+                    dialogCallBack.confirm("",dialog);
                 }
             });
 
@@ -386,6 +387,7 @@ public class AlertDialogUtil {
                 public void onClick(View v) {
                     ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                     cm.setText(pwd);
+                    dialogCallBack.confirm("",dialog);
                 }
             });
 

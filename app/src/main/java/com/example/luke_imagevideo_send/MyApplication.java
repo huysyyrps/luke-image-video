@@ -1,7 +1,13 @@
 package com.example.luke_imagevideo_send;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.igexin.sdk.IUserLoggerInterface;
@@ -24,10 +30,24 @@ public class MyApplication extends Application {
     private static Context context;//全局上下文
     private static OkHttpClient mOkHttpClient;
     private PoolThread executor;
+    public static NotificationManager notificationChannelManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        notificationChannelManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+            Uri sound=Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/"+R.raw.fengming);
+            NotificationChannel huifangcannel = new NotificationChannel("huifang", "回访提示音", NotificationManager.IMPORTANCE_HIGH);
+            huifangcannel.setSound(sound, att);
+            notificationChannelManager.createNotificationChannel(huifangcannel);
+        }
+
+
         MobSDK.submitPolicyGrantResult(true, null);
         myApp = this;
         context = getApplicationContext();

@@ -1,6 +1,5 @@
 package com.example.luke_imagevideo_send;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -14,6 +13,8 @@ import com.igexin.sdk.IUserLoggerInterface;
 import com.igexin.sdk.PushManager;
 import com.mob.MobSDK;
 
+import org.litepal.LitePalApplication;
+
 import cn.ycbjie.ycthreadpoollib.PoolThread;
 import cn.ycbjie.ycthreadpoollib.callback.ThreadCallback;
 import okhttp3.OkHttpClient;
@@ -24,7 +25,7 @@ import okhttp3.OkHttpClient;
  * @description: application
  */
 
-public class MyApplication extends Application {
+public class MyApplication extends LitePalApplication {
     public static MyApplication myApp;
     public static final int TIMEOUT = 60;
     private static Context context;//全局上下文

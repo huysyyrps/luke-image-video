@@ -146,4 +146,5 @@ dependencies {
     implementation 'com.github.jiangdongguo:SignalView:v1.0'
     implementation 'com.getui:gtsdk:3.2.4.0'  //个推SDK
     implementation 'com.getui:gtc:3.1.6.0'  //个推核心组件
+    implementation 'org.litepal.android:core:1.6.1'
 }

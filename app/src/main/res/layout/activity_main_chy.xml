@@ -363,12 +363,13 @@
                         android:text="数据集合" />
                     <View style="@style/VLine" />
 
-                    <CheckBox
-                        android:id="@+id/rbSave"
+                    <Button
+                        android:id="@+id/btnSave"
                         android:layout_width="130dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_marginLeft="50dp"
+                        android:background="@drawable/button_selectssid"
                         android:text="保存" />
 
                     <View style="@style/VLine" />

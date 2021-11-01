@@ -14,7 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -53,6 +53,7 @@ import com.example.luke_imagevideo_send.http.views.Header;
 import com.jiangdg.singalviewlib.SignalView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.litepal.tablemanager.Connector;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     @BindView(R.id.header)
     Header header;
     @BindView(R.id.rbSave)
-    CheckBox rbSave;
+    Button btnSave;
     @BindView(R.id.rbMenu)
     RadioButton rbMenu;
     @BindView(R.id.tvSS)
@@ -135,12 +136,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     String getDate, tag = "";
     String unit = "", nowData = "";
     Dialog myDialog;
+    String HD = "";
     double com = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        //创建数据库
+        Connector.getDatabase();
         new PickerDivider().setNumberPickerDivider(onePicker);
         new PickerDivider().setNumberPickerDivider(tenPicker);
         new PickerDivider().setNumberPickerDivider(hundredPicker);
@@ -325,7 +329,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     bluetoothList.remove(bleDevice);
                     baseRecyclerAdapter.notifyDataSetChanged();
                 }
-                if (myDialog!=null){
+                if (myDialog != null) {
                     myDialog.dismiss();
                 }
                 Toast.makeText(MainCHYActivity.this, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
@@ -408,7 +412,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     private void makeBackData(String data) {
         Log.e("mainchyactivity----", data);
         //测厚仪在设置界面APP不允许操作
-        if (data.equals("5b000b004e00005d")||data.equals("5b000b0055000000")||data.equals("5b000b0155000000")) {
+        if (data.equals("5b000b004e00005d") || data.equals("5b000b0055000000") || data.equals("5b000b0155000000")) {
             Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
             timer.schedule(new TimerTask() {
                 @Override
@@ -419,7 +423,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         } else {
             if (data.substring(4, 6).equals("01")) {
                 if (data.length() == 20) {
-                    String HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                    HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
                     String OH = data.substring(16, 18);
                     if (tvUnit.getText().toString().equals("MM")) {
                         DecimalFormat df = new DecimalFormat("###.00");
@@ -428,9 +432,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         DecimalFormat df = new DecimalFormat("###.000");
                         makeFData(tvData, df, HD, "dataIN");
                     }
-                    if (rbSave.isChecked()) {
-                        showChart(HD);
-                    }
+//                    if (rbSave.isChecked()) {
+//                        showChart(HD);
+//                    }
                     signaView.setSignalValue((int) (8 - Long.parseLong(OH, 16)));
                     Log.e("mainchyactivity-HD", HD);
                     unit = tvUnit.getText().toString();
@@ -624,7 +628,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 } else {
                     tvF.setTextColor(getResources().getColor(R.color.black));
                 }
-                tvF.setText(FTopData+"0");
+                tvF.setText(FTopData + "0");
             }
         }
         if (tag.equals("dataIN")) {
@@ -672,7 +676,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 } else {
                     tvF.setTextColor(getResources().getColor(R.color.black));
                 }
-                tvF.setText(FTopData+"0");
+                tvF.setText(FTopData + "0");
             }
         }
         if (tag.equals("ss")) {
@@ -714,7 +718,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 String data = FTopData.substring(0, FTopData.split("\\.")[0].length() + 3);
                 tvF.setText(FTopData.substring(0, FTopData.split("\\.")[0].length() + 3));
             } else {
-                tvF.setText(FTopData+"0");
+                tvF.setText(FTopData + "0");
             }
         }
         if (tag.equals("utilIF")) {
@@ -735,7 +739,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 }
             } else {
-                tvF.setText(FTopData+"0");
+                tvF.setText(FTopData + "0");
             }
         }
     }
@@ -743,15 +747,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     public void showChart(String f) {
         if (valueList.size() >= 1100) {
             Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
-        }else if (valueList.size() == 0 && com == 1) {
-            valueList.add(com+"");
-            valueList.add(f+"");
+        } else if (valueList.size() == 0 && com == 1) {
+            valueList.add(com + "");
+            valueList.add(f + "");
         } else if (valueList.size() % 11 == 0) {
             com++;
-            valueList.add(com+"");
-            valueList.add(f+"");
+            valueList.add(com + "");
+            valueList.add(f + "");
         } else {
-            valueList.add(f+"");
+            valueList.add(f + "");
         }
 //        if (tvMax.getText().toString().equals("0.0")) {
 //            tvMax.setText(f + "");
@@ -800,7 +804,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack})
+    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack,R.id.btnSave})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSure:
@@ -893,7 +897,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
             case R.id.rbMenu:
                 exit = true;
                 Intent intent = new Intent(this, ValueActivity.class);
-                intent.putExtra("unit",tvUnit.getText().toString());
+                intent.putExtra("unit", tvUnit.getText().toString());
                 if (valueList.size() != 0) {
                     EventBus.getDefault().postSticky(valueList);
                     startActivity(intent);
@@ -947,6 +951,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 });
                 break;
+            case R.id.btnSave:
+                showChart(HD);
+                break;
         }
     }
 
@@ -958,12 +965,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 if (tag.equals("FTOP")) {
                     if (name1 != null && !name1.trim().equals("")) {
 //                        tvFTop.setText(name1);
-                        if (tvUnit.getText().toString().equals("MM")){
-                            if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
+                        if (tvUnit.getText().toString().equals("MM")) {
+                            if (Double.valueOf(name1) < 0.50 || Double.valueOf(name1) > 500.10) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
-                            }else if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
+                            } else if (Double.valueOf(name1) < Double.valueOf(tvFBot.getText().toString())) {
                                 Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
                                 dialog.dismiss();
                                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -978,12 +985,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                                     }
                                 }, 300);
                             }
-                        }else if (tvUnit.getText().toString().equals("IN")){
-                            if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
+                        } else if (tvUnit.getText().toString().equals("IN")) {
+                            if (Double.valueOf(name1) < 0.019 || Double.valueOf(name1) > 19.688) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
-                            }else if (Double.valueOf(name1)<Double.valueOf(tvFBot.getText().toString())){
+                            } else if (Double.valueOf(name1) < Double.valueOf(tvFBot.getText().toString())) {
                                 Toast.makeText(MainCHYActivity.this, "阈值上限不能小于阈值下限", Toast.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
                                 dialog.dismiss();
                                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -1006,12 +1013,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 if (tag.equals("FBOT")) {
                     if (name1 != null && !name1.trim().equals("")) {
 //                        tvFBot.setText(name1);
-                        if (tvUnit.getText().toString().equals("MM")){
-                            if (Double.valueOf(name1)<0.50||Double.valueOf(name1)>500.10){
+                        if (tvUnit.getText().toString().equals("MM")) {
+                            if (Double.valueOf(name1) < 0.50 || Double.valueOf(name1) > 500.10) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.5~500.1", Toast.LENGTH_SHORT).show();
-                            }else if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
+                            } else if (Double.valueOf(name1) > Double.valueOf(tvFTop.getText().toString())) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
                                 dialog.dismiss();
                                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -1026,12 +1033,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                                     }
                                 }, 300);
                             }
-                        }else if (tvUnit.getText().toString().equals("IN")){
-                            if (Double.valueOf(name1)<0.019||Double.valueOf(name1)>19.688){
+                        } else if (tvUnit.getText().toString().equals("IN")) {
+                            if (Double.valueOf(name1) < 0.019 || Double.valueOf(name1) > 19.688) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限取值范围0.019~19.688", Toast.LENGTH_SHORT).show();
-                            }else if (Double.valueOf(name1)>Double.valueOf(tvFTop.getText().toString())){
+                            } else if (Double.valueOf(name1) > Double.valueOf(tvFTop.getText().toString())) {
                                 Toast.makeText(MainCHYActivity.this, "阈值下限不能大于阈值上限", Toast.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 name1 = String.valueOf(new Double(Double.valueOf(name1) * 1000).intValue());
                                 dialog.dismiss();
                                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -1185,4 +1192,5 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         BleManager.getInstance().disconnectAllDevice();
         BleManager.getInstance().destroy();
     }
+
 }

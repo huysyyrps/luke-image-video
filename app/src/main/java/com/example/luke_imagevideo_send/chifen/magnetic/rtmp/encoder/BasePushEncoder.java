@@ -7,7 +7,6 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.projection.MediaProjection;
-import android.os.Build;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -68,7 +67,6 @@ public abstract class BasePushEncoder {
         }
         this.mRenderMode = mRenderMode;
     }
-
 
     public void start() {
         Log.d("chenzhu","start zzzz"+mSurface+" "+mSurface+" "+isScreen);
@@ -177,12 +175,12 @@ public abstract class BasePushEncoder {
             videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
             //设置压缩等级  默认是baseline
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                videoFormat.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileMain);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    videoFormat.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel3);
-                }
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                videoFormat.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileMain);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    videoFormat.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel3);
+//                }
+//            }
             mVideoEncodec.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mVideoBuffInfo = new MediaCodec.BufferInfo();
             mSurface = mVideoEncodec.createInputSurface();
@@ -242,7 +240,6 @@ public abstract class BasePushEncoder {
             }
         }
     }
-
 
     private long audioPts;
 

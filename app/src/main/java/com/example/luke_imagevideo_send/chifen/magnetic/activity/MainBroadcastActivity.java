@@ -28,10 +28,7 @@ import androidx.annotation.RequiresApi;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.OnConntionListener;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.RtmpHelper;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.encoder.BasePushEncoder;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmp.encoder.PushEncode;
+import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
@@ -44,7 +41,7 @@ import java.math.BigDecimal;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainBroadcastActivity extends BaseActivity implements OnConntionListener, BasePushEncoder.OnMediaInfoListener{
+public class MainBroadcastActivity extends BaseActivity {
 
     @BindView(R.id.header)
     Header header;
@@ -68,14 +65,11 @@ public class MainBroadcastActivity extends BaseActivity implements OnConntionLis
     LinearLayout linearLayout1;
     private Notifications mNotifications;
     private int clickNum = 0;
-    private RtmpHelper rtmpHelper;
-    private PushEncode pushEncode;
     private boolean isStart;
     MediaProjectionManager  projectionManager;
     MediaProjection mediaProjection;
     private Surface mSurface;
     String url = "rtmp://221.2.36.238:6062/live";
-    String tag = "", log = "";
     private Handler handler = new Handler();
     private String project = "", workName = "", workCode = "", address = "";
 
@@ -188,10 +182,10 @@ public class MainBroadcastActivity extends BaseActivity implements OnConntionLis
             if (mediaProjection == null) {
                 Log.e("@@", "media projection is null");
                 return;
+            }else {
+                ScreenLive screenLive = new ScreenLive();
+                screenLive.startLive(url, mediaProjection);
             }
-            rtmpHelper = new RtmpHelper();
-            rtmpHelper.setOnConntionListener(this);
-            rtmpHelper.initLivePush(url);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("@@", "---------------->>>1" + e);
@@ -276,88 +270,4 @@ public class MainBroadcastActivity extends BaseActivity implements OnConntionLis
     @Override
     protected void rightClient() {}
 
-
-    /**
-     * 按钮单击按监听
-     *
-     * @param
-     * @return
-     */
-    public void onBtnClick(String value1, String value2) {
-        clickNum++;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (clickNum == 1) {
-                    Toast.makeText(mNotifications, value1, Toast.LENGTH_SHORT).show();
-                } else if (clickNum == 2) {
-                    Toast.makeText(mNotifications, value2, Toast.LENGTH_SHORT).show();
-                }
-                //防止handler引起的内存泄漏
-                handler.removeCallbacksAndMessages(null);
-                clickNum = 0;
-            }
-        }, 800);
-    }
-
-
-    @Override
-    public void onConntecting() {
-        Log.e("chenzhu", "连接中...");
-    }
-
-    @Override
-    public void onConntectSuccess() {
-        Log.e("chenzhu", "onConntectSuccess...");
-        startPush();
-    }
-
-    @Override
-    public void onConntectFail(String msg) {
-        Log.e("chenzhu", "onConntectFail  " + msg);
-    }
-
-    private void startPush() {
-        pushEncode = new PushEncode(this);
-        pushEncode.initEncoder(true,mediaProjection, 1080,640,44100,2,16);
-        pushEncode.setOnMediaInfoListener(this);
-        pushEncode.start();
-    }
-
-    @Override
-    public void onMediaTime(int times) {
-
-    }
-
-    @Override
-    public void onSPSPPSInfo(byte[] sps, byte[] pps) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushSPSPPS(sps, pps);
-    }
-
-    @Override
-    public void onVideoDataInfo(byte[] data, boolean keyFrame) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushVideoData(data,keyFrame);
-    }
-
-    @Override
-    public void onAudioInfo(byte[] data) {
-        if (rtmpHelper == null) return;
-        rtmpHelper.pushAudioData(data);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (pushEncode != null) {
-            pushEncode.stop();
-            pushEncode = null;
-        }
-
-        if(rtmpHelper!=null){
-            rtmpHelper.stop();
-            rtmpHelper =null;
-        }
-    }
 }

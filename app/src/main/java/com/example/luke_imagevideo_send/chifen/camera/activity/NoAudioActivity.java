@@ -89,10 +89,12 @@ public class NoAudioActivity extends BaseActivity implements HaveVideoContract.V
         baseRecyclerAdapter = new BaseRecyclerAdapter<HaveAudio>(NoAudioActivity.this, R.layout.album_item, imagePaths) {
             @Override
             public void convert(BaseViewHolder holder, final HaveAudio haveAudio) {
-                holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
-                holder.setVisitionTextView(R.id.tvTime);
-                holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
-                holder.setText(R.id.tvTime, haveAudio.getTime());
+                if (haveAudio.getFile().getName() + ""!=null){
+                    holder.setBitmap(R.id.imageView, haveAudio.getBitmap());
+                    holder.setVisitionTextView(R.id.tvTime);
+                    holder.setText(R.id.tvName, haveAudio.getFile().getName() + "");
+                    holder.setText(R.id.tvTime, haveAudio.getTime());
+                }
                 holder.setOnClickListener(R.id.imageView, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

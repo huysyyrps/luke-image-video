@@ -91,11 +91,11 @@
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
         <activity android:name=".main.activity.WelcomeActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
@@ -108,12 +108,11 @@
         <activity
             android:name=".chifen.magnetic.activity.SpideMainActivity"
             android:screenOrientation="landscape">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".chifen.magnetic.activity.MainBroadcastActivity"

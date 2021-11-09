@@ -62,7 +62,7 @@ public class AudioCodec extends Thread {
         rtmpPackage.setBuffer(audioSpec);
         rtmpPackage.setType(RTMPPackage.RTMP_PACKET_TYPE_AUDIO_HEAD);
         rtmpPackage.setTms(0);
-        screenLive.addPackage(rtmpPackage);
+//        screenLive.addPackage(rtmpPackage);
 
 
         byte[] buffer = new byte[minBufferSize];
@@ -109,7 +109,7 @@ public class AudioCodec extends Thread {
                 rtmpPackage.setType(RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA);
                 //相对时间
                 rtmpPackage.setTms(bufferInfo.presentationTimeUs/1000 - startTime);
-                screenLive.addPackage(rtmpPackage);
+//                screenLive.addPackage(rtmpPackage);
                 // 释放输出队列，让其能存放新数据
                 mediaCodec.releaseOutputBuffer(index, false);
 

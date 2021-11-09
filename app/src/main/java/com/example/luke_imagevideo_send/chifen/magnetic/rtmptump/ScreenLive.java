@@ -17,14 +17,11 @@ public class ScreenLive extends Thread {
     private String url;
     private MediaProjection mediaProjection;
 
-
     public void startLive(String url, MediaProjection mediaProjection) {
         this.url = url;
         this.mediaProjection = mediaProjection;
         LiveTaskManager.getInstance().execute(this);
-
     }
-
 
     public void addPackage(RTMPPackage rtmpPackage) {
         if (!isLiving) {
@@ -43,17 +40,17 @@ public class ScreenLive extends Thread {
 
         VideoCodec videoCodec = new VideoCodec(this);
         videoCodec.startLive(mediaProjection);
-
 //        AudioCodec audioCodec = new AudioCodec(this);
 //        audioCodec.startLive();
-
         isLiving = true;
         while (isLiving) {
             RTMPPackage rtmpPackage = null;
             try {
+                //取出数据
                 rtmpPackage = queue.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                continue;
             }
             Log.i(TAG, "取出数据");
             if (rtmpPackage.getBuffer() != null && rtmpPackage.getBuffer().length != 0) {

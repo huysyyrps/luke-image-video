@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.example.luke_imagevideo_send.chifen.magnetic.activity.MainBroadcastActivity;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.message.GTCmdMessage;
@@ -40,7 +42,6 @@ public class DemoIntentService extends GTIntentService {
         byte[] payload = msg.getPayload();
         String pkg = msg.getPkgName();
         String cid = msg.getClientId();
-
         // 第三方回执调用接口，actionid范围为90000-90999，可根据业务场景执行
         boolean result = PushManager.getInstance().sendFeedbackMessage(context, taskid, messageid, 90001);
         Log.d(TAG, "call sendFeedbackMessage = " + (result ? "success" : "failed"));
@@ -79,12 +80,20 @@ public class DemoIntentService extends GTIntentService {
     @Override
     public void onNotificationMessageArrived(Context context, GTNotificationMessage msg) {
         Log.e("PUSH_LOG通知到达", msg.getContent() + "");
+        String appid = msg.getAppid();
+        String taskid = msg.getTaskId();
+        String messageid = msg.getMessageId();
+        String pkg = msg.getPkgName();
+        String cid = msg.getClientId();
+        //在Service服务类中发送广播消息给Activity活动界面
+        Intent intentBroadcastReceiver = new Intent();
+        intentBroadcastReceiver.setAction(MainBroadcastActivity.ACTION_SERVICE_NEED);
+        sendBroadcast(intentBroadcastReceiver);
         showNotification("huifang");
     }
-//
-//    /*
-//     * 简单的发送通知
-//     */
+    /**
+     * 简单的发送通知
+     */
     @SuppressLint("NewApi")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void showNotification(String qudaoid) {

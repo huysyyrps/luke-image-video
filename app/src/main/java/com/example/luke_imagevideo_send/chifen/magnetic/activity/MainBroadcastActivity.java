@@ -1,6 +1,9 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.projection.MediaProjection;
@@ -32,6 +35,8 @@ import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
+import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -66,18 +71,34 @@ public class MainBroadcastActivity extends BaseActivity {
     private Notifications mNotifications;
     private int clickNum = 0;
     private boolean isStart;
-    MediaProjectionManager  projectionManager;
+    MediaProjectionManager projectionManager;
     MediaProjection mediaProjection;
     private Surface mSurface;
-    String url = "rtmp://221.2.36.238:6062/live";
+    //    String url = "rtmp://221.2.36.238:6062/live";
+    String url = "rtmp://221.2.36.238:2012/live";
     private Handler handler = new Handler();
     private String project = "", workName = "", workCode = "", address = "";
+    //声明一个操作常量字符串
+    public static final String ACTION_SERVICE_NEED = "action.ServiceNeed";
+    //声明一个内部广播实例
+    public ServiceNeedBroadcastReceiver broadcastReceiver;
+    ScreenLive screenLive;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        /**
+         * 注册广播实例（在初始化的时候）
+         */
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_SERVICE_NEED);
+        broadcastReceiver = new ServiceNeedBroadcastReceiver();
+        registerReceiver(broadcastReceiver, filter);
+
         mNotifications = new Notifications(getApplicationContext());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -168,7 +189,7 @@ public class MainBroadcastActivity extends BaseActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void ScreenRecoder (){
+    public void ScreenRecoder() {
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         startActivityForResult(projectionManager.createScreenCaptureIntent(), 1);
     }
@@ -182,16 +203,20 @@ public class MainBroadcastActivity extends BaseActivity {
             if (mediaProjection == null) {
                 Log.e("@@", "media projection is null");
                 return;
-            }else {
-                ScreenLive screenLive = new ScreenLive();
-                screenLive.startLive(url, mediaProjection);
+            } else {
+                if (screenLive==null){
+                    screenLive = new ScreenLive();
+                    screenLive.startLive(url, mediaProjection);
+                }else {
+                    screenLive.startLive(url, mediaProjection);
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("@@", "---------------->>>1" + e);
         }
     }
-
 
     @Override
     protected void onStart() {
@@ -268,6 +293,37 @@ public class MainBroadcastActivity extends BaseActivity {
     }
 
     @Override
-    protected void rightClient() {}
+    protected void rightClient() {
+    }
 
+    /**
+     * 定义广播接收器，用于执行Service服务的需求（内部类）
+     */
+    private class ServiceNeedBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //这里是要在Activity活动里执行的代码
+            new AlertDialogUtil(context).showDialog("111", new AlertDialogCallBack() {
+                @Override
+                public void confirm(String name) {
+                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void cancel() {
+                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void save(String name) {
+                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void checkName(String name) {
+                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 }

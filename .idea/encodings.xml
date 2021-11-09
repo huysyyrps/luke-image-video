@@ -41,6 +41,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/TokenTestPresenter.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/color/radionbutton_select.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_top.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/pxqbutton_select.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/pxqbutton_select.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_forgrt_password.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/custom_date_picker.xml" charset="GBK" />

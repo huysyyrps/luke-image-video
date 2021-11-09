@@ -257,6 +257,7 @@
     <color name="color_unselected">#777777</color>
     <!--标签Tab选中的颜色-->
     <color name="color_selected">#1da8fe</color>
+    <color name="color_selected1">#801da8fe</color>
 
     <color name="tv_task_nofify_no">#fac46e</color>
     <color name="tv_task_done_car">#fa6e85</color>
@@ -278,4 +279,5 @@
     <color name="dictdialog_divider_color">#ededed</color>
     <color name="translucent_color">#80000000</color>
     <color name="translucent_color1">#00000000</color>
+    <color name="translucent_color2">#4DFFFFFF</color>
 </resources>

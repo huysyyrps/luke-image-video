@@ -88,27 +88,34 @@ RTMPPacket *createVideoPackage(int8_t *buf, int len, const long tms, Live *live)
 
 }
 
+//服务器连接成功，现在开始发送RTMP视频数据
 RTMPPacket *createVideoPackage(Live *live) {
     int body_size = 13 + live->sps_len + 3 + live->pps_len;
     RTMPPacket *packet = (RTMPPacket *) malloc(sizeof(RTMPPacket));
     RTMPPacket_Alloc(packet, body_size);
+    RTMPPacket_Reset(packet);
     int i = 0;
     //AVC sequence header 与IDR一样
+    //固定头
     packet->m_body[i++] = 0x17;
     //AVC sequence header 设置为0x00
+    //类型
     packet->m_body[i++] = 0x00;
     //CompositionTime
     packet->m_body[i++] = 0x00;
     packet->m_body[i++] = 0x00;
     packet->m_body[i++] = 0x00;
     //AVC sequence header
+    //版本
     packet->m_body[i++] = 0x01;   //configurationVersion 版本号 1
+    //编码规格
     packet->m_body[i++] = live->sps[1]; //profile 如baseline、main、 high
 
     packet->m_body[i++] = live->sps[2]; //profile_compatibility 兼容性
     packet->m_body[i++] = live->sps[3]; //profile level
     packet->m_body[i++] = 0xFF; // reserved（111111） + lengthSizeMinusOne（2位 nal 长度） 总是0xff
     //sps
+    //整个sps
     packet->m_body[i++] = 0xE1; //reserved（111） + lengthSizeMinusOne（5位 sps 个数） 总是0xe1
     //sps length 2字节
     packet->m_body[i++] = (live->sps_len >> 8) & 0xff; //第0个字节
@@ -129,6 +136,7 @@ RTMPPacket *createVideoPackage(Live *live) {
     packet->m_nTimeStamp = 0;
     packet->m_hasAbsTimestamp = 0;
     packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+//    packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
     packet->m_nInfoField2 = live->rtmp->m_stream_id;
     return packet;
 }
@@ -243,4 +251,13 @@ Java_com_example_luke_1imagevideo_1send_chifen_magnetic_rtmptump_ScreenLive_send
     }
     env->ReleaseByteArrayElements(data_, data, 0);
     return ret;
+}extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_example_luke_1imagevideo_1send_chifen_magnetic_rtmptump_ScreenLive_stopData(JNIEnv *env,
+                                                                                     jobject thiz, jstring url_) {
+    // TODO: implement stopData()
+    RTMP_Close(live->rtmp);
+    RTMP_Free(live->rtmp);
+    return -1;
+
 }

@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
@@ -32,7 +31,6 @@ import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
@@ -68,14 +66,10 @@ public class MainBroadcastActivity extends BaseActivity {
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
-    private Notifications mNotifications;
-    private int clickNum = 0;
-    private boolean isStart;
     MediaProjectionManager projectionManager;
     MediaProjection mediaProjection;
-    private Surface mSurface;
-    //    String url = "rtmp://221.2.36.238:6062/live";
-    String url = "rtmp://221.2.36.238:2012/live";
+//        String url = "rtmp://221.2.36.238:6062/live";
+    String url = "rtmp://221.2.36.238:2012/live/live1";
     private Handler handler = new Handler();
     private String project = "", workName = "", workCode = "", address = "";
     //声明一个操作常量字符串
@@ -85,8 +79,21 @@ public class MainBroadcastActivity extends BaseActivity {
     ScreenLive screenLive;
 
 
+    private Handler mHander = new Handler();
+    private int mCount = 0;
+    private Runnable mCounter = new Runnable() {
+        @Override
+        public void run() {
+            mCount++;
+            if (mCount > 220) {
+                webView.loadUrl(address);
+                mCount = 0;
+            }
+            mHander.postDelayed(this, 1000);
+        }
+    };
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,12 +106,13 @@ public class MainBroadcastActivity extends BaseActivity {
         broadcastReceiver = new ServiceNeedBroadcastReceiver();
         registerReceiver(broadcastReceiver, filter);
 
-        mNotifications = new Notifications(getApplicationContext());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
         }
+        // 设置全屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Intent intent = getIntent();
 //        project = intent.getStringExtra("project");
@@ -130,8 +138,6 @@ public class MainBroadcastActivity extends BaseActivity {
         }
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
-        // 设置全屏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         webView.setBackgroundColor(Color.BLACK);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -141,6 +147,7 @@ public class MainBroadcastActivity extends BaseActivity {
             e.printStackTrace();
         }
         address = "http://" + address + ":8080";
+//        address = "http://stream.iqilu.com/vod_bag_2016//2020/02/16/903BE158056C44fcA9524B118A5BF230/903BE158056C44fcA9524B118A5BF230_H264_mp4_500K.mp4";
         webView.loadUrl(address);
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -184,7 +191,8 @@ public class MainBroadcastActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //全屏设置
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        getGPS();
+//        getGPS();
+//        mHander.post(mCounter);
         ScreenRecoder();
     }
 
@@ -192,6 +200,15 @@ public class MainBroadcastActivity extends BaseActivity {
     public void ScreenRecoder() {
         projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         startActivityForResult(projectionManager.createScreenCaptureIntent(), 1);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (screenLive != null) {
+            screenLive.stopData();
+            screenLive = null;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -206,11 +223,8 @@ public class MainBroadcastActivity extends BaseActivity {
             } else {
                 if (screenLive==null){
                     screenLive = new ScreenLive();
-                    screenLive.startLive(url, mediaProjection);
-                }else {
-                    screenLive.startLive(url, mediaProjection);
                 }
-
+                screenLive.startLive(url, mediaProjection);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -326,4 +340,5 @@ public class MainBroadcastActivity extends BaseActivity {
             });
         }
     }
+
 }

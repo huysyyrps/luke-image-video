@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -326,7 +327,13 @@ public class AlertDialogUtil {
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.dialog_with_ble, null, false);
             EditText editText = (EditText) view.findViewById(R.id.edittext);
-            editText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(2), new InputFilter.LengthFilter(8)});
+            if (hint.equals("请输入探头频率")) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(2), new InputFilter.LengthFilter(8)});
+            } else if (hint.equals("请输入报警电压")) {
+                editText.setInputType(InputType.TYPE_CLASS_PHONE);
+
+            }
             SpannableString s = new SpannableString(hint);//这里输入自己想要的提示文字
             editText.setHint(s);
             TextView tvYes = (TextView) view.findViewById(R.id.yes);

@@ -71,7 +71,7 @@ public class BytesHexChange {
         return (byte) Integer.parseInt(inHex, 16);
     }
 
-    public static String str2HexStr(String str) {
+    public String str2HexStr(String str) {
 
         char[] chars = "0123456789ABCDEF".toCharArray();
         StringBuilder sb = new StringBuilder("");
@@ -278,5 +278,22 @@ public class BytesHexChange {
             strBuilder.append("");
         }
         return strBuilder.toString();
+    }
+
+    /*
+     * 字节数组转16进制字符串
+     */
+    public static String bytes2HexString(byte[] b) {
+        String r = "";
+
+        for (int i = 0; i < b.length; i++) {
+            String hex = Integer.toHexString(b[i] & 0xFF);
+            if (hex.length() == 1) {
+                hex = '0' + hex;
+            }
+            r += hex.toUpperCase();
+        }
+
+        return r;
     }
 }

@@ -12,7 +12,7 @@ public class ScreenLive extends Thread {
     }
 
     private static final String TAG = "------>dddd<--------";
-    private boolean isLiving;
+    private boolean isLiving = true;
     private LinkedBlockingQueue<RTMPPackage> queue = new LinkedBlockingQueue<>();
     private String url;
     private MediaProjection mediaProjection;
@@ -30,6 +30,12 @@ public class ScreenLive extends Thread {
         queue.add(rtmpPackage);
     }
 
+    public void stopData() {
+        stopData("");
+        isLiving = false;
+    }
+
+
     @Override
     public void run() {
         //1推送到
@@ -42,7 +48,6 @@ public class ScreenLive extends Thread {
         videoCodec.startLive(mediaProjection);
 //        AudioCodec audioCodec = new AudioCodec(this);
 //        audioCodec.startLive();
-        isLiving = true;
         while (isLiving) {
             RTMPPackage rtmpPackage = null;
             try {
@@ -50,11 +55,10 @@ public class ScreenLive extends Thread {
                 rtmpPackage = queue.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                continue;
             }
-            Log.i(TAG, "取出数据");
+//            Log.i(TAG, "取出数据");
             if (rtmpPackage.getBuffer() != null && rtmpPackage.getBuffer().length != 0) {
-                Log.i(TAG, "ScreenLive run: ----------->推送 " + rtmpPackage.getBuffer().length + "   type:" + rtmpPackage.getType());
+//                Log.i(TAG, "ScreenLive run: ----------->推送 " + rtmpPackage.getBuffer().length + "   type:" + rtmpPackage.getType());
                 sendData(rtmpPackage.getBuffer(), rtmpPackage.getBuffer().length, rtmpPackage.getTms(), rtmpPackage.getType());
             }
         }
@@ -65,4 +69,7 @@ public class ScreenLive extends Thread {
 
     //发送RTMP Data
     private native boolean sendData(byte[] data, int len, long tms, int type);
+
+    private native boolean stopData(String url);
+
 }

@@ -1,6 +1,5 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,16 +14,12 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaCodecInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,17 +27,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -52,10 +42,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
+import androidx.annotation.RequiresApi;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
+import com.example.luke_imagevideo_send.cehouyi.util.BytesHexChange;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.camera.activity.SettingActivity;
@@ -65,18 +56,20 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.MainUI;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.Notifications;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.ScreenRecorder;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.TaskCenter;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.VideoEncodeConfig;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.getGPS;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getSSHGPSData;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.myWebView;
 import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
-import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.dialog.ProgressHUD;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.example.luke_imagevideo_send.modbus.Crc16Util;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.licheedev.modbus4android.BuildConfig;
@@ -85,11 +78,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -117,7 +108,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
     @BindView(R.id.webView)
-    WebView webView;
+    myWebView webView;
     @BindView(R.id.tvTime)
     TextView tvTime;
     @BindView(R.id.tvGPS)
@@ -142,11 +133,24 @@ public class MainActivity extends BaseActivity {
     LinearLayout linearLayoutStop;
     @BindView(R.id.ivTimer)
     ImageView ivTimer;
+    @BindView(R.id.tvVoltage)
+    TextView tvVoltage;
+    @BindView(R.id.tvElectric)
+    TextView tvElectric;
+    @BindView(R.id.tvTopElectric)
+    TextView tvTopElectric;
+    @BindView(R.id.tvFrequency)
+    TextView tvFrequency;
+    @BindView(R.id.tvCall)
+    TextView tvCall;
+    @BindView(R.id.llFrequency)
+    LinearLayout llFrequency;
+    @BindView(R.id.llCall)
+    LinearLayout llCall;
 
     Bitmap mBitmap;
-    String name = "",nameWrite = "";
+    String name = "", nameWrite = "";
 
-    boolean loadError = false;
     private static AlertDialogUtil alertDialogUtil;
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private static final int REQUEST_PERMISSIONS = 2;
@@ -176,12 +180,13 @@ public class MainActivity extends BaseActivity {
     private KProgressHUD progressHUD;
     private WindowManager mWindowManager;
     private boolean isScreenshot = false;
-    private Handler handler = new Handler();
     private Toast toast;
     private final int BREATH_INTERVAL_TIME = 1000; //设置呼吸灯时间间隔
     private AlphaAnimation animationFadeIn;
     private AlphaAnimation animationFadeOut;
+    String tag = "";
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,52 +243,32 @@ public class MainActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        address = "http://" + address + ":8080";
-        webView.loadUrl(address);
-        webView.setWebViewClient(new WebViewClient() {
+        TaskCenter.sharedCenter().connect(address,502);
+        TaskCenter.sharedCenter().setDisconnectedCallback(new TaskCenter.OnServerDisconnectedCallbackBlock() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //使用WebView加载显示url
-                view.loadUrl(url);
-                //返回true
-                return true;
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                webView.setVisibility(View.GONE);
-//                imageView.setVisibility(View.GONE);
-                linearLayout.setVerticalGravity(View.GONE);
-                loadError = true;
-            }
-
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                handler.proceed();
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                //DialogShow.showRoundProcessDialog();
+            public void callback(IOException e) {
+                handlerSetting.sendEmptyMessage(Constant.TAG_THERE);
             }
         });
-        //声明WebSettings子类
-        WebSettings webSettings = webView.getSettings();
-        //设置自适应屏幕，两者合用
-        //将图片调整到适合webview的大小
-        webSettings.setUseWideViewPort(true);
-        // 缩放至屏幕的大小
-        webSettings.setLoadWithOverviewMode(true);
-        //关闭webview中缓存
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        //不使用缓存
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        //全屏设置
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        getGPS();
+        TaskCenter.sharedCenter().setConnectedCallback(new TaskCenter.OnServerConnectedCallbackBlock() {
+            @Override
+            public void callback() {
+                handlerSetting.sendEmptyMessage(Constant.TAG_FOUR);
+            }
+        });
+        TaskCenter.sharedCenter().setReceivedCallback(new TaskCenter.OnReceiveCallbackBlock() {
+            @Override
+            public void callback(String receicedMessage) {
+                Message message = new Message();
+                message.what = Constant.TAG_FIVE;
+                message.obj = receicedMessage;
+                handlerSetting.sendMessage(message);
+            }
+        });
+
+        address = "http://" + address + ":8080";
+        webView.loadUrl(address);
+        new getSSHGPSData().getGPS(this, tvGPS);
     }
 
     @Override
@@ -294,79 +279,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void backTime(String time) {
                 tvTime.setText(time);
-            }
-        });
-    }
-
-    /**
-     * 获取定位信息
-     */
-    private void getGPS() {
-        try {
-            address = new getIp().getConnectIp();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor(address, "cat /dev/ttyUSB1", new SSHCallBack() {
-                        @Override
-                        public void confirm(String data) {
-                            try {
-                                String [] GpsData = data.split(getResources().getString(R.string.special_data));
-                                if (GpsData.length!=0){
-                                    String lastData = GpsData[GpsData.length-1];
-                                    String [] NEData = lastData.split(",");
-                                    String firstN = NEData[1];
-                                    String firstE = NEData[3];
-                                    BigDecimal DataN = new BigDecimal(Double.valueOf(firstN)/100).setScale(6,BigDecimal.ROUND_HALF_UP);
-                                    BigDecimal DataE = new BigDecimal(Double.valueOf(firstE)/100).setScale(6,BigDecimal.ROUND_HALF_UP);
-                                    String s = DataE+","+DataN;
-                                    tvGPS.setText(s);
-                                }else {
-//                                    getGPSData();
-                                    Location location = getLastKnownLocation();
-                                    tvGPS.setText(location.getLongitude()+",\t\t"+location.getLatitude());
-                                    Log.e("XXXXXXX", "有位置权限-纬度:" + location.getLatitude() + " 经度:" + location.getLongitude());
-                                }
-                            }catch (Exception ex) {
-//                                getGPSData();
-
-                                // 使用
-                                Location location = getLastKnownLocation();
-                                tvGPS.setText(location.getLongitude()+",\t\t"+location.getLatitude());
-                                Log.e("XXXXXXX", "有位置权限-纬度:" + location.getLatitude() + " 经度:" + location.getLongitude());
-                            }
-                        }
-
-                        @Override
-                        public void error(String s) {
-                            (MainActivity.this).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
-                                    getGPSData();
-                                }
-                            });
-                        }
-                    });
-                }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void getGPSData(){
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        new getGPS().initGPS(MainActivity.this,locationManager,tvGPS, new DialogCallBack() {
-            @Override
-            public void confirm(String name, Dialog dialog) {
-
-            }
-
-            @Override
-            public void cancel() {
-                Toast.makeText(MainActivity.this, "请开启GPS模块", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -396,7 +308,7 @@ public class MainActivity extends BaseActivity {
     protected void rightClient() {
     }
 
-    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.linearLayoutStop, R.id.rbRefresh})
+    @OnClick({R.id.rbCamera, R.id.rbVideo, R.id.rbAlbum, R.id.rbSound, R.id.rbSetting, R.id.linearLayoutStop, R.id.rbRefresh,R.id.llFrequency, R.id.llCall})
     public void onClick(View view1) {
         switch (view1.getId()) {
             case R.id.rbCamera:
@@ -531,10 +443,74 @@ public class MainActivity extends BaseActivity {
             case R.id.rbRefresh:
                 ShowDialog("/etc/init.d/mjpg-streamer restart");
                 break;
+            case R.id.llFrequency:
+                tag = "Frequency";
+                showFDialog();
+                break;
+            case R.id.llCall:
+                tag = "Call";
+                showFDialog();
+                break;
         }
     }
 
-    public void checkTirem(){
+    private void showFDialog() {
+        String hint = "";
+        if (tag.equals("Frequency")) {
+            hint = "请输入探头频率";
+        } else if (tag.equals("Call")) {
+            hint = "请输入报警电压";
+        }
+        new AlertDialogUtil(this).showDialogF(hint, new DialogCallBackTwo() {
+            @Override
+            public void confirm(String name1, Dialog dialog, EditText editText) {
+                if (tag.equals("Frequency")) {
+//                    tvFrequency.setText(name1);
+                    int IFrequency = Integer.valueOf(name1);
+                    double DCall = Double.valueOf(tvCall.getText().toString())*10;
+                    int i = new Double(DCall).intValue();
+                    int ICall = Integer.valueOf(String.valueOf(i));
+                    String SFrequency = Integer.toHexString(IFrequency);
+                    String SCall = Integer.toHexString(ICall);
+                    if(SFrequency.length()==1){
+                        SFrequency = "0"+SFrequency;
+                    }
+                    if(SCall.length()==1){
+                        SCall = "0"+SCall;
+                    }
+                    String data = "BF" +SCall+SFrequency;
+                    byte[] sendData = new BytesHexChange().hexStringToBytes(data+new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes(data)));
+                    TaskCenter.sharedCenter().send(sendData);
+                    dialog.dismiss();
+                }
+                if (tag.equals("Call")) {
+//                    tvCall.setText(name1);
+                    int IFrequency = Integer.valueOf(tvFrequency.getText().toString());
+                    double DCall = Double.valueOf(name1)*10;
+                    int i = new Double(DCall).intValue();
+                    int ICall = Integer.valueOf(String.valueOf(i));
+                    String SFrequency = Integer.toHexString(IFrequency);
+                    String SCall = Integer.toHexString(ICall);
+                    if(SFrequency.length()==1){
+                        SFrequency = "0"+SFrequency;
+                    }
+                    if(SCall.length()==1){
+                        SCall = "0"+SCall;
+                    }
+                    String data = "BF"+SCall+SFrequency;
+                    byte[] sendData = new BytesHexChange().hexStringToBytes(data+new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes(data)));
+                    TaskCenter.sharedCenter().send(sendData);
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void cancel(String name2, Dialog dialog) {
+            }
+        });
+    }
+
+    public void checkTirem() {
         animationFadeIn = new AlphaAnimation(0.1f, 1.0f);
         animationFadeIn.setDuration(BREATH_INTERVAL_TIME);
 //        animationFadeIn.setStartOffset(100);
@@ -543,7 +519,7 @@ public class MainActivity extends BaseActivity {
         animationFadeOut.setDuration(BREATH_INTERVAL_TIME);
 //        animationFadeIn.setStartOffset(100);
 
-        animationFadeIn.setAnimationListener(new Animation.AnimationListener(){
+        animationFadeIn.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationEnd(Animation arg0) {
@@ -564,7 +540,7 @@ public class MainActivity extends BaseActivity {
 
         });
 
-        animationFadeOut.setAnimationListener(new Animation.AnimationListener(){
+        animationFadeOut.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationEnd(Animation arg0) {
@@ -654,7 +630,7 @@ public class MainActivity extends BaseActivity {
                     if (!name1.equals("")) {
                         name = name1 + "(" + workCode + ")" + ".png";
                     }
-                    saveImg(name1,name, MainActivity.this);
+                    saveImg(name1, name, MainActivity.this);
                 }
 
                 @Override
@@ -750,7 +726,7 @@ public class MainActivity extends BaseActivity {
             //将要保存的图片文件
             File mFile = new File(dir + name);
             if (mFile.exists()) {
-                selectDialog(name1,mFile, name);
+                selectDialog(name1, mFile, name);
                 return false;
             }
             FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
@@ -778,7 +754,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void selectDialog(String name2, File mFile, String name) {
-        alertDialogUtil.showImageNameSelect(name2,new DialogCallBackTwo() {
+        alertDialogUtil.showImageNameSelect(name2, new DialogCallBackTwo() {
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
                 if (name1.trim().equals("")) {
@@ -792,7 +768,7 @@ public class MainActivity extends BaseActivity {
 //                        editText.setHint(s);
                     } else {
                         dialog.dismiss();
-                        saveImg(name1,name1 + "(" + workCode + ")" + ".png", MainActivity.this);
+                        saveImg(name1, name1 + "(" + workCode + ")" + ".png", MainActivity.this);
                     }
                 }
             }
@@ -804,11 +780,11 @@ public class MainActivity extends BaseActivity {
                 if (name.equals(name2 + "(" + workCode + ")" + ".png")) {
                     dialog.dismiss();
                     mFile.delete();
-                    saveImg(name2,name, MainActivity.this);
+                    saveImg(name2, name, MainActivity.this);
                 } else if (name2.equals("")) {
                     dialog.dismiss();
                     mFile.delete();
-                    saveImg(name2,name, MainActivity.this);
+                    saveImg(name2, name, MainActivity.this);
                 } else {
                     Toast.makeText(MainActivity.this, "不存在重复文件，请点击保存按钮", Toast.LENGTH_SHORT).show();
                 }
@@ -816,8 +792,8 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void selectVideoDialog(File mFile, String name2,String nameWrite, View view1) {
-        alertDialogUtil.showImageNameSelect(nameWrite,new DialogCallBackTwo() {
+    private void selectVideoDialog(File mFile, String name2, String nameWrite, View view1) {
+        alertDialogUtil.showImageNameSelect(nameWrite, new DialogCallBackTwo() {
 
             @Override
             public void confirm(String name1, Dialog dialog, EditText editText) {
@@ -974,7 +950,7 @@ public class MainActivity extends BaseActivity {
                             if (haveAudio.equals("Audio")) {
                                 //将要保存的图片文件
                                 if (file.exists()) {
-                                    selectVideoDialog(file, name,nameWrite, view1);
+                                    selectVideoDialog(file, name, nameWrite, view1);
                                     return;
                                 }
                             } else if (haveAudio.equals("noAudio")) {
@@ -1139,6 +1115,7 @@ public class MainActivity extends BaseActivity {
             mMediaProjection = null;
 
         }
+        TaskCenter.sharedCenter().disconnect();
     }
 
     Handler handlerSetting = new Handler() {
@@ -1154,42 +1131,34 @@ public class MainActivity extends BaseActivity {
                 case Constant.TAG_TWO:
                     Toast.makeText(MainActivity.this, toastData, Toast.LENGTH_LONG).show();
                     progressHUD.dismiss();
+                    break;
+                case Constant.TAG_THERE:
+                    Toast.makeText(MainActivity.this, "断开连接", Toast.LENGTH_LONG).show();
+                    break;
+                case Constant.TAG_FOUR:
+                    Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_LONG).show();
+                    TaskCenter.sharedCenter().send(new BytesHexChange().hexStringToBytes("BF4F4B"+new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes("BF4F4B"))));
+                    break;
+                case Constant.TAG_FIVE:
+                    String backData = msg.obj.toString();
+                    if (backData.length() == 18&&backData.substring(0,2).equals("BE")
+                        && new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes(backData.substring(0,14))).equals(backData.substring(14,18))){
+                        String electric = String.valueOf(Double.valueOf(Integer.valueOf(backData.substring(2,4), 16))/10);
+                        tvVoltage.setText(electric);
+                        String call = String.valueOf(Double.valueOf(Integer.valueOf(backData.substring(4,6), 16))/10);
+                        tvCall.setText(call);
+                        String voltage = String.valueOf(Integer.valueOf(backData.substring(6,8), 16));
+                        tvElectric.setText(voltage);
+                        String topVoltage = String.valueOf(Double.valueOf(Integer.valueOf(backData.substring(8,12), 16))/10);
+                        tvTopElectric.setText(topVoltage);
+                        String frequency = String.valueOf(Integer.valueOf(backData.substring(12,14), 16));
+                        tvFrequency.setText(frequency);
+                    }else if (backData.length()==10&&backData.substring(0,2).equals("BE")
+                            && new Crc16Util().getTableCRC(new BytesHexChange().hexStringToBytes(backData.substring(0,6))).equals(backData.substring(6,10))){
+                        Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
         }
     };
-
-    private Location getLastKnownLocation() {
-        //获取地理位置管理器
-        LocationManager mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO:去请求权限后再获取
-            return null;
-        }
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                bestLocation = l;
-            }
-        }
-// 在一些手机5.0(api21)获取为空后，采用下面去兼容获取。
-        if (bestLocation==null){
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            criteria.setAltitudeRequired(false);
-            criteria.setBearingRequired(false);
-            criteria.setCostAllowed(true);
-            criteria.setPowerRequirement(Criteria.POWER_LOW);
-            String provider = mLocationManager.getBestProvider(criteria, true);
-            if (!TextUtils.isEmpty(provider)){
-                bestLocation = mLocationManager.getLastKnownLocation(provider);
-            }
-        }
-        return bestLocation;
-    }
 }

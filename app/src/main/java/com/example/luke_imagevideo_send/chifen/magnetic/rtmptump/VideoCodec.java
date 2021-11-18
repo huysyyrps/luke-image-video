@@ -35,7 +35,6 @@ public class VideoCodec extends Thread {
 
     public void startLive(MediaProjection mediaProjection) {
         this.mediaProjection = mediaProjection;
-
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1280, 640);
         //设置颜色格式
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
@@ -55,7 +54,7 @@ public class VideoCodec extends Thread {
 
             virtualDisplay = mediaProjection.createVirtualDisplay(
                     "screen-codec",
-                    1280, 720, 1,
+                    1280, 640, 1,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
                     surface, null, null);
 
@@ -98,6 +97,8 @@ public class VideoCodec extends Thread {
                 RTMPPackage rtmpPackage = new RTMPPackage(outData, (bufferInfo.presentationTimeUs / 1000) - startTime);
                 rtmpPackage.setType(RTMPPackage.RTMP_PACKET_TYPE_VIDEO);
                 screenLive.addPackage(rtmpPackage);
+                //对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
+                //调用这个api之后，SurfaceView才有图像
                 mediaCodec.releaseOutputBuffer(index, false);
             }
         }

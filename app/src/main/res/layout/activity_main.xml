@@ -15,12 +15,12 @@
         app:header_is_left_iv_visiable="false">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <WebView
+    <com.example.luke_imagevideo_send.chifen.magnetic.view.myWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/linelayout_radion">
-    </WebView>
+    </com.example.luke_imagevideo_send.chifen.magnetic.view.myWebView>
 
     <RadioGroup
         android:id="@+id/radioGroup"
@@ -68,59 +68,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="时间:"
-                android:gravity="center"
-                android:textSize="14dp"
-                android:layout_marginLeft="10dp"
-                android:textColor="@color/red"/>
-            <TextView
-                android:id="@+id/tvTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="时间"
-                android:textColor="@color/red"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="GPS:"
-                android:gravity="center"
-                android:textSize="14dp"
-                android:textColor="@color/red"/>
-            <TextView
-                android:id="@+id/tvGPS"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:text="获取位置中"
-                android:gravity="left|center_vertical"
-                android:textSize="14dp"
-                android:textColor="@color/red"/>
-        </LinearLayout>
-
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
@@ -132,6 +89,7 @@
                     android:textColor="@color/red"/>
                 <TextView
                     android:id="@+id/tvCompName"
+                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -142,7 +100,8 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
@@ -154,6 +113,7 @@
                     android:textColor="@color/red"/>
                 <TextView
                     android:id="@+id/tvWorkName"
+                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -164,7 +124,8 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
@@ -176,6 +137,7 @@
                     android:textColor="@color/red"/>
                 <TextView
                     android:id="@+id/tvWorkCode"
+                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -183,6 +145,184 @@
                     android:maxLength="15"
                     android:textColor="@color/red"/>
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="电  压  值:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvVoltage"
+                android:layout_marginLeft="10dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="电  流  值:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvElectric"
+                android:layout_marginLeft="10dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="高压电压:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvTopElectric"
+                android:layout_marginLeft="10dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llFrequency"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="探头频率:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvFrequency"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_triangle_red1"
+                android:layout_gravity="center|right"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llCall"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="报警电压:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvCall"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_triangle_red1"
+                android:layout_gravity="center|right"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时        间:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="时间"
+                android:textColor="@color/red"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="G    P    S:"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
+            <TextView
+                android:id="@+id/tvGPS"
+                android:layout_marginLeft="10dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="获取位置中"
+                android:gravity="left|center_vertical"
+                android:textSize="14dp"
+                android:textColor="@color/red"/>
         </LinearLayout>
 
     </LinearLayout>

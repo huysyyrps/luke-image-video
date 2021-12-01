@@ -29,14 +29,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="100dp"
-        android:background="@null"
-        android:hint="请重新命名或者覆盖"/>
+        android:inputType="numberDecimal|number"
+        android:background="@null"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@drawable/linelayout_radion">
+        <TextView
+            android:id="@+id/cover"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/cancle"
+            android:textColor="@color/color_forget_button"
+            android:textSize="16sp" />
         <TextView
             android:id="@+id/yes"
             android:text="@string/title_tips_save"
@@ -49,17 +60,6 @@
             android:layout_weight="1"
             android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/cover"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/cover"
-            android:textColor="@color/color_forget_button"
-            android:textSize="16sp" />
 
     </LinearLayout>
 </LinearLayout>

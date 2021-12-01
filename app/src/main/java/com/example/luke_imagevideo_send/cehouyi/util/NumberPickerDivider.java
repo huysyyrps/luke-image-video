@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 public class NumberPickerDivider {
     public static final  String[] TD = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     public static final  String[] EP = {"EE", "PE"};
-    public static final  String[] TT = {"BT-08", "XT-06", "GT-350", "ZT-102", "15P6Y-H", "P-153-H"};
+    public static final  String[] TT = {"         BT-08         ", "         XT-06         ", "         GT-350         ", "         ZT-102         ", "         15P6Y-H         ", "         P-153-H         "};
     public static final  String[] WB = {"关闭", "150-300℃", "300-500℃"};
 
     public static final  String[] ZY = {"0","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"

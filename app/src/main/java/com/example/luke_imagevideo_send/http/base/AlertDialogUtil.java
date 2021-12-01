@@ -419,4 +419,35 @@ public class AlertDialogUtil {
             dialog.getWindow().setContentView(view);
         }
     }
+
+    public void showLk600(String name, final DialogCallBackTwo alertDialogCallBack) {
+        if (dialog == null || !dialog.isShowing()) {
+            dialog = new Dialog(context);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.dialog_with_imagename, null, false);
+            EditText editText = (EditText) view.findViewById(R.id.edittext);
+            TextView tvYes = (TextView) view.findViewById(R.id.yes);
+            TextView tvCover = (TextView) view.findViewById(R.id.cover);
+            TextView tvTitle = (TextView) view.findViewById(R.id.title);
+            tvTitle.setText(name);
+            tvYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialogCallBack.confirm(editText.getText().toString(),dialog,editText);
+                }
+            });
+
+            tvCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialogCallBack.cancel(editText.getText().toString(),dialog);
+                }
+            });
+
+            dialog.getWindow().setContentView(view);
+        }
+    }
 }

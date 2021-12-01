@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    tools:context=".cehouyi.activity.MainLK600Activity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnA"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="A扫"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnB"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="B扫"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnSound"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="5920m/s"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnPass"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="通道2"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnTable"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="F001"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnProbe"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="BT-08"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_electric"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvElectric"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center"
+                    android:text="50"
+                    android:textColor="@color/text_green"
+                    android:textSize="12dp" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPattern"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="E"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnTime"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="16:31:22"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/ic_max"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/tvMax"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/pxqbutton_select"
+                android:text="0.00"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/ic_min"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/tvMin"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/pxqbutton_select"
+                android:text="0.00"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_clire" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnData"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="22.83m/s"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/pxqbutton_select"
+            android:gravity="center"
+            android:text="存储"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:layout_marginTop="40dp">
+        </com.github.mikephil.charting.charts.LineChart>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:layout_marginTop="40dp"
+            android:visibility="gone">
+        </com.github.mikephil.charting.charts.BarChart>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/lGain"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="增益:"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvGain"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="40"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lMove"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="平移:"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvMove"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lgate"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="闸门:"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvGate"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="10"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lClear"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/linelayout_color_pxqoutradion"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="消隐:"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvClear"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="4.1"
+                    android:textColor="@color/red"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

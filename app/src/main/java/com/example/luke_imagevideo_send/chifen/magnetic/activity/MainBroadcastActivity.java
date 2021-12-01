@@ -1,7 +1,5 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -33,8 +31,6 @@ import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
-import com.example.luke_imagevideo_send.http.base.AlertDialogCallBack;
-import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -75,7 +71,7 @@ public class MainBroadcastActivity extends BaseActivity {
     //声明一个操作常量字符串
     public static final String ACTION_SERVICE_NEED = "action.ServiceNeed";
     //声明一个内部广播实例
-    public ServiceNeedBroadcastReceiver broadcastReceiver;
+//    public ServiceNeedBroadcastReceiver broadcastReceiver;
     ScreenLive screenLive;
 
 
@@ -103,8 +99,8 @@ public class MainBroadcastActivity extends BaseActivity {
          */
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SERVICE_NEED);
-        broadcastReceiver = new ServiceNeedBroadcastReceiver();
-        registerReceiver(broadcastReceiver, filter);
+//        broadcastReceiver = new ServiceNeedBroadcastReceiver();
+//        registerReceiver(broadcastReceiver, filter);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -310,35 +306,35 @@ public class MainBroadcastActivity extends BaseActivity {
     protected void rightClient() {
     }
 
-    /**
-     * 定义广播接收器，用于执行Service服务的需求（内部类）
-     */
-    private class ServiceNeedBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //这里是要在Activity活动里执行的代码
-            new AlertDialogUtil(context).showDialog("111", new AlertDialogCallBack() {
-                @Override
-                public void confirm(String name) {
-                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void cancel() {
-                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void save(String name) {
-                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void checkName(String name) {
-                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
+//    /**
+//     * 定义广播接收器，用于执行Service服务的需求（内部类）
+//     */
+//    private class ServiceNeedBroadcastReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //这里是要在Activity活动里执行的代码
+//            new AlertDialogUtil(context).showDialog("111", new AlertDialogCallBack() {
+//                @Override
+//                public void confirm(String name) {
+//                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void cancel() {
+//                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void save(String name) {
+//                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void checkName(String name) {
+//                    Toast.makeText(context, "111", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+//    }
 
 }

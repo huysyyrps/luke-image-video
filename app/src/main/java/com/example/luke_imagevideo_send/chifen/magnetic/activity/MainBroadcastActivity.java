@@ -2,22 +2,15 @@ package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +24,7 @@ import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.chifen.magnetic.view.TBSWebView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.example.luke_imagevideo_send.http.views.Header;
@@ -44,8 +38,6 @@ public class MainBroadcastActivity extends BaseActivity {
 
     @BindView(R.id.header)
     Header header;
-    @BindView(R.id.webView)
-    WebView webView;
     @BindView(R.id.tvTime)
     TextView tvTime;
     @BindView(R.id.tvGPS)
@@ -62,32 +54,17 @@ public class MainBroadcastActivity extends BaseActivity {
     TextView tvWorkCode;
     @BindView(R.id.linearLayout1)
     LinearLayout linearLayout1;
+    @BindView(R.id.tbsView)
+    TBSWebView tbsView;
     MediaProjectionManager projectionManager;
     MediaProjection mediaProjection;
-//        String url = "rtmp://221.2.36.238:6062/live";
     String url = "rtmp://221.2.36.238:2012/live/live1";
-    private Handler handler = new Handler();
     private String project = "", workName = "", workCode = "", address = "";
     //声明一个操作常量字符串
     public static final String ACTION_SERVICE_NEED = "action.ServiceNeed";
     //声明一个内部广播实例
 //    public ServiceNeedBroadcastReceiver broadcastReceiver;
     ScreenLive screenLive;
-
-
-    private Handler mHander = new Handler();
-    private int mCount = 0;
-    private Runnable mCounter = new Runnable() {
-        @Override
-        public void run() {
-            mCount++;
-            if (mCount > 220) {
-                webView.loadUrl(address);
-                mCount = 0;
-            }
-            mHander.postDelayed(this, 1000);
-        }
-    };
 
 
     @Override
@@ -111,15 +88,12 @@ public class MainBroadcastActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Intent intent = getIntent();
-//        project = intent.getStringExtra("project");
-//        workName = intent.getStringExtra("etWorkName");
-//        workCode = intent.getStringExtra("etWorkCode");
-//        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-//            linearLayout.setVisibility(View.GONE);
-//        }
-        project = "1";
-        workName = "1";
-        workCode = "1";
+        project = intent.getStringExtra("project");
+        workName = intent.getStringExtra("etWorkName");
+        workCode = intent.getStringExtra("etWorkCode");
+        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
+            linearLayout.setVisibility(View.GONE);
+        }
         if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
             linearLayout.setVisibility(View.GONE);
         }
@@ -135,60 +109,15 @@ public class MainBroadcastActivity extends BaseActivity {
         header.setVisibility(View.GONE);
         frameLayout.setBackgroundColor(getResources().getColor(R.color.black));
 
-        webView.setBackgroundColor(Color.BLACK);
-        webView.getSettings().setJavaScriptEnabled(true);
         try {
             address = new getIp().getConnectIp();
         } catch (Exception e) {
             e.printStackTrace();
         }
         address = "http://" + address + ":8080";
-//        address = "http://stream.iqilu.com/vod_bag_2016//2020/02/16/903BE158056C44fcA9524B118A5BF230/903BE158056C44fcA9524B118A5BF230_H264_mp4_500K.mp4";
-        webView.loadUrl(address);
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //使用WebView加载显示url
-                view.loadUrl(url);
-                //返回true
-                return true;
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                webView.setVisibility(View.GONE);
-//                imageView.setVisibility(View.GONE);
-                linearLayout.setVerticalGravity(View.GONE);
-            }
-
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                handler.proceed();
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                //DialogShow.showRoundProcessDialog();
-            }
-        });
-        //声明WebSettings子类
-        WebSettings webSettings = webView.getSettings();
-        //设置自适应屏幕，两者合用
-        //将图片调整到适合webview的大小
-        webSettings.setUseWideViewPort(true);
-        // 缩放至屏幕的大小
-        webSettings.setLoadWithOverviewMode(true);
-        //关闭webview中缓存
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        //不使用缓存
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        //全屏设置
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-//        getGPS();
-//        mHander.post(mCounter);
+        Log.e("XXXXX", address);
+        tbsView.setBackgroundColor(Color.BLACK);
+        tbsView.loadUrl("http://192.168.43.104:8080");
         ScreenRecoder();
     }
 
@@ -202,7 +131,7 @@ public class MainBroadcastActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (screenLive != null) {
-            screenLive.stopData();
+//            screenLive.stopData();
             screenLive = null;
         }
     }
@@ -217,7 +146,7 @@ public class MainBroadcastActivity extends BaseActivity {
                 Log.e("@@", "media projection is null");
                 return;
             } else {
-                if (screenLive==null){
+                if (screenLive == null) {
                     screenLive = new ScreenLive();
                 }
                 screenLive.startLive(url, mediaProjection);
@@ -287,9 +216,15 @@ public class MainBroadcastActivity extends BaseActivity {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        tbsView.goBack();
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
-        webView.loadUrl(address);
+        tbsView.loadUrl(address);
     }
 
     @Override

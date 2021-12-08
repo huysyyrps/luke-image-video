@@ -203,6 +203,11 @@ public class SendSelectActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
     //设置SweetSheet上的数据
     public void initData() {
 

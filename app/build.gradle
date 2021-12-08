@@ -149,4 +149,6 @@ dependencies {
     implementation 'com.getui:gtc:3.1.6.0'  //个推核心组件
     implementation 'org.litepal.android:core:1.6.1'
     implementation 'cn.qqtheme.framework:AndroidPicker:latest.integration'//选择器
+    implementation 'fm.jiecao:jiecaovideoplayer:5.5.4'
+    api 'com.tencent.tbs:tbssdk:44132'
 }

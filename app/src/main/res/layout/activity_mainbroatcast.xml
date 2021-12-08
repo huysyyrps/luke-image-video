@@ -15,13 +15,10 @@
         app:header_is_left_iv_visiable="false">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <WebView
-        android:id="@+id/webView"
+    <com.example.luke_imagevideo_send.chifen.magnetic.view.TBSWebView
+        android:id="@+id/tbsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/linelayout_radion">
-    </WebView>
-
+        android:layout_height="match_parent"/>
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"

@@ -241,12 +241,12 @@ Java_com_example_luke_1imagevideo_1send_chifen_magnetic_rtmptump_ScreenLive_send
     jbyte *data = env->GetByteArrayElements(data_, NULL);
     switch (type) {
         case 0: //video
-            LOGI("send video  lenght :%d", len);
+//            LOGI("send video  lenght :%d", len);
             ret = sendVideo(data, len, tms);
             break;
         default: //audio
             ret = sendAudio(data, len, type, tms);
-            LOGI("send Audio  lenght :%d", len);
+//            LOGI("send Audio  lenght :%d", len);
             break;
     }
     env->ReleaseByteArrayElements(data_, data, 0);
@@ -254,7 +254,7 @@ Java_com_example_luke_1imagevideo_1send_chifen_magnetic_rtmptump_ScreenLive_send
 }extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_example_luke_1imagevideo_1send_chifen_magnetic_rtmptump_ScreenLive_stopData(JNIEnv *env,
-                                                                                     jobject thiz, jstring url_) {
+                                                                                     jobject thiz) {
     // TODO: implement stopData()
     RTMP_Close(live->rtmp);
     RTMP_Free(live->rtmp);

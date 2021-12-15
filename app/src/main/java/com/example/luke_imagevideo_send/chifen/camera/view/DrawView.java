@@ -46,17 +46,17 @@ public class DrawView extends ImageView {
         {
             setColor(Color.RED);
             setAntiAlias(true);
-            setTextAlign(Paint.Align.CENTER);//居中显示
+            setTextAlign(Align.CENTER);//居中显示
             setStrokeWidth(4.0f);
             setDither(true);
             setFilterBitmap(true);
-            setStyle(Paint.Style.STROKE);
-            setStrokeJoin(Paint.Join.ROUND);
-            setStrokeCap(Paint.Cap.ROUND);
+            setStyle(Style.STROKE);
+            setStrokeJoin(Join.ROUND);
+            setStrokeCap(Cap.ROUND);
             setTextSize(44);
             setFakeBoldText(false);
             setTypeface(Typeface.DEFAULT);
-            setTextAlign(Paint.Align.CENTER);//居中显示
+            setTextAlign(Align.CENTER);//居中显示
             setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
         }
     };

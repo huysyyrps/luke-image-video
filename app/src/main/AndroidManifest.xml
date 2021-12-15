@@ -30,6 +30,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -50,6 +51,7 @@
     <uses-permission
         android:name="android.permission.STATUS_BAR_SERVICE"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".MyApplication"
@@ -69,9 +71,6 @@
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
         </activity>
-        <activity
-            android:name=".TestActivity"
-            android:screenOrientation="landscape" />
         <activity android:name=".chifen.camera.activity.DailyActivity" />
         <activity android:name=".chifen.camera.activity.CXContextActivity" />
         <activity android:name=".chifen.camera.activity.CFContextActivity" />
@@ -95,6 +94,9 @@
             android:label="PushService"
             android:process=":pushservice" />
         <service android:name=".DemoIntentService" />
+<!--        <service android:name=".chifen.magnetic.service.CaptureScreenService"-->
+<!--            android:enabled="true"-->
+<!--            android:foregroundServiceType="mediaProjection"/>-->
 
         <activity android:name=".main.activity.AgreeActivity" />
         <activity android:name=".main.activity.LoginActivity" />
@@ -116,27 +118,11 @@
             android:screenOrientation="landscape"></activity>
         <activity
             android:name=".chifen.magnetic.activity.SpideMainActivity"
-            android:screenOrientation="landscape">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".chifen.magnetic.activity.MainBroadcastActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|keyboardHidden">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity
             android:name=".chifen.camera.activity.PhotoActivity"
             android:screenOrientation="landscape" />
@@ -150,20 +136,8 @@
         <activity
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".cehouyi.activity.MainOutCHYActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
-        <activity android:name=".cehouyi.activity.MainCHYActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+        <activity android:name=".cehouyi.activity.MainOutCHYActivity"/>
+        <activity android:name=".cehouyi.activity.MainCHYActivity"/>
         <activity android:name=".cehouyi.activity.MainMenuOutActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />
     </application>

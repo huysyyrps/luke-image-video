@@ -1,7 +1,6 @@
 package com.example.luke_imagevideo_send.chifen.magnetic.activity;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
@@ -19,20 +18,27 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.VideoCaptureScreen;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
-import com.example.luke_imagevideo_send.chifen.magnetic.rtmptump.ScreenLive;
-import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.KeyCenter;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.TBSWebView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.base.SSHCallBack;
+import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.views.Header;
-
-import java.math.BigDecimal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.constants.ZegoPublishChannel;
+import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoVideoBufferType;
+import im.zego.zegoexpress.entity.ZegoCDNConfig;
+import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
+import im.zego.zegoexpress.entity.ZegoEngineProfile;
+import im.zego.zegoexpress.entity.ZegoUser;
+import im.zego.zegoexpress.entity.ZegoVideoConfig;
 
 public class MainBroadcastActivity extends BaseActivity {
 
@@ -56,29 +62,39 @@ public class MainBroadcastActivity extends BaseActivity {
     LinearLayout linearLayout1;
     @BindView(R.id.tbsView)
     TBSWebView tbsView;
-    MediaProjectionManager projectionManager;
-    MediaProjection mediaProjection;
-    String url = "rtmp://221.2.36.238:2012/live/live1";
+    public static MediaProjectionManager mMediaProjectionManager;
+    public static MediaProjection mMediaProjection;
     private String project = "", workName = "", workCode = "", address = "";
     //声明一个操作常量字符串
     public static final String ACTION_SERVICE_NEED = "action.ServiceNeed";
     //声明一个内部广播实例
 //    public ServiceNeedBroadcastReceiver broadcastReceiver;
-    ScreenLive screenLive;
+//    ScreenLive screenLive;
+    String userID;
+    String publishStreamID;
+    String playStreamID;
+    String roomID;
+    ZegoExpressEngine engine;
+    ZegoUser user;
+    private static final int DEFAULT_VIDEO_WIDTH = 1280;
+    private static final int DEFAULT_VIDEO_HEIGHT = 720;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        tbsView.setVerticalScrollBarEnabled(false); //垂直不显示
+        tbsView.setHorizontalScrollBarEnabled(false);//水平不显示
         /**
          * 注册广播实例（在初始化的时候）
          */
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_SERVICE_NEED);
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(ACTION_SERVICE_NEED);
 //        broadcastReceiver = new ServiceNeedBroadcastReceiver();
 //        registerReceiver(broadcastReceiver, filter);
 
+        //不息屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -91,9 +107,6 @@ public class MainBroadcastActivity extends BaseActivity {
         project = intent.getStringExtra("project");
         workName = intent.getStringExtra("etWorkName");
         workCode = intent.getStringExtra("etWorkCode");
-        if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
-            linearLayout.setVisibility(View.GONE);
-        }
         if (project.trim().equals("") && workName.trim().equals("") && workCode.trim().equals("")) {
             linearLayout.setVisibility(View.GONE);
         }
@@ -117,44 +130,80 @@ public class MainBroadcastActivity extends BaseActivity {
         address = "http://" + address + ":8080";
         Log.e("XXXXX", address);
         tbsView.setBackgroundColor(Color.BLACK);
-        tbsView.loadUrl("http://192.168.43.104:8080");
-        ScreenRecoder();
+        tbsView.loadUrl(address);
+//        ScreenRecoder();
+        setDefaultValue();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void ScreenRecoder() {
-        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-        startActivityForResult(projectionManager.createScreenCaptureIntent(), 1);
+    public void setDefaultValue() {
+        userID = "Android_" + Build.MODEL.replaceAll(" ", "_");
+        roomID = "0033";
+        publishStreamID = "0033";
+        playStreamID = "0033";
+        ZegoEngineProfile profile = new ZegoEngineProfile();
+        profile.appID = KeyCenter.appID();
+        profile.appSign = KeyCenter.appSign();
+        profile.scenario = ZegoScenario.GENERAL;
+        profile.application = getApplication();
+        engine = ZegoExpressEngine.createEngine(profile, null);
+
+        ZegoVideoConfig videoConfig = new ZegoVideoConfig();
+        videoConfig.captureHeight = 720;
+        videoConfig.captureWidth = 1280;
+        videoConfig.encodeHeight = 720;
+        videoConfig.encodeWidth = 1280;
+        // 设置视频配置
+        engine.setVideoConfig(videoConfig);
+        //create the user
+        user = new ZegoUser(userID);
+        prepareScreenCapture();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (screenLive != null) {
-//            screenLive.stopData();
-            screenLive = null;
+    public void prepareScreenCapture() {
+        if (Build.VERSION.SDK_INT < 21) {
+            Toast.makeText(this, "Require root permission", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            // 5.0及以上版本
+            // 请求录屏权限，等待用户授权
+            mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+            startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), Constant.TAG_ONE);
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try {
-            mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-            if (mediaProjection == null) {
-                Log.e("@@", "media projection is null");
-                return;
-            } else {
-                if (screenLive == null) {
-                    screenLive = new ScreenLive();
-                }
-                screenLive.startLive(url, mediaProjection);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("@@", "---------------->>>1" + e);
+        if (requestCode == Constant.TAG_ONE && resultCode == RESULT_OK) {
+            //Target版本低于10.0直接获取MediaProjection
+            mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
+            loginRoom();
+            setCustomCapture();
+            ZegoCDNConfig config = new ZegoCDNConfig();
+            // set CDN URL
+            config.url = "rtmp://221.2.36.238:2012/live/live1";
+            engine.enablePublishDirectToCDN(true, config);
+            engine.startPublishingStream(publishStreamID);
         }
+    }
+
+    public void loginRoom() {
+        engine.loginRoom(roomID, user);
+        engine.enableCamera(true);
+        engine.muteMicrophone(false);
+        engine.muteSpeaker(false);
+    }
+
+    public void setCustomCapture() {
+        // VideoCaptureScreen inherits IZegoCustomVideoCaptureHandler, which is used to monitor custom capture onStart and onStop callbacks
+        // VideoCaptureScreen继承IZegoCustomVideoCaptureHandler，用于监听自定义采集onStart和onStop回调
+        VideoCaptureScreen videoCapture = new VideoCaptureScreen(mMediaProjection, DEFAULT_VIDEO_WIDTH, DEFAULT_VIDEO_HEIGHT, engine);
+        engine.setCustomVideoCaptureHandler(videoCapture);
+        ZegoCustomVideoCaptureConfig videoCaptureConfig = new ZegoCustomVideoCaptureConfig();
+        videoCaptureConfig.bufferType = ZegoVideoBufferType.SURFACE_TEXTURE;
+        // Start Custom Capture
+        engine.enableCustomVideoCapture(true, videoCaptureConfig, ZegoPublishChannel.MAIN);
     }
 
     @Override
@@ -169,56 +218,12 @@ public class MainBroadcastActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 获取定位信息
-     */
-    private void getGPS() {
-        try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor("192.168.1.251", "cat /dev/ttyUSB1", new SSHCallBack() {
-                        @Override
-                        public void confirm(String data) {
-                            try {
-                                String[] GpsData = data.split(getResources().getString(R.string.special_data));
-                                if (GpsData.length != 0) {
-                                    String lastData = GpsData[GpsData.length - 1];
-                                    String[] NEData = lastData.split(",");
-                                    String firstN = NEData[1];
-                                    String firstE = NEData[3];
-                                    BigDecimal DataN = new BigDecimal(Double.valueOf(firstN) / 100).setScale(6, BigDecimal.ROUND_HALF_UP);
-                                    BigDecimal DataE = new BigDecimal(Double.valueOf(firstE) / 100).setScale(6, BigDecimal.ROUND_HALF_UP);
-                                    String s = DataE + "," + DataN;
-                                    tvGPS.setText(s);
-                                }
-                            } catch (Exception ex) {
-                                Log.e("XXX", ex.toString());
-                            }
-                        }
-
-                        @Override
-                        public void error(String s) {
-                            (MainBroadcastActivity.this).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainBroadcastActivity.this, s, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
-                }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         tbsView.goBack();
+        engine.logoutRoom(roomID);
+        engine.stopPublishingStream();
     }
 
     @Override
@@ -240,6 +245,42 @@ public class MainBroadcastActivity extends BaseActivity {
     @Override
     protected void rightClient() {
     }
+
+//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+//    public void ScreenRecoder() {
+//        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+//        startActivityForResult(projectionManager.createScreenCaptureIntent(), 1);
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if (screenLive != null) {
+////            screenLive.stopData();
+//            screenLive = null;
+//        }
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+//    @Override
+//    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        try {
+//            mediaProjection = projectionManager.getMediaProjection(resultCode, data);
+//            if (mediaProjection == null) {
+//                Log.e("@@", "media projection is null");
+//                return;
+//            } else {
+//                if (screenLive == null) {
+//                    screenLive = new ScreenLive();
+//                }
+//                screenLive.startLive(url, mediaProjection);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.d("@@", "---------------->>>1" + e);
+//        }
+//    }
 
 //    /**
 //     * 定义广播接收器，用于执行Service服务的需求（内部类）

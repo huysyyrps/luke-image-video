@@ -57,7 +57,7 @@ public class RecyclerViewDelegate extends Delegate {
         mRV = (RecyclerView) rootView.findViewById(R.id.rv);
         sliderIm = (CRImageView) rootView.findViewById(R.id.sliderIM);
         mRV.setLayoutManager(new LinearLayoutManager(mParentVG.getContext(), LinearLayoutManager.VERTICAL, false));
-        mSweetView.setAnimationListener(new RecyclerViewDelegate.AnimationImp());
+        mSweetView.setAnimationListener(new AnimationImp());
         if(mContentViewHeight > 0){
             mFreeGrowUpParentRelativeLayout.setContentHeight(mContentViewHeight);
         }

@@ -25,7 +25,15 @@ public class TBSWebView extends WebView {
         getSettings().setSupportZoom(false);
         getSettings().setBuiltInZoomControls(true);
         getSettings().setDisplayZoomControls(false);
+        getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
 //        setWebViewClient(new WVClient());
+    }
+    /**
+     * 使WebView不可滚动
+     * */
+    @Override
+    public void scrollTo(int x, int y){
+        super.scrollTo(0,0);
     }
 //    private class WVClient extends WebViewClient {
 //        @Override

@@ -3,11 +3,11 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/LoginActivity.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/cehouyi/module/DataContract.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleItemView.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleMenu.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleMenuAdapter.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/ItemInfo.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/UserEvent.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleItemView.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleMenu.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/CircleMenuAdapter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/ItemInfo.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/chifen/magnetic/view/UserEvent.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/AlertDialogLoginCallBack.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/BaseEView.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/http/base/BaseObserverNoEntry1.java" charset="GBK" />
@@ -41,7 +41,6 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/luke_imagevideo_send/main/presenter/TokenTestPresenter.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/color/radionbutton_select.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_top.xml" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/pxqbutton_select.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/pxqbutton_select.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_forgrt_password.xml" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" charset="GBK" />

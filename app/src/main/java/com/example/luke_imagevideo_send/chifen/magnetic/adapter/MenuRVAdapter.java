@@ -43,16 +43,16 @@ public class MenuRVAdapter extends RecyclerView.Adapter<MenuRVAdapter.MenuVH> {
     }
 
     @Override
-    public MenuRVAdapter.MenuVH onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public MenuVH onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 //        if(mHeaderView != null && viewType == TYPE_HEADER) {
 //            return new MenuVH(mHeaderView);
 //        }
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(mItemLayoutId, null, false);
-        return new MenuRVAdapter.MenuVH(view);
+        return new MenuVH(view);
     }
 
     @Override
-    public void onBindViewHolder(MenuRVAdapter.MenuVH menuVH, int i) {
+    public void onBindViewHolder(MenuVH menuVH, int i) {
 
 
 
@@ -77,7 +77,7 @@ public class MenuRVAdapter extends RecyclerView.Adapter<MenuRVAdapter.MenuVH> {
         }
     }
 
-    private void animation(MenuRVAdapter.MenuVH menuVH) {
+    private void animation(MenuVH menuVH) {
 
         ViewHelper.setAlpha(menuVH.itemView, 0);
 

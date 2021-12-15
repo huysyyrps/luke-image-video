@@ -30,6 +30,7 @@ public class PermissionActivity extends BaseActivity {
         mList.add(new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "位置", R.drawable.permission_ic_location));
         mList.add(new PermissionItem(Manifest.permission.READ_EXTERNAL_STORAGE, "读取文件", R.drawable.permission_ic_storage));
         mList.add(new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, "写入文件", R.drawable.permission_ic_storage));
+        mList.add(new PermissionItem(Manifest.permission.FOREGROUND_SERVICE, "前台服务", R.drawable.permission_ic_storage));
         HiPermission.create(PermissionActivity.this)
                 .title("亲爱的用户")
                 .permissions(mList)

@@ -35,9 +35,10 @@ android {
             }
         }
         ndk {
-            // 注意：这里需要添加项目所需 CPU 类型的最小集
-            abiFilters  "armeabi-v7a", "x86_64", "x86"
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
         }
+
+        multiDexEnabled true
         manifestPlaceholders = [
                 //从 3.1.2.0 版本开始，APPID 占位符从 GETUI_APP_ID 切换为 GETUI_APPID
                 //后续所有产品的 APPID 均统一配置为 GETUI_APPID 占位符
@@ -151,4 +152,5 @@ dependencies {
     implementation 'cn.qqtheme.framework:AndroidPicker:latest.integration'//选择器
     implementation 'fm.jiecao:jiecaovideoplayer:5.5.4'
     api 'com.tencent.tbs:tbssdk:44132'
+    implementation 'com.github.zegolibrary:express-video:2.15.0'
 }

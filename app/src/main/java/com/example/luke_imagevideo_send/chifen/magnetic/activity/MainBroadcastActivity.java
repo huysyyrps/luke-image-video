@@ -6,7 +6,6 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +18,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.VideoCaptureScreen;
+import com.example.luke_imagevideo_send.cehouyi.util.BottomUI;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTime;
 import com.example.luke_imagevideo_send.cehouyi.util.GetTimeCallBack;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.KeyCenter;
@@ -31,10 +31,10 @@ import com.example.luke_imagevideo_send.http.views.Header;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
-import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -79,13 +79,13 @@ public class MainBroadcastActivity extends BaseActivity {
     private static final int DEFAULT_VIDEO_WIDTH = 1280;
     private static final int DEFAULT_VIDEO_HEIGHT = 720;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        tbsView.setVerticalScrollBarEnabled(false); //垂直不显示
-        tbsView.setHorizontalScrollBarEnabled(false);//水平不显示
+//        tbsView.setVerticalScrollBarEnabled(false); //垂直不显示
+//        tbsView.setHorizontalScrollBarEnabled(false);//水平不显示
+
         /**
          * 注册广播实例（在初始化的时候）
          */
@@ -96,10 +96,6 @@ public class MainBroadcastActivity extends BaseActivity {
 
         //不息屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-        }
         // 设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -139,13 +135,17 @@ public class MainBroadcastActivity extends BaseActivity {
         userID = "Android_" + Build.MODEL.replaceAll(" ", "_");
         roomID = "0033";
         publishStreamID = "0033";
-        playStreamID = "0033";
         ZegoEngineProfile profile = new ZegoEngineProfile();
         profile.appID = KeyCenter.appID();
         profile.appSign = KeyCenter.appSign();
         profile.scenario = ZegoScenario.GENERAL;
         profile.application = getApplication();
         engine = ZegoExpressEngine.createEngine(profile, null);
+        user = new ZegoUser(userID);
+        engine.loginRoom(roomID, user);
+        engine.enableCamera(true);
+        engine.muteMicrophone(false);
+        engine.muteSpeaker(false);
 
         ZegoVideoConfig videoConfig = new ZegoVideoConfig();
         videoConfig.captureHeight = 720;
@@ -154,8 +154,8 @@ public class MainBroadcastActivity extends BaseActivity {
         videoConfig.encodeWidth = 1280;
         // 设置视频配置
         engine.setVideoConfig(videoConfig);
-        //create the user
-        user = new ZegoUser(userID);
+        //停止或恢复发送音频流。
+        engine.mutePublishStreamAudio(true);
         prepareScreenCapture();
     }
 
@@ -178,21 +178,26 @@ public class MainBroadcastActivity extends BaseActivity {
         if (requestCode == Constant.TAG_ONE && resultCode == RESULT_OK) {
             //Target版本低于10.0直接获取MediaProjection
             mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
-            loginRoom();
             setCustomCapture();
-            ZegoCDNConfig config = new ZegoCDNConfig();
-            // set CDN URL
-            config.url = "rtmp://221.2.36.238:2012/live/live1";
-            engine.enablePublishDirectToCDN(true, config);
+//            ZegoCDNConfig config = new ZegoCDNConfig();
+//            // set CDN URL
+//            config.url = "rtmp://221.2.36.238:2012/live/live1";
+//            engine.enablePublishDirectToCDN(true, config);
             engine.startPublishingStream(publishStreamID);
-        }
-    }
+            engine.addPublishCdnUrl(publishStreamID, "rtmp://221.2.36.238:2012/live/live1", new IZegoPublisherUpdateCdnUrlCallback() {
+                @Override
+                public void onPublisherUpdateCdnUrlResult(int errorCode) {
+                    if (errorCode == 0){
+                        // Add CDN URL successfully
+                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.register_success), Toast.LENGTH_LONG).show();
+                    } else {
+                        // Fail to add CDN URL.
+                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.faile_code), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
 
-    public void loginRoom() {
-        engine.loginRoom(roomID, user);
-        engine.enableCamera(true);
-        engine.muteMicrophone(false);
-        engine.muteSpeaker(false);
+        }
     }
 
     public void setCustomCapture() {
@@ -233,6 +238,12 @@ public class MainBroadcastActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        new BottomUI().hideBottomUIMenu(this.getWindow());
+    }
+
+    @Override
     protected int provideContentViewId() {
         return R.layout.activity_mainbroatcast;
     }
@@ -245,6 +256,7 @@ public class MainBroadcastActivity extends BaseActivity {
     @Override
     protected void rightClient() {
     }
+
 
 //    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 //    public void ScreenRecoder() {

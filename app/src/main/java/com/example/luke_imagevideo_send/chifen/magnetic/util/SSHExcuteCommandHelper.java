@@ -21,8 +21,8 @@ import java.io.PrintWriter;
  * SSH工具类
  */
 public class SSHExcuteCommandHelper {
-    Session session = null;
-    ChannelExec openChannel = null;
+    static Session session = null;
+    static ChannelExec openChannel = null;
     ChannelShell channel = null;
     private Handler mHandler;
 
@@ -74,7 +74,7 @@ public class SSHExcuteCommandHelper {
     /**
      * 关闭连接
      */
-    public void disconnect() {
+    public static void disconnect() {
         if (openChannel != null && !openChannel.isClosed()) {
             openChannel.disconnect();
         }

@@ -85,4 +85,6 @@
     <string name="write_failure">命令执行失败</string>
     <string name="f_top">阀值上限</string>
     <string name="f_bot">阀值下限</string>
+    <string name="rtc_success">转推成功</string>
+    <string name="rtc_faile">转推失败</string>
 </resources>

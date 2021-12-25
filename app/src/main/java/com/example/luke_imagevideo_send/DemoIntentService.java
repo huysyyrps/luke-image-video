@@ -8,11 +8,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.example.luke_imagevideo_send.chifen.magnetic.activity.MainBroadcastActivity;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
+import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
+import com.example.luke_imagevideo_send.http.base.SSHCallBack;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.message.GTCmdMessage;
@@ -110,5 +114,30 @@ public class DemoIntentService extends GTIntentService {
     @Override
     public void onNotificationMessageClicked(Context context, GTNotificationMessage msg) {
         Log.e("PUSH_LOG通知到达", msg.getContent() + "");
+        try {
+            String address = new getIp().getConnectIp();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //发送设置数据
+                    SSHExcuteCommandHelper.writeBefor(address, "XXX", new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            if (data != null) {
+                                Toast.makeText(MyApplication.getContext(), "111111", Toast.LENGTH_SHORT).show();
+                                SSHExcuteCommandHelper.disconnect();
+                            }
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            Toast.makeText(MyApplication.getContext(), s, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

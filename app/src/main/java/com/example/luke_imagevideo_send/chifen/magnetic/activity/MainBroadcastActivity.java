@@ -34,7 +34,9 @@ import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoTrafficControlProperty;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
+import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -143,15 +145,26 @@ public class MainBroadcastActivity extends BaseActivity {
         engine = ZegoExpressEngine.createEngine(profile, null);
         user = new ZegoUser(userID);
         engine.loginRoom(roomID, user);
+        //开/关摄像头。是否打开摄像头；"true" 表示打开摄像头；"false" 表示关闭摄像头。
         engine.enableCamera(true);
-        engine.muteMicrophone(false);
-        engine.muteSpeaker(false);
+        //设置是否静音（关闭麦克风）。"true" 表示静音（关闭麦克风）；"false" 表示开启麦克风
+        engine.muteMicrophone(true);
+        //设置是否静音（关闭音频输出）。"true" 表示静音(关闭音频输出)；"false" 表示开启音频输出
+        engine.muteSpeaker(true);
+        //是否停止发送音频流；true 表示不发送音频流；false 表示发送音频流；默认为 false。
+        engine.mutePublishStreamAudio (true);
+        //是否使用流量控制。true 表示开启流控，false 表示关闭流控。默认为 true。
+        // 开启流量控制可以使 SDK 根据当前上行网络环境状况，或者在1 对1 互动场景下根据对方下行网络环境状况，调节音视频推流码率大小，以保障效果流畅
+        engine.enableTrafficControl(true, ZegoTrafficControlProperty.BASIC.value());
+        //硬编码
+        engine.enableHardwareEncoder(true);
 
         ZegoVideoConfig videoConfig = new ZegoVideoConfig();
-        videoConfig.captureHeight = 720;
-        videoConfig.captureWidth = 1280;
-        videoConfig.encodeHeight = 720;
+        videoConfig.captureHeight = 320;
+        videoConfig.captureWidth = 180;
+        videoConfig.encodeHeight = 740;
         videoConfig.encodeWidth = 1280;
+//        videoConfig = new ZegoVideoConfig(ZegoVideoConfigPreset.PRESET_720P);
         // 设置视频配置
         engine.setVideoConfig(videoConfig);
         //停止或恢复发送音频流。
@@ -179,9 +192,9 @@ public class MainBroadcastActivity extends BaseActivity {
             //Target版本低于10.0直接获取MediaProjection
             mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
             setCustomCapture();
-//            ZegoCDNConfig config = new ZegoCDNConfig();
-//            // set CDN URL
-//            config.url = "rtmp://221.2.36.238:2012/live/live1";
+            ZegoCDNConfig config = new ZegoCDNConfig();
+            // set CDN URL
+//            config.url = "rtmp://221.2.36.238:2012/live/live1";p
 //            engine.enablePublishDirectToCDN(true, config);
             engine.startPublishingStream(publishStreamID);
             engine.addPublishCdnUrl(publishStreamID, "rtmp://221.2.36.238:2012/live/live1", new IZegoPublisherUpdateCdnUrlCallback() {
@@ -189,14 +202,13 @@ public class MainBroadcastActivity extends BaseActivity {
                 public void onPublisherUpdateCdnUrlResult(int errorCode) {
                     if (errorCode == 0){
                         // Add CDN URL successfully
-                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.register_success), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.rtc_success), Toast.LENGTH_LONG).show();
                     } else {
                         // Fail to add CDN URL.
-                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.faile_code), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainBroadcastActivity.this, getString(R.string.rtc_faile), Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
         }
     }
 
@@ -227,8 +239,16 @@ public class MainBroadcastActivity extends BaseActivity {
     public void onDestroyView() {
         super.onDestroyView();
         tbsView.goBack();
+        ZegoExpressEngine.destroyEngine(null);
+        engine.stopPreview();
         engine.logoutRoom(roomID);
         engine.stopPublishingStream();
+    }
+
+    @Override
+    protected void onDestroy() {
+        ZegoExpressEngine.destroyEngine(null);
+        super.onDestroy();
     }
 
     @Override
@@ -256,8 +276,6 @@ public class MainBroadcastActivity extends BaseActivity {
     @Override
     protected void rightClient() {
     }
-
-
 //    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 //    public void ScreenRecoder() {
 //        projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);

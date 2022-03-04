@@ -15,12 +15,10 @@
         app:header_title_right="刷新">
     </com.example.luke_imagevideo_send.http.views.Header>
 
-    <include layout="@layout/dialog_bluetooth_list"
-        />
+    <include layout="@layout/dialog_bluetooth_list"/>
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -353,11 +351,11 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/rbMenu"
+                        android:layout_width="0dp"
                         android:layout_weight="1"
                         style="@style/RadionButton"
                         android:text="数据集合" />
@@ -365,10 +363,11 @@
 
                     <Button
                         android:id="@+id/btnSave"
-                        android:layout_width="130dp"
-                        android:layout_height="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="50dp"
+                        android:layout_margin="5dp"
                         android:background="@drawable/button_selectssid"
                         android:text="保存" />
 
@@ -377,6 +376,8 @@
                     <RadioButton
                         android:id="@+id/rbBack"
                         style="@style/RadionButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:background="@drawable/bin"
                         android:text="恢复出厂" />
                 </LinearLayout>

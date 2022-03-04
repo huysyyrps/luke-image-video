@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -69,8 +68,8 @@ import butterknife.OnClick;
 public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
     @BindView(R.id.header)
     Header header;
-    @BindView(R.id.rbSave)
-    Button btnSave;
+//    @BindView(R.id.rbSave)
+//    Button btnSave;
     @BindView(R.id.rbMenu)
     RadioButton rbMenu;
     @BindView(R.id.tvSS)
@@ -412,14 +411,30 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     private void makeBackData(String data) {
         Log.e("mainchyactivity----", data);
         //测厚仪在设置界面APP不允许操作
-        if (data.equals("5b000b004e00005d") || data.equals("5b000b0055000000") || data.equals("5b000b0155000000")) {
+//        if (data.equals("5b000b004e00005d") || data.equals("5b000b0055000000") || data.equals("5b000b0155000000")) {
+//            Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
+//            timer.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+//                }
+//            }, 300);
+//        }
+        if (data.substring(4, 6).equals("0b")) {
             Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
                 }
-            }, 300);
+            }, 100);
+
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                }
+            }, 600);
         } else {
             if (data.substring(4, 6).equals("01")) {
                 if (data.length() == 20) {
@@ -804,7 +819,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack,R.id.btnSave})
+    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSure:
@@ -951,9 +966,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 });
                 break;
-            case R.id.btnSave:
-                showChart(HD);
-                break;
+//            case R.id.btnSave:
+//                showChart(HD);
+//                break;
         }
     }
 

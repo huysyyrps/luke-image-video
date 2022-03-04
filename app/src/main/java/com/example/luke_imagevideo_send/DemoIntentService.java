@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -83,7 +82,29 @@ public class DemoIntentService extends GTIntentService {
     // 通知到达，只有个推通道下发的通知会回调此方法
     @Override
     public void onNotificationMessageArrived(Context context, GTNotificationMessage msg) {
-        Log.e("PUSH_LOG通知到达", msg.getContent() + "");
+        try {
+            String address = new getIp().getConnectIp();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //发送设置数据
+                    SSHExcuteCommandHelper.writeBefor(address, "XXX", new SSHCallBack() {
+                        @Override
+                        public void confirm(String data) {
+                            Log.e("PUSH_LOG通知到达", data + "111111");
+                            SSHExcuteCommandHelper.disconnect();
+                        }
+
+                        @Override
+                        public void error(String s) {
+                            Log.e("PUSH_LOG通知到达", "222" + "111111");
+                        }
+                    });
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String appid = msg.getAppid();
         String taskid = msg.getTaskId();
         String messageid = msg.getMessageId();
@@ -114,30 +135,5 @@ public class DemoIntentService extends GTIntentService {
     @Override
     public void onNotificationMessageClicked(Context context, GTNotificationMessage msg) {
         Log.e("PUSH_LOG通知到达", msg.getContent() + "");
-        try {
-            String address = new getIp().getConnectIp();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //发送设置数据
-                    SSHExcuteCommandHelper.writeBefor(address, "XXX", new SSHCallBack() {
-                        @Override
-                        public void confirm(String data) {
-                            if (data != null) {
-                                Toast.makeText(MyApplication.getContext(), "111111", Toast.LENGTH_SHORT).show();
-                                SSHExcuteCommandHelper.disconnect();
-                            }
-                        }
-
-                        @Override
-                        public void error(String s) {
-                            Toast.makeText(MyApplication.getContext(), s, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -271,7 +271,6 @@
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:layout_gravity">right|top</item>
-        <item name="scaleType">centerInside</item>
         <item name="android:layout_marginRight">5dp</item>
         <item name="android:layout_marginTop">5dp</item>
     </style>

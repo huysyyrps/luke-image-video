@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +50,6 @@ import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.jiangdg.singalviewlib.SignalView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.litepal.tablemanager.Connector;
 
 import java.text.DecimalFormat;
@@ -70,8 +68,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     Header header;
 //    @BindView(R.id.rbSave)
 //    Button btnSave;
-    @BindView(R.id.rbMenu)
-    RadioButton rbMenu;
     @BindView(R.id.tvSS)
     TextView tvSS;
     @BindView(R.id.tvUnit)
@@ -92,10 +88,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvCancle;
     @BindView(R.id.tvSure)
     TextView tvSure;
-    @BindView(R.id.tvMax)
-    TextView tvMax;
-    @BindView(R.id.tvMin)
-    TextView tvMin;
     @BindView(R.id.gifView)
     GifView gifView;
     @BindView(R.id.recyclerView)
@@ -112,12 +104,9 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvFBot;
     @BindView(R.id.tvFMZT)
     TextView tvFMZT;
-    @BindView(R.id.rbBack)
-    RadioButton rbBack;
+    @BindView(R.id.btnBack)
+    TextView btnBack;
 
-    double Max = 0, Min = 0;
-    Handler handler = new Handler();
-    boolean exit = false;
     List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     List<BleDevice> bluetoothList = new ArrayList<>();
@@ -819,7 +808,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.rbMenu, R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.rbBack})
+    @OnClick({R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.btnBack})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSure:
@@ -909,17 +898,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 }
                 break;
-            case R.id.rbMenu:
-                exit = true;
-                Intent intent = new Intent(this, ValueActivity.class);
-                intent.putExtra("unit", tvUnit.getText().toString());
-                if (valueList.size() != 0) {
-                    EventBus.getDefault().postSticky(valueList);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "暂无数据", Toast.LENGTH_SHORT).show();
-                }
-                break;
             case R.id.tvSS:
                 tag = "SS";
                 initSS();
@@ -946,7 +924,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 tag = "FBOT";
                 showFDialog("请输入阈值下限");
                 break;
-            case R.id.rbBack:
+            case R.id.btnBack:
                 tag = "BACK";
                 new AlertDialogUtil(this).showSmallDialog("您确定要恢复出厂设置吗？", new DialogCallBack() {
                     @Override

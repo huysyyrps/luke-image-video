@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.mob.sdk'
 //华为二维码扫描
 apply plugin: 'com.huawei.agconnect'
+
+
 // 在MobSDK的扩展中注册SMSSDK的相关信息
 MobSDK {
     appKey "31bc5cafc24e4"
@@ -20,12 +22,11 @@ android {
         }
     }
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.example.luke_imagevideo_send"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -79,12 +80,15 @@ dependencies {
     implementation files('libs\\commons-logging.jar')
     implementation files('libs\\jsch-0.1.54.jar')
     implementation files('libs\\modbus4Android-1.2.jar')
+    implementation 'com.google.android.material:material:1.4.0'
 //    implementation project(path: ':picture_library')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
+
+
     implementation 'com.android.support:recyclerview-v7:28.+'
     // Retrofit库
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
@@ -136,8 +140,8 @@ dependencies {
     implementation 'com.clj.fastble:FastBleLib:2.3.4'
     implementation 'com.shark:screencapture:1.0.0'
     //时间选择器
-    compile 'com.contrarywind:Android-PickerView:3.2.6'
-    compile 'cn.yc:YCThreadPoolLib:1.3.3'
+    implementation 'com.contrarywind:Android-PickerView:3.2.6'
+    implementation 'cn.yc:YCThreadPoolLib:1.3.3'
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.github.jiangdongguo:SignalView:v1.0'
     implementation 'com.getui:gtsdk:3.2.4.0'  //个推SDK

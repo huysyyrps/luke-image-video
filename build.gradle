@@ -11,11 +11,12 @@ buildscript {
         maven {url 'https://developer.huawei.com/repo/'}
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.0.1"
+        classpath 'com.android.tools.build:gradle:4.0.1'
         //短信验证码
         classpath "com.mob.sdk:MobSDK:2018.0319.1724"
         //华为二维码扫描
         classpath 'com.huawei.agconnect:agcp:1.4.2.301'
+
     }
 }
 

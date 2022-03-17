@@ -14,7 +14,7 @@
         app:header_title="测厚仪"
         app:header_title_right="刷新"></com.example.luke_imagevideo_send.http.views.Header>
 
-    <include layout="@layout/dialog_bluetooth_list" />
+    <include layout="@layout/dialog_bluetooth_list"/>
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -323,7 +323,7 @@
                                 style="@style/TextView"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="CLOSS"
+                                android:text="CLOSE"
                                 android:textColor="@color/text_green" />
                             <ImageView
                                 android:layout_width="12dp"

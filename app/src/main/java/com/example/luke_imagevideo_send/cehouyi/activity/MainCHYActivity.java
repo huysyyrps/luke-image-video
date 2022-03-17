@@ -66,7 +66,7 @@ import butterknife.OnClick;
 public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
     @BindView(R.id.header)
     Header header;
-//    @BindView(R.id.rbSave)
+    //    @BindView(R.id.rbSave)
 //    Button btnSave;
     @BindView(R.id.tvSS)
     TextView tvSS;
@@ -106,12 +106,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     TextView tvFMZT;
     @BindView(R.id.btnBack)
     TextView btnBack;
+    @BindView(R.id.signaView)
+    SignalView signaView;
+    @BindView(R.id.tvSM)
+    TextView tvSM;
 
     List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     List<BleDevice> bluetoothList = new ArrayList<>();
-    @BindView(R.id.signaView)
-    SignalView signaView;
+
     private BluetoothAdapter mBluetoothAdapter;
     BleDevice myBleDevice;
     String ecServerId = "0000FFF0-0000-1000-8000-00805F9B34FB";
@@ -126,6 +129,10 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     Dialog myDialog;
     String HD = "";
     double com = 1;
+    boolean isFirst = true;
+    boolean fmOpen = true;
+    boolean mmUnit = true;
+    boolean smOpen = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -400,15 +407,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     private void makeBackData(String data) {
         Log.e("mainchyactivity----", data);
         //测厚仪在设置界面APP不允许操作
-//        if (data.equals("5b000b004e00005d") || data.equals("5b000b0055000000") || data.equals("5b000b0155000000")) {
-//            Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
-//            timer.schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-//                }
-//            }, 300);
-//        }
         if (data.substring(4, 6).equals("0b")) {
             Toast.makeText(this, "请退出测厚仪设置界面后设置", Toast.LENGTH_SHORT).show();
             timer.schedule(new TimerTask() {
@@ -425,24 +423,46 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 }
             }, 600);
         } else {
-            if (data.substring(4, 6).equals("01")) {
-                if (data.length() == 20) {
-                    HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
-                    String OH = data.substring(16, 18);
-                    if (tvUnit.getText().toString().equals("MM")) {
-                        DecimalFormat df = new DecimalFormat("###.00");
-                        makeFData(tvData, df, HD, "dataMM");
-                    } else if (tvUnit.getText().toString().equals("IN")) {
-                        DecimalFormat df = new DecimalFormat("###.000");
-                        makeFData(tvData, df, HD, "dataIN");
-                    }
-//                    if (rbSave.isChecked()) {
-//                        showChart(HD);
-//                    }
-                    signaView.setSignalValue((int) (8 - Long.parseLong(OH, 16)));
-                    Log.e("mainchyactivity-HD", HD);
-                    unit = tvUnit.getText().toString();
-                    nowData = tvData.getText().toString();
+            if (data.substring(4, 6).equals("08")) {
+                Log.e("mainchyactivity-08", data.substring(0, 16));
+                if (Long.parseLong(data.substring(8, 10), 16) == 0) {
+                    tvFMZT.setText("关");
+                    fmOpen = false;
+                } else if (Long.parseLong(data.substring(8, 10), 16) == 1) {
+                    tvFMZT.setText("开");
+                    fmOpen = true;
+                }
+
+                if (Long.parseLong(data.substring(10, 12), 16) == 0) {
+                    tvSM.setText("CLOSE");
+                    smOpen = false;
+                } else if (Long.parseLong(data.substring(10, 12), 16) == 1) {
+                    tvSM.setText("OPEN");
+                    smOpen = true;
+                }
+
+                if (Long.parseLong(data.substring(12, 14), 16) == 0) {
+                    tvUnit.setText("IN");
+                    mmUnit = false;
+                } else if (Long.parseLong(data.substring(12, 14), 16) == 1) {
+                    tvUnit.setText("MM");
+                    mmUnit = true;
+                }
+
+                if (isFirst) {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+                        }
+                    }, 100);
+                } else {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                        }
+                    }, 100);
                 }
             }
             if (data.substring(4, 6).equals("05")) {
@@ -456,23 +476,38 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 } else {
                     makeFData(tvSS, df, L, "ss");
                 }
-                if (tag.equals("SS")) {
-                    tag = "";
+                if (isFirst) {
                     timer.schedule(new TimerTask() {
                         @Override
-                        public void run() {//时间
-                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                        }
-                    }, 300);
-                } else if (tag.equals("") || tag.equals("UNIT")) {
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {//时间
+                        public void run() {
                             writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
                         }
                     }, 100);
+                }else {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                        }
+                    }, 100);
                 }
-                Log.e("mainchyactivity-ss", data.substring(0, 16));
+//                if (tag.equals("SS")) {
+//                    tag = "";
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {//时间
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+//                        }
+//                    }, 300);
+//                } else if (tag.equals("") || tag.equals("UNIT")) {
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {//时间
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
+//                        }
+//                    }, 100);
+//                }
+//                Log.e("mainchyactivity-ss", data.substring(0, 16));
             }
             if (data.substring(4, 6).equals("06")) {
                 String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
@@ -483,23 +518,38 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     DecimalFormat df = new DecimalFormat("###.000");
                     makeFData(tvFTop, df, L, "utilIF");
                 }
-                if (tag != null && tag.equals("FTOP")) {
-                    tag = "";
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                        }
-                    }, 300);
-                } else {
+                if (isFirst) {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
                         }
-                    }, 300);
+                    }, 100);
+                }else {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+                        }
+                    }, 100);
                 }
-                Log.e("mainchyactivity-FTop", data.substring(0, 16));
+//                if (tag != null && tag.equals("FTOP")) {
+//                    tag = "";
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+//                        }
+//                    }, 300);
+//                } else {
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
+//                        }
+//                    }, 300);
+//                }
+//                Log.e("mainchyactivity-FTop", data.substring(0, 16));
             }
             if (data.substring(4, 6).equals("07")) {
                 String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
@@ -516,78 +566,28 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
                     }
                 }, 100);
-                Log.e("mainchyactivity-FBot", data.substring(0, 16));
+                isFirst = false;
             }
-            if (data.substring(4, 6).equals("08")) {
-                String s = tvUnit.getText().toString();
-                Log.e("mainchyactivity-08", data.substring(0, 16));
-                if (Long.parseLong(data.substring(8, 10), 16) == 0) {
-                    tvFMZT.setText("关");
-                } else if (Long.parseLong(data.substring(8, 10), 16) == 1) {
-                    tvFMZT.setText("开");
-                }
-                if (Long.parseLong(data.substring(12, 14), 16) == 0) {
-                    tvUnit.setText("IN");
-                    if (unit.equals("IN")) {
-                        tvData.setText(nowData);
-                    } else {
-                        if (!tvData.getText().toString().equals("0.00")) {
-                            String fals = String.valueOf(Double.valueOf(tvData.getText().toString()) / 25.4);
-                            if (fals.split("\\.")[1].length() > 2) {
-                                tvData.setText(fals.substring(0, fals.split("\\.")[0].length() + 4));
-                            } else {
-                                tvData.setText(fals);
-                            }
-                        }
+            if (data.substring(4, 6).equals("01")) {
+                if (data.length() == 20) {
+                    HD = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
+                    String OH = data.substring(16, 18);
+                    if (tvUnit.getText().toString().equals("MM")) {
+                        DecimalFormat df = new DecimalFormat("###.00");
+                        makeFData(tvData, df, HD, "dataMM");
+                    } else if (tvUnit.getText().toString().equals("IN")) {
+                        DecimalFormat df = new DecimalFormat("###.000");
+                        makeFData(tvData, df, HD, "dataIN");
                     }
+                    signaView.setSignalValue((int) (8 - Long.parseLong(OH, 16)));
+                    Log.e("mainchyactivity-HD", HD);
+                    unit = tvUnit.getText().toString();
+                    nowData = tvData.getText().toString();
+                }
+            }
 
-                    if (tag.equals("UNIT") || tag.equals("")) {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
-                            }
-                        }, 100);
-                    } else {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                            }
-                        }, 100);
-                    }
-                } else if (Long.parseLong(data.substring(12, 14), 16) == 1) {
-                    tvUnit.setText("MM");
-                    if (unit.equals("MM")) {
-                        tvData.setText(nowData);
-                    } else {
-                        if (!tvData.getText().toString().equals("0.00")) {
-                            String fals = String.valueOf(Double.valueOf(tvData.getText().toString()) * 25.4);
-                            if (fals.split("\\.")[1].length() > 2) {
-                                tvData.setText(fals.substring(0, fals.split("\\.")[0].length() + 3));
-                            } else {
-                                tvData.setText(fals);
-                            }
-                        }
-                    }
-                    if (tag.equals("UNIT") || tag.equals("")) {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
-                            }
-                        }, 100);
-                    } else {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                            }
-                        }, 100);
-                    }
-                }
-            }
             if (data.substring(4, 6).equals("0a")) {
+                isFirst = true;
                 valueList.clear();
                 signaView.setSignalValue(0);
                 tvData.setText("0.00");
@@ -748,35 +748,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         }
     }
 
-    public void showChart(String f) {
-        if (valueList.size() >= 1100) {
-            Toast.makeText(this, "数据集合已满请删除数据", Toast.LENGTH_SHORT).show();
-        } else if (valueList.size() == 0 && com == 1) {
-            valueList.add(com + "");
-            valueList.add(f + "");
-        } else if (valueList.size() % 11 == 0) {
-            com++;
-            valueList.add(com + "");
-            valueList.add(f + "");
-        } else {
-            valueList.add(f + "");
-        }
-//        if (tvMax.getText().toString().equals("0.0")) {
-//            tvMax.setText(f + "");
-//            Max = f;
-//        } else if (f > Max) {
-//            tvMax.setText(f + "");
-//            Max = f;
-//        }
-//        if (tvMin.getText().toString().equals("0.0")) {
-//            tvMin.setText(f + "");
-//            Min = f;
-//        } else if (f < Min) {
-//            tvMin.setText(f + "");
-//            Min = f;
-//        }
-    }
-
     @Override
     public String format(int value) {
         Log.i("XXX", "format: value" + value);
@@ -808,113 +779,186 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     }
 
 
-    @OnClick({R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.btnBack})
+    @OnClick({R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.btnBack, R.id.tvSM})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tvCancle:
+                linearLayout.setVisibility(View.GONE);
+                break;
             case R.id.tvSure:
                 linearLayout.setVisibility(View.GONE);
-                if (tag.equals("SS")) {
-                    String ssdata = String.valueOf(onePicker.getValue() + 1)
-                            + String.valueOf(tenPicker.getValue())
-                            + String.valueOf(hundredPicker.getValue())
-                            + String.valueOf(thousandPicker.getValue());
-                    tvSS.setText(ssdata);
-                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {//时间
-                            String strHex2 = String.format("%04x", Integer.parseInt(ssdata)).toUpperCase();//高位补0
-                            strHex2 = strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                            writeCommand(myBleDevice, characteristicWrite, "5b0005" + strHex2 + "00005d");
-                        }
-                    }, 300);
-                }
-                if (tag.equals("FMZT")) {
-                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                    if (onePicker.getValue() == 0) {
-                        tvFMZT.setText("开");
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {//时间
-                                if (tvUnit.getText().toString().equals("MM")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
-                                } else if (tvUnit.getText().toString().equals("IN")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
-                                }
-                            }
-                        }, 300);
-                    } else {
-                        tvFMZT.setText("关");
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {//时间
-                                if (tvUnit.getText().toString().equals("MM")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
-                                } else if (tvUnit.getText().toString().equals("IN")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
-                                }
-                            }
-                        }, 300);
+                String ssdata = String.valueOf(onePicker.getValue() + 1)
+                        + String.valueOf(tenPicker.getValue())
+                        + String.valueOf(hundredPicker.getValue())
+                        + String.valueOf(thousandPicker.getValue());
+                tvSS.setText(ssdata);
+                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {//时间
+                        String strHex2 = String.format("%04x", Integer.parseInt(ssdata)).toUpperCase();//高位补0
+                        strHex2 = strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                        writeCommand(myBleDevice, characteristicWrite, "5b0005" + strHex2 + "00005d");
                     }
-                }
-                if (tag.equals("UNIT")) {
-                    writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                    if (onePicker.getValue() == 0) {
-                        tvUnit.setText("MM");
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                if (tvFMZT.getText().toString().equals("开")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
-                                } else if (tvFMZT.getText().toString().equals("关")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
-                                }
-                            }
-                        }, 300);
-//                        timer.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
-//                            }
-//                        }, 300);
-                    } else {
-                        tvUnit.setText("IN");
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                if (tvFMZT.getText().toString().equals("开")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
-                                } else if (tvFMZT.getText().toString().equals("关")) {
-                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
-                                }
-                            }
-                        }, 300);
-//                        timer.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
-//                            }
-//                        }, 300);
-                    }
-                }
+                }, 300);
                 break;
             case R.id.tvSS:
                 tag = "SS";
                 initSS();
                 linearLayout.setVisibility(View.VISIBLE);
                 break;
-            case R.id.tvCancle:
-                linearLayout.setVisibility(View.GONE);
-                break;
             case R.id.tvFMZT:
-                tag = "FMZT";
-                initZT();
-                linearLayout.setVisibility(View.VISIBLE);
+                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                if (tvFMZT.getText().toString().equals("开")) {
+                    tvFMZT.setText("关");
+                    if (mmUnit){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010001015d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
+                                }
+                            }, 300);
+
+                        }
+                    }else if (!mmUnit){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010001005d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
+                                }
+                            }, 300);
+                        }
+                    }
+                } else {
+                    tvFMZT.setText("开");
+                    if (mmUnit){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010101015d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
+                                }
+                            }, 300);
+                        }
+                    }else if (!mmUnit){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010101005d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
+                                }
+                            }, 300);
+                        }
+                    }
+                }
                 break;
             case R.id.tvUnit:
-                tag = "UNIT";
-                initZT();
-                linearLayout.setVisibility(View.VISIBLE);
+                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                if (tvUnit.getText().toString().equals("MM")) {
+                    tvUnit.setText("IN");
+                    if (fmOpen){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010101005d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100005d");
+                                }
+                            }, 300);
+
+                        }
+                    }else if (!fmOpen){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010001005d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000005d");
+                                }
+                            }, 300);
+
+                        }
+                    }
+                } else {
+                    tvUnit.setText("MM");
+                    if (fmOpen){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010101015d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010100015d");
+                                }
+                            }, 300);
+
+                        }
+                    }else if (!fmOpen){
+                        if (smOpen){
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010001015d");
+                                }
+                            }, 300);
+                        }else {
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {//时间
+                                    writeCommand(myBleDevice, characteristicWrite, "5b0008010000015d");
+                                }
+                            }, 300);
+
+                        }
+                    }
+                }
                 break;
             case R.id.tvFTop:
                 tag = "FTOP";
@@ -944,9 +988,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 });
                 break;
-//            case R.id.btnSave:
-//                showChart(HD);
-//                break;
         }
     }
 
@@ -1123,54 +1164,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         thousandPicker.setWrapSelectorWheel(false);
     }
 
-    private void initZT() {
-        if (tag.equals("FMZT")) {
-            String[] one = {"开", "关"};
-            onePicker.setFormatter(this);
-            onePicker.setOnValueChangedListener(this);
-            onePicker.setOnScrollListener(this);
-            onePicker.setMaxValue(one.length - 1);
-            onePicker.setDisplayedValues(one);
-            onePicker.setMinValue(0);
-            onePicker.setValue(0);
-            tenPicker.setVisibility(View.GONE);
-            hundredPicker.setVisibility(View.GONE);
-            thousandPicker.setVisibility(View.GONE);
-            //这里设置为不循环显示，默认值为true
-            onePicker.setWrapSelectorWheel(false);
-        }
-        if (tag.equals("OHZT")) {
-            String[] one = {"0", "1", "2", "3", "4", "5", "6", "7"};
-            onePicker.setFormatter(this);
-            onePicker.setOnValueChangedListener(this);
-            onePicker.setOnScrollListener(this);
-            onePicker.setMaxValue(one.length - 1);
-            onePicker.setDisplayedValues(one);
-            onePicker.setMinValue(0);
-            onePicker.setValue(0);
-            tenPicker.setVisibility(View.GONE);
-            hundredPicker.setVisibility(View.GONE);
-            thousandPicker.setVisibility(View.GONE);
-            //这里设置为不循环显示，默认值为true
-            onePicker.setWrapSelectorWheel(false);
-        }
-        if (tag.equals("UNIT")) {
-            String[] one = {"MM", "IN"};
-            onePicker.setFormatter(this);
-            onePicker.setOnValueChangedListener(this);
-            onePicker.setOnScrollListener(this);
-            onePicker.setMaxValue(one.length - 1);
-            onePicker.setDisplayedValues(one);
-            onePicker.setMinValue(0);
-            onePicker.setValue(0);
-            tenPicker.setVisibility(View.GONE);
-            hundredPicker.setVisibility(View.GONE);
-            thousandPicker.setVisibility(View.GONE);
-            //这里设置为不循环显示，默认值为true
-            onePicker.setWrapSelectorWheel(false);
-        }
-    }
-
     Handler messageHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -1185,5 +1178,4 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         BleManager.getInstance().disconnectAllDevice();
         BleManager.getInstance().destroy();
     }
-
 }

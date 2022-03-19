@@ -9,20 +9,19 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +36,6 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.cunoraz.gifview.library.GifView;
 import com.example.luke_imagevideo_send.R;
 import com.example.luke_imagevideo_send.cehouyi.util.BytesHexChange;
-import com.example.luke_imagevideo_send.cehouyi.util.PickerDivider;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.CallPolice;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
@@ -48,10 +46,19 @@ import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
 import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.views.Header;
+import com.github.gzuliyujiang.wheelpicker.NumberPicker;
+import com.github.gzuliyujiang.wheelpicker.OptionPicker;
+import com.github.gzuliyujiang.wheelpicker.contract.OnNumberPickedListener;
+import com.github.gzuliyujiang.wheelpicker.contract.OnOptionPickedListener;
+import com.github.gzuliyujiang.wheelpicker.contract.OnOptionSelectedListener;
+import com.github.gzuliyujiang.wheelview.contract.WheelFormatter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jiangdg.singalviewlib.SignalView;
 
-import org.litepal.tablemanager.Connector;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,39 +70,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener, NumberPicker.Formatter {
+public class MainCHYActivity extends BaseActivity implements OnNumberPickedListener, OnOptionPickedListener {
     @BindView(R.id.header)
     Header header;
-    //    @BindView(R.id.rbSave)
-//    Button btnSave;
     @BindView(R.id.tvSS)
     TextView tvSS;
     @BindView(R.id.tvUnit)
     TextView tvUnit;
     @BindView(R.id.tvData)
     TextView tvData;
-    @BindView(R.id.onePicker)
-    NumberPicker onePicker;
-    @BindView(R.id.tenPicker)
-    NumberPicker tenPicker;
-    @BindView(R.id.hundredPicker)
-    NumberPicker hundredPicker;
-    @BindView(R.id.thousandPicker)
-    NumberPicker thousandPicker;
-    @BindView(R.id.linearLayout)
-    RelativeLayout linearLayout;
-    @BindView(R.id.tvCancle)
-    TextView tvCancle;
-    @BindView(R.id.tvSure)
-    TextView tvSure;
     @BindView(R.id.gifView)
     GifView gifView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.linBleList)
     LinearLayout linBleList;
-    @BindView(R.id.llNumberPicker)
-    LinearLayout llNumberPicker;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
     @BindView(R.id.tvFTop)
@@ -110,11 +99,12 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     SignalView signaView;
     @BindView(R.id.tvSM)
     TextView tvSM;
+    @BindView(R.id.tvGroup)
+    TextView tvGroup;
 
     List<String> valueList = new ArrayList<>();
     BaseRecyclerPositionAdapter baseRecyclerAdapter;
     List<BleDevice> bluetoothList = new ArrayList<>();
-
     private BluetoothAdapter mBluetoothAdapter;
     BleDevice myBleDevice;
     String ecServerId = "0000FFF0-0000-1000-8000-00805F9B34FB";
@@ -124,26 +114,24 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
     BluetoothGattCharacteristic characteristicRead;
     BluetoothGattCharacteristic characteristicNotify;
     Timer timer = new Timer();
-    String getDate, tag = "";
+    String tag = "";
     String unit = "", nowData = "";
     Dialog myDialog;
     String HD = "";
-    double com = 1;
     boolean isFirst = true;
     boolean fmOpen = true;
     boolean mmUnit = true;
     boolean smOpen = true;
 
+    String selectTag = "";
+
+    String tsetData = "5b000901014e0400004d0800000b0c00005d5b0009010213100000e9130000bd1700005d5b00090103891b0000931f0000692300005d5b000901045427000000000000000000005d";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        //创建数据库
-        Connector.getDatabase();
-        new PickerDivider().setNumberPickerDivider(onePicker);
-        new PickerDivider().setNumberPickerDivider(tenPicker);
-        new PickerDivider().setNumberPickerDivider(hundredPicker);
-        new PickerDivider().setNumberPickerDivider(thousandPicker);
+
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         baseRecyclerAdapter = new BaseRecyclerPositionAdapter<BleDevice>(MainCHYActivity.this, R.layout.bluetooth_device_name_item, bluetoothList) {
@@ -177,6 +165,8 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         gifView.setVisibility(View.VISIBLE);
         gifView.setGifResource(R.drawable.bleloading1);
         gifView.play();
+
+        String[] testData1 = tsetData.split("5b000901");
     }
 
     @Override
@@ -260,6 +250,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         BleManager.getInstance().scan(new BleScanCallback() {
             @Override//会回到主线程
             public void onScanStarted(boolean success) {
+                Log.e("MainCHYActivity", "000");
             }
 
             @Override//扫描过程中所有被扫描到的结果回调
@@ -483,7 +474,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                             writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
                         }
                     }, 100);
-                }else {
+                } else {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -491,23 +482,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         }
                     }, 100);
                 }
-//                if (tag.equals("SS")) {
-//                    tag = "";
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {//时间
-//                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-//                        }
-//                    }, 300);
-//                } else if (tag.equals("") || tag.equals("UNIT")) {
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {//时间
-//                            writeCommand(myBleDevice, characteristicWrite, "5b0006000000005d");
-//                        }
-//                    }, 100);
-//                }
-//                Log.e("mainchyactivity-ss", data.substring(0, 16));
             }
             if (data.substring(4, 6).equals("06")) {
                 String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
@@ -525,7 +499,7 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                             writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
                         }
                     }, 100);
-                }else {
+                } else {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -533,23 +507,6 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         }
                     }, 100);
                 }
-//                if (tag != null && tag.equals("FTOP")) {
-//                    tag = "";
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-//                        }
-//                    }, 300);
-//                } else {
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            writeCommand(myBleDevice, characteristicWrite, "5b0007000000005d");
-//                        }
-//                    }, 300);
-//                }
-//                Log.e("mainchyactivity-FTop", data.substring(0, 16));
             }
             if (data.substring(4, 6).equals("07")) {
                 String L = data.substring(12, 14) + data.substring(10, 12) + data.substring(8, 10) + data.substring(6, 8);
@@ -598,6 +555,13 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
                     }
                 }, 300);
+            }
+
+            if (data.substring(4, 6).equals("09")) {
+                Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+                Log.e("XXX", data);
+                DecimalFormat df = new DecimalFormat("###.00");
+                makeFData(tvGroup, df, "00002754", "dataMM");
             }
         }
     }
@@ -748,78 +712,58 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         }
     }
 
-    @Override
-    public String format(int value) {
-        Log.i("XXX", "format: value" + value);
-        String tmpStr = String.valueOf(value);
-        if (value < 10) {
-            tmpStr = "0" + tmpStr;
-        }
-        return tmpStr;
-    }
-
-    @Override
-    public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch (scrollState) {
-            case NumberPicker.OnScrollListener.SCROLL_STATE_FLING:
-                Log.i("XXX", "onScrollStateChange: 后续滑动(飞呀飞，根本停下来)");
-                break;
-            case NumberPicker.OnScrollListener.SCROLL_STATE_IDLE:
-                Log.i("XXX", "onScrollStateChange: 不滑动");
-                break;
-            case NumberPicker.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                Log.i("XXX", "onScrollStateChange: 滑动中");
-                break;
-        }
-    }
-
-    @Override
-    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-        Log.i("XXX", "onValueChange: 原来的值 " + oldVal + "--新值: " + newVal);
-    }
-
-
-    @OnClick({R.id.tvSS, R.id.tvCancle, R.id.tvSure, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.btnBack, R.id.tvSM})
+    @OnClick({R.id.tvSS, R.id.tvFMZT, R.id.tvUnit, R.id.tvFTop, R.id.tvFBot, R.id.btnBack, R.id.tvSM, R.id.tvGroup})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tvCancle:
-                linearLayout.setVisibility(View.GONE);
-                break;
-            case R.id.tvSure:
-                linearLayout.setVisibility(View.GONE);
-                String ssdata = String.valueOf(onePicker.getValue() + 1)
-                        + String.valueOf(tenPicker.getValue())
-                        + String.valueOf(hundredPicker.getValue())
-                        + String.valueOf(thousandPicker.getValue());
-                tvSS.setText(ssdata);
-                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {//时间
-                        String strHex2 = String.format("%04x", Integer.parseInt(ssdata)).toUpperCase();//高位补0
-                        strHex2 = strHex2.substring(2, 4) + strHex2.substring(0, 2);
-                        writeCommand(myBleDevice, characteristicWrite, "5b0005" + strHex2 + "00005d");
-                    }
-                }, 300);
-                break;
             case R.id.tvSS:
-                tag = "SS";
-                initSS();
-                linearLayout.setVisibility(View.VISIBLE);
+                selectTag = "ssTag";
+                String JsonData = "";
+                JsonData = getJson(this, "sound_velocity.json");//获取assets目录下的json文件数据
+                List<String> data = new Gson().fromJson(JsonData, new TypeToken<List<String>>() {}.getType());
+                OptionPicker picker = new OptionPicker(this);
+                picker.setData(data);
+                picker.setDefaultValue(5920);
+                picker.setOnOptionPickedListener(this);
+                picker.getWheelLayout().setOnOptionSelectedListener(new OnOptionSelectedListener() {
+                    @Override
+                    public void onOptionSelected(int position, Object item) {
+                        picker.getTitleView().setText(picker.getWheelView().formatItem(position));
+                    }
+                });
+                picker.getWheelView().setStyle(R.style.WheelStyleDemo);
+                picker.show();
+                break;
+            case R.id.tvGroup:
+                selectTag = "groupTag";
+                String JsonGroupData = "";
+                JsonGroupData = getJson(this, "group.json");//获取assets目录下的json文件数据
+                List<String> groupListData = new Gson().fromJson(JsonGroupData, new TypeToken<List<String>>() {}.getType());
+                OptionPicker groupPicker = new OptionPicker(this);
+                groupPicker.setData(groupListData);
+                groupPicker.setDefaultValue(01);
+                groupPicker.setOnOptionPickedListener(this);
+                groupPicker.getWheelLayout().setOnOptionSelectedListener(new OnOptionSelectedListener() {
+                    @Override
+                    public void onOptionSelected(int position, Object item) {
+                        groupPicker.getTitleView().setText(groupPicker.getWheelView().formatItem(position));
+                    }
+                });
+                groupPicker.getWheelView().setStyle(R.style.WheelStyleDemo);
+                groupPicker.show();
                 break;
             case R.id.tvFMZT:
                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
                 if (tvFMZT.getText().toString().equals("开")) {
                     tvFMZT.setText("关");
-                    if (mmUnit){
-                        if (smOpen){
+                    if (mmUnit) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010001015d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -828,15 +772,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                             }, 300);
 
                         }
-                    }else if (!mmUnit){
-                        if (smOpen){
+                    } else if (!mmUnit) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010001005d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -847,15 +791,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 } else {
                     tvFMZT.setText("开");
-                    if (mmUnit){
-                        if (smOpen){
+                    if (mmUnit) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010101015d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -863,15 +807,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                                 }
                             }, 300);
                         }
-                    }else if (!mmUnit){
-                        if (smOpen){
+                    } else if (!mmUnit) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010101005d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -886,15 +830,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
                 if (tvUnit.getText().toString().equals("MM")) {
                     tvUnit.setText("IN");
-                    if (fmOpen){
-                        if (smOpen){
+                    if (fmOpen) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010101005d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -903,15 +847,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                             }, 300);
 
                         }
-                    }else if (!fmOpen){
-                        if (smOpen){
+                    } else if (!fmOpen) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010001005d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -923,15 +867,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                     }
                 } else {
                     tvUnit.setText("MM");
-                    if (fmOpen){
-                        if (smOpen){
+                    if (fmOpen) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010101015d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -940,15 +884,15 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                             }, 300);
 
                         }
-                    }else if (!fmOpen){
-                        if (smOpen){
+                    } else if (!fmOpen) {
+                        if (smOpen) {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
                                     writeCommand(myBleDevice, characteristicWrite, "5b0008010001015d");
                                 }
                             }, 300);
-                        }else {
+                        } else {
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {//时间
@@ -962,11 +906,59 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                 break;
             case R.id.tvFTop:
                 tag = "FTOP";
-                showFDialog("请输入阈值上限");
+                selectTag = "fTopTag";
+                NumberPicker fTopPicker = new NumberPicker(this);
+                fTopPicker.setBodyWidth(120);
+                fTopPicker.setOnNumberPickedListener(this);
+                fTopPicker.setFormatter(new WheelFormatter() {
+                    @Override
+                    public String formatItem(@NonNull Object item) {
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        return df.format(item);
+                    }
+                });
+                if (tvUnit.getText().toString().equals("MM")){
+                    fTopPicker.setRange(495f, 500f, 0.01f);
+                }else {
+                    fTopPicker.setRange(495f, 500f, 0.01f);
+                }
+                fTopPicker.setDefaultValue(5f);
+                fTopPicker.getTitleView().setText("自定义阈值");
+                fTopPicker.getTitleView().setTextColor(getResources().getColor(R.color.color_bg_selected1));
+                fTopPicker.getTitleView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFDialog("请输入阈值上限");
+                        fTopPicker.dismiss();
+                    }
+                });
+                fTopPicker.show();
                 break;
             case R.id.tvFBot:
                 tag = "FBOT";
-                showFDialog("请输入阈值下限");
+                selectTag = "fTopTag";
+                NumberPicker fBotPicker = new NumberPicker(this);
+                fBotPicker.setBodyWidth(120);
+                fBotPicker.setOnNumberPickedListener(this);
+                fBotPicker.setFormatter(new WheelFormatter() {
+                    @Override
+                    public String formatItem(@NonNull Object item) {
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        return df.format(item);
+                    }
+                });
+                fBotPicker.setRange(495f, 500f, 0.01f);
+                fBotPicker.setDefaultValue(5f);
+                fBotPicker.getTitleView().setText("自定义阈值");
+                fBotPicker.getTitleView().setTextColor(getResources().getColor(R.color.color_bg_selected1));
+                fBotPicker.getTitleView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showFDialog("请输入阈值下限");
+                        fBotPicker.dismiss();
+                    }
+                });
+                fBotPicker.show();
                 break;
             case R.id.btnBack:
                 tag = "BACK";
@@ -1092,76 +1084,13 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
                         Toast.makeText(MainCHYActivity.this, title, Toast.LENGTH_SHORT).show();
                     }
                 }
+                myDialog.dismiss();
             }
 
             @Override
             public void cancel(String name2, Dialog dialog) {
             }
         });
-    }
-
-    private void initSS() {
-        String[] one = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        onePicker.setFormatter(this);
-        onePicker.setOnValueChangedListener(this);
-        onePicker.setOnScrollListener(this);
-        onePicker.setDisplayedValues(null);
-        onePicker.setMaxValue(one.length - 1);
-        onePicker.setDisplayedValues(one);
-        onePicker.setMinValue(0);
-        onePicker.setValue(5);
-        //设置为对当前值不可编辑
-        onePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-
-        String[] ten = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        tenPicker.setFormatter(this);
-        tenPicker.setOnValueChangedListener(this);
-        tenPicker.setOnScrollListener(this);
-        tenPicker.setDisplayedValues(null);
-        tenPicker.setMaxValue(ten.length - 1);
-        tenPicker.setDisplayedValues(ten);
-        tenPicker.setMinValue(0);
-        tenPicker.setValue(9);
-        //设置为对当前值不可编辑
-        tenPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-
-        String[] hundred = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        hundredPicker.setFormatter(this);
-        hundredPicker.setOnValueChangedListener(this);
-        hundredPicker.setOnScrollListener(this);
-        hundredPicker.setDisplayedValues(null);
-        hundredPicker.setMaxValue(hundred.length - 1);
-        hundredPicker.setDisplayedValues(hundred);
-        hundredPicker.setMinValue(0);
-        hundredPicker.setValue(2);
-        //设置为对当前值不可编辑
-        hundredPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-
-        String[] thousand = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        thousandPicker.setFormatter(this);
-        thousandPicker.setOnValueChangedListener(this);
-        thousandPicker.setOnScrollListener(this);
-        thousandPicker.setDisplayedValues(null);
-        thousandPicker.setMaxValue(thousand.length - 1);
-        thousandPicker.setDisplayedValues(thousand);
-        thousandPicker.setMinValue(0);
-        thousandPicker.setValue(0);
-        //设置为对当前值不可编辑
-        thousandPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-
-        onePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        tenPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        hundredPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        thousandPicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
-        onePicker.setVisibility(View.VISIBLE);
-        tenPicker.setVisibility(View.VISIBLE);
-        hundredPicker.setVisibility(View.VISIBLE);
-        thousandPicker.setVisibility(View.VISIBLE);
-        //这里设置为不循环显示，默认值为true
-        onePicker.setWrapSelectorWheel(false);
-        tenPicker.setWrapSelectorWheel(false);
-        hundredPicker.setWrapSelectorWheel(false);
-        thousandPicker.setWrapSelectorWheel(false);
     }
 
     Handler messageHandler = new Handler() {
@@ -1178,4 +1107,85 @@ public class MainCHYActivity extends BaseActivity implements NumberPicker.OnValu
         BleManager.getInstance().disconnectAllDevice();
         BleManager.getInstance().destroy();
     }
+
+    //读取Json文件
+    private static String getJson(Context context, String fileName) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            AssetManager assetManager = context.getAssets();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(
+                    assetManager.open(fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public void onNumberPicked(int position, Number item) {
+        if (selectTag.equals("fTopTag")){
+            String fTopData = String.valueOf(new Double(Double.valueOf(String.valueOf(item)) * 1000).intValue());
+            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    String strHex2 = String.format("%08x", Integer.parseInt(fTopData)).toUpperCase();//高位补0
+                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                    //5b0006000000005d
+                    writeCommand(myBleDevice, characteristicWrite, "5b0006" + strHex2 + "5d");
+                }
+            }, 300);
+        }
+        if (selectTag.equals("fBotTag")){
+            String fBotData = String.valueOf(new Double(Double.valueOf(String.valueOf(item)) * 1000).intValue());
+            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    String strHex2 = String.format("%08x", Integer.parseInt(fBotData)).toUpperCase();//高位补0
+                    strHex2 = strHex2.substring(6, 8) + strHex2.substring(4, 6) + strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                    //5b0006000000005d
+                    writeCommand(myBleDevice, characteristicWrite, "5b0007" + strHex2 + "5d");
+                }
+            }, 300);
+        }
+    }
+
+    /**
+     * 底部弹出框选择数据后的操作
+     *
+     * @param position
+     * @param item
+     */
+    @Override
+    public void onOptionPicked(int position, Object item) {
+        if (selectTag.equals("ssTag")) {
+            tvSS.setText(item.toString());
+            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    String strHex2 = String.format("%04x", Integer.parseInt(item.toString())).toUpperCase();//高位补0
+                    strHex2 = strHex2.substring(2, 4) + strHex2.substring(0, 2);
+                    writeCommand(myBleDevice, characteristicWrite, "5b0005" + strHex2 + "00005d");
+                }
+            }, 300);
+        }
+        if (selectTag.equals("groupTag")) {
+            tvGroup.setText(item.toString());
+            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {//时间
+                    writeCommand(myBleDevice, characteristicWrite, "5b0009"+item.toString()+"0000005d");
+                }
+            }, 300);
+        }
+    }
+
 }

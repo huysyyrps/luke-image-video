@@ -81,6 +81,7 @@ dependencies {
     implementation files('libs\\jsch-0.1.54.jar')
     implementation files('libs\\modbus4Android-1.2.jar')
     implementation 'com.google.android.material:material:1.4.0'
+    implementation files('libs\\poi-3.9-20121203.jar')
 //    implementation project(path: ':picture_library')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -151,4 +152,8 @@ dependencies {
     implementation 'fm.jiecao:jiecaovideoplayer:5.5.4'
     api 'com.tencent.tbs:tbssdk:44132'
     implementation 'com.github.zegolibrary:express-video:2.15.0'
+
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.7'
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:Common:4.1.7'
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelView:4.1.7'
 }

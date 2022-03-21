@@ -1,14 +1,11 @@
 package com.example.luke_imagevideo_send.cehouyi.activity;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,34 +14,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.clj.fastble.BleManager;
-import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.callback.BleNotifyCallback;
-import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
-import com.clj.fastble.scan.BleScanRuleConfig;
-import com.cunoraz.gifview.library.GifView;
 import com.example.luke_imagevideo_send.R;
+import com.example.luke_imagevideo_send.cehouyi.util.BleConstant;
+import com.example.luke_imagevideo_send.cehouyi.util.BleWriteCallBack;
 import com.example.luke_imagevideo_send.cehouyi.util.BytesHexChange;
+import com.example.luke_imagevideo_send.cehouyi.util.ConstandData;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.CallPolice;
 import com.example.luke_imagevideo_send.http.base.AlertDialogUtil;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
-import com.example.luke_imagevideo_send.http.base.BaseRecyclerPositionAdapter;
-import com.example.luke_imagevideo_send.http.base.BaseViewHolder;
-import com.example.luke_imagevideo_send.http.base.Constant;
 import com.example.luke_imagevideo_send.http.base.DialogCallBack;
 import com.example.luke_imagevideo_send.http.base.DialogCallBackTwo;
-import com.example.luke_imagevideo_send.http.base.ProgressDialogUtil;
 import com.example.luke_imagevideo_send.http.views.Header;
 import com.github.gzuliyujiang.wheelpicker.NumberPicker;
 import com.github.gzuliyujiang.wheelpicker.OptionPicker;
@@ -64,7 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,12 +66,6 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
     TextView tvUnit;
     @BindView(R.id.tvData)
     TextView tvData;
-    @BindView(R.id.gifView)
-    GifView gifView;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @BindView(R.id.linBleList)
-    LinearLayout linBleList;
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
     @BindView(R.id.tvFTop)
@@ -103,16 +84,7 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
     TextView tvGroup;
 
     List<String> valueList = new ArrayList<>();
-    BaseRecyclerPositionAdapter baseRecyclerAdapter;
-    List<BleDevice> bluetoothList = new ArrayList<>();
-    private BluetoothAdapter mBluetoothAdapter;
-    BleDevice myBleDevice;
-    String ecServerId = "0000FFF0-0000-1000-8000-00805F9B34FB";
-    String ecWriteCharacteristicId = "0000FFF2-0000-1000-8000-00805F9B34FB";
-    String ecReadCharacteristicId = "0000FFF1-0000-1000-8000-00805F9B34FB";
-    BluetoothGattCharacteristic characteristicWrite;
-    BluetoothGattCharacteristic characteristicRead;
-    BluetoothGattCharacteristic characteristicNotify;
+
     Timer timer = new Timer();
     String tag = "";
     String unit = "", nowData = "";
@@ -122,51 +94,30 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
     boolean fmOpen = true;
     boolean mmUnit = true;
     boolean smOpen = true;
-
     String selectTag = "";
-
-    String tsetData = "5b000901014e0400004d0800000b0c00005d5b0009010213100000e9130000bd1700005d5b00090103891b0000931f0000692300005d5b000901045427000000000000000000005d";
+    BleDevice myBleDevice = ConstandData.myBleDevice;
+    BluetoothGattCharacteristic characteristicWrite = ConstandData.characteristicWrite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
 
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(manager);
-        baseRecyclerAdapter = new BaseRecyclerPositionAdapter<BleDevice>(MainCHYActivity.this, R.layout.bluetooth_device_name_item, bluetoothList) {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("ExitApp");
+        this.registerReceiver(this.broadcastReceiver, filter);
+
+        new BleConstant().indicateset(ConstandData.myBleDevice, ConstandData.characteristicRead, this, new BleWriteCallBack() {
             @Override
-            public void convert(BaseViewHolder holder, BleDevice device, int selectposition) {
-                if (bluetoothList.size() == 0) {
-                    AlertDialogUtil alertDialogUtil = new AlertDialogUtil(MainCHYActivity.this);
-                    alertDialogUtil.showSmallDialog("暂无可连接蓝牙");
-                } else {
-                    if (device.getName() != null) {
-                        holder.setText(R.id.textView, device.getName());
-                    }
-
-                    holder.setOnClickListener(R.id.textView, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            BleManager.getInstance().cancelScan();
-                            gifView.setVisibility(View.GONE);
-                            gifView.isPaused();
-                            //连接
-                            connect(device);
-                        }
-                    });
-                }
+            public void onBleWriteCallBack(BleDevice bleDevice, BluetoothGattCharacteristic characteristicWrite) {
+                sendData();
             }
-        };
-        recyclerView.setAdapter(baseRecyclerAdapter);
 
-        initBluetooth();
-
-        gifView.setVisibility(View.VISIBLE);
-        gifView.setGifResource(R.drawable.bleloading1);
-        gifView.play();
-
-        String[] testData1 = tsetData.split("5b000901");
+            @Override
+            public void onBleWriteBackCallBack(String data) {
+                makeBackData(data);
+            }
+        });
     }
 
     @Override
@@ -181,177 +132,8 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
 
     @Override
     protected void rightClient() {
-        bluetoothList.clear();
-        baseRecyclerAdapter.notifyDataSetChanged();
-        gifView.play();
-        gifView.setVisibility(View.VISIBLE);
-        startScan();
     }
 
-    /**
-     * 初始化扫描蓝牙
-     */
-    private void initBluetooth() {
-        BleManager.getInstance().init(getApplication());
-        BleManager.getInstance()
-                .enableLog(true)
-                .setReConnectCount(1, 5000)
-                .setOperateTimeout(10000);
-
-        boolean bl = BleManager.getInstance().isSupportBle();
-        if (!bl) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // 初始化 Bluetooth adapter, 通过蓝牙管理器得到一个参考蓝牙适配器(API必须在以上android4.3或以上和版本)
-        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        // 检查设备上是否支持蓝牙
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // 检查蓝牙是否开启
-        if (!mBluetoothAdapter.isEnabled()) {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, Constant.TAG_ONE);
-                return;
-            }
-        }
-        startScan();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.TAG_ONE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, R.string.please_open_bluetooth_to_use_ble_function, Toast.LENGTH_SHORT).show();
-            } else if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(this, R.string.please_open_bluetooth_to_use_ble_function, Toast.LENGTH_SHORT).show();
-                // 扫描蓝牙设备
-                startScan();
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * 蓝牙扫描
-     */
-    private void startScan() {
-        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
-                .setScanTimeOut(15000)              // 扫描超时时间，可选，默认10秒
-                .build();
-        BleManager.getInstance().initScanRule(scanRuleConfig);
-        BleManager.getInstance().scan(new BleScanCallback() {
-            @Override//会回到主线程
-            public void onScanStarted(boolean success) {
-                Log.e("MainCHYActivity", "000");
-            }
-
-            @Override//扫描过程中所有被扫描到的结果回调
-            public void onLeScan(BleDevice bleDevice) {
-                super.onLeScan(bleDevice);
-            }
-
-            @Override//扫描过程中的所有过滤后的结果回调
-            public void onScanning(BleDevice bleDevice) {
-                Log.e("MainCHYActivity", bleDevice.getName() + "111");
-                if (!bluetoothList.contains(bleDevice)) {
-                    if (bleDevice.getName() != null && !bleDevice.getName().equals("")) {
-                        bluetoothList.add(bleDevice);
-                        baseRecyclerAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-
-            @Override//本次扫描时段内所有被扫描且过滤后的设备集合
-            public void onScanFinished(List<BleDevice> scanResultList) {
-                gifView.pause();
-                gifView.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    /**
-     * 连接
-     */
-    private void connect(final BleDevice bleDevice) {
-        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
-            @Override//开始连接
-            public void onStartConnect() {
-                ProgressDialogUtil.startLoad(MainCHYActivity.this, getResources().getString(R.string.connecting));
-            }
-
-            @Override
-            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                ProgressDialogUtil.stopLoad();
-                Toast.makeText(MainCHYActivity.this, exception.getCode() + "", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                ProgressDialogUtil.stopLoad();
-                Toast.makeText(MainCHYActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
-                linBleList.setVisibility(View.GONE);
-                frameLayout.setVisibility(View.VISIBLE);
-                header.setRightTv(false);
-                myBleDevice = bleDevice;
-                BluetoothGattService service = gatt.getService(UUID.fromString(ecServerId));
-                characteristicWrite = service.getCharacteristic(UUID.fromString(ecWriteCharacteristicId));
-                characteristicRead = service.getCharacteristic(UUID.fromString(ecReadCharacteristicId));
-                characteristicNotify = service.getCharacteristic(UUID.fromString(ecReadCharacteristicId));
-                indicateset(bleDevice, characteristicRead);
-            }
-
-            @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                ProgressDialogUtil.stopLoad();
-                if (bluetoothList.contains(bleDevice)) {
-                    bluetoothList.remove(bleDevice);
-                    baseRecyclerAdapter.notifyDataSetChanged();
-                }
-                if (myDialog != null) {
-                    myDialog.dismiss();
-                }
-                Toast.makeText(MainCHYActivity.this, getString(R.string.active_disconnected), Toast.LENGTH_LONG).show();
-                linBleList.setVisibility(View.VISIBLE);
-                frameLayout.setVisibility(View.GONE);
-                header.setRightTv(true);
-                bluetoothList.clear();
-                baseRecyclerAdapter.notifyDataSetChanged();
-                gifView.play();
-                gifView.setVisibility(View.VISIBLE);
-                startScan();
-            }
-        });
-    }
-
-    private void indicateset(final BleDevice bleDevice, final BluetoothGattCharacteristic characteristic) {
-        Log.e("mainactivity-notify", characteristic.getService().getUuid().toString());
-        BleManager.getInstance().notify(bleDevice, ecServerId, ecReadCharacteristicId, new BleNotifyCallback() {
-            @Override
-            public void onNotifySuccess() {
-                sendData();
-            }
-
-            @Override
-            public void onNotifyFailure(BleException exception) {
-                Toast.makeText(MainCHYActivity.this, "通知服务开启失败", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCharacteristicChanged(byte[] data) {
-                makeBackData(new BytesHexChange().bytes2hex(data));
-                // 打开通知后，设备发过来的数据将在这里出现
-                Log.e("mainchyactivity-notify", new BytesHexChange().bytes2hex(data));
-            }
-        });
-    }
 
     /**
      * 写入数据
@@ -360,14 +142,14 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
+                writeCommand(ConstandData.myBleDevice, ConstandData.characteristicWrite, "5b0001000000005d");
             }
         }, 100);
 
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                writeCommand(myBleDevice, characteristicWrite, "5b0008000000005d");
+                writeCommand(ConstandData.myBleDevice, ConstandData.characteristicWrite, "5b0008000000005d");
             }
         }, 600);
     }
@@ -375,8 +157,8 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
     /**
      * 写入数据回调
      */
-    private void writeCommand(final BleDevice bleDevice, final BluetoothGattCharacteristic characteristic, String sengData) {
-        BleManager.getInstance().write(bleDevice, ecServerId, ecWriteCharacteristicId, new BytesHexChange().hexStringToBytes(sengData), new BleWriteCallback() {
+    public void writeCommand(final BleDevice bleDevice, final BluetoothGattCharacteristic characteristic, String sengData) {
+        BleManager.getInstance().write(bleDevice, ConstandData.ecServerId, ConstandData.ecWriteCharacteristicId, new BytesHexChange().hexStringToBytes(sengData), new BleWriteCallback() {
             @Override
             public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
                 String justStringWrite = new BytesHexChange().bytes2hex(justWrite);
@@ -440,21 +222,22 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                     mmUnit = true;
                 }
 
-                if (isFirst) {
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
-                        }
-                    }, 100);
-                } else {
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
-                        }
-                    }, 100);
-                }
+//                if (isFirst) {
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
+//                        }
+//                    }, 100);
+//                } else {
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            writeCommand(myBleDevice, characteristicWrite, "5b0001000000Ff5d");
+//                        }
+//                    }, 100);
+//                }
+                writeCommand(myBleDevice, characteristicWrite, "5b0005000000005d");
             }
             if (data.substring(4, 6).equals("05")) {
                 String L = data.substring(8, 10) + data.substring(6, 8);
@@ -558,10 +341,7 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
             }
 
             if (data.substring(4, 6).equals("09")) {
-                Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
-                Log.e("XXX", data);
-                DecimalFormat df = new DecimalFormat("###.00");
-                makeFData(tvGroup, df, "00002754", "dataMM");
+                Log.e("XXXXX", data);
             }
         }
     }
@@ -719,7 +499,8 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                 selectTag = "ssTag";
                 String JsonData = "";
                 JsonData = getJson(this, "sound_velocity.json");//获取assets目录下的json文件数据
-                List<String> data = new Gson().fromJson(JsonData, new TypeToken<List<String>>() {}.getType());
+                List<String> data = new Gson().fromJson(JsonData, new TypeToken<List<String>>() {
+                }.getType());
                 OptionPicker picker = new OptionPicker(this);
                 picker.setData(data);
                 picker.setDefaultValue(5920);
@@ -734,22 +515,13 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                 picker.show();
                 break;
             case R.id.tvGroup:
-                selectTag = "groupTag";
-                String JsonGroupData = "";
-                JsonGroupData = getJson(this, "group.json");//获取assets目录下的json文件数据
-                List<String> groupListData = new Gson().fromJson(JsonGroupData, new TypeToken<List<String>>() {}.getType());
-                OptionPicker groupPicker = new OptionPicker(this);
-                groupPicker.setData(groupListData);
-                groupPicker.setDefaultValue(01);
-                groupPicker.setOnOptionPickedListener(this);
-                groupPicker.getWheelLayout().setOnOptionSelectedListener(new OnOptionSelectedListener() {
-                    @Override
-                    public void onOptionSelected(int position, Object item) {
-                        groupPicker.getTitleView().setText(groupPicker.getWheelView().formatItem(position));
-                    }
-                });
-                groupPicker.getWheelView().setStyle(R.style.WheelStyleDemo);
-                groupPicker.show();
+                Intent intent = new Intent(this,GroupDataActivity.class);
+                if (tvUnit.getText().toString().equals("MM")){
+                    intent.putExtra("unit","dataMM");
+                }else if (tvUnit.getText().toString().equals("IN")){
+                    intent.putExtra("unit","dataIN");
+                }
+                startActivity(intent);
                 break;
             case R.id.tvFMZT:
                 writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
@@ -917,10 +689,10 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                         return df.format(item);
                     }
                 });
-                if (tvUnit.getText().toString().equals("MM")){
+                if (tvUnit.getText().toString().equals("MM")) {
                     fTopPicker.setRange(495f, 500f, 0.01f);
-                }else {
-                    fTopPicker.setRange(495f, 500f, 0.01f);
+                } else {
+                    fTopPicker.setRange(19f, 18f, 0.001f);
                 }
                 fTopPicker.setDefaultValue(5f);
                 fTopPicker.getTitleView().setText("自定义阈值");
@@ -947,7 +719,11 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                         return df.format(item);
                     }
                 });
-                fBotPicker.setRange(495f, 500f, 0.01f);
+                if (tvUnit.getText().toString().equals("MM")) {
+                    fBotPicker.setRange(495f, 500f, 0.01f);
+                } else {
+                    fBotPicker.setRange(19f, 18f, 0.001f);
+                }
                 fBotPicker.setDefaultValue(5f);
                 fBotPicker.getTitleView().setText("自定义阈值");
                 fBotPicker.getTitleView().setTextColor(getResources().getColor(R.color.color_bg_selected1));
@@ -1128,7 +904,7 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
 
     @Override
     public void onNumberPicked(int position, Number item) {
-        if (selectTag.equals("fTopTag")){
+        if (selectTag.equals("fTopTag")) {
             String fTopData = String.valueOf(new Double(Double.valueOf(String.valueOf(item)) * 1000).intValue());
             writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
             timer.schedule(new TimerTask() {
@@ -1141,7 +917,7 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                 }
             }, 300);
         }
-        if (selectTag.equals("fBotTag")){
+        if (selectTag.equals("fBotTag")) {
             String fBotData = String.valueOf(new Double(Double.valueOf(String.valueOf(item)) * 1000).intValue());
             writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
             timer.schedule(new TimerTask() {
@@ -1176,16 +952,13 @@ public class MainCHYActivity extends BaseActivity implements OnNumberPickedListe
                 }
             }, 300);
         }
-        if (selectTag.equals("groupTag")) {
-            tvGroup.setText(item.toString());
-            writeCommand(myBleDevice, characteristicWrite, "5b0001000000005d");
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {//时间
-                    writeCommand(myBleDevice, characteristicWrite, "5b0009"+item.toString()+"0000005d");
-                }
-            }, 300);
-        }
     }
+
+    protected BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
 
 }

@@ -80,7 +80,7 @@
     <string name="ble_not_supported">本设备不支持蓝牙</string>
     <string name="please_open_bluetooth_to_use_ble_function">请打开蓝牙以使用蓝牙功能</string>
     <string name="start_scanning_bluetooth_device">开始扫描蓝牙设备&#8230;</string>
-    <string name="connecting">开始扫描蓝牙设备&#8230;</string>
+    <string name="connecting">开始连接蓝牙设备&#8230;</string>
     <string name="active_disconnected">蓝牙连接已断开</string>
     <string name="write_failure">命令执行失败</string>
     <string name="f_top">阀值上限</string>

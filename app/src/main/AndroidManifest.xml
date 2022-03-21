@@ -64,15 +64,9 @@
         android:theme="@style/NoAction"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity
-            android:name=".cehouyi.activity.MainLK600Activity"
-            android:screenOrientation="landscape">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+        <activity android:name=".cehouyi.activity.GroupDataActivity" />
+        <activity android:name=".cehouyi.activity.MainLK600Activity" />
         <activity android:name=".chifen.camera.activity.DailyActivity" />
         <activity android:name=".chifen.camera.activity.CXContextActivity" />
         <activity android:name=".chifen.camera.activity.CFContextActivity" />
@@ -99,15 +93,12 @@
         <!-- android:enabled="true" -->
         <!-- android:foregroundServiceType="mediaProjection"/> -->
         <activity android:name=".main.activity.AgreeActivity" />
-        <activity android:name=".main.activity.LoginActivity">
-        </activity>
+        <activity android:name=".main.activity.LoginActivity" />
         <activity android:name=".main.activity.RegisterActivity" />
         <activity android:name=".main.activity.CheckPassWordActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".main.activity.WelcomeActivity">
-
-        </activity>
+        <activity android:name=".main.activity.WelcomeActivity" />
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".main.activity.DefinedActivity" />
@@ -135,13 +126,15 @@
             android:name=".chifen.camera.activity.SeeImageOrVideoActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
-        <activity android:name=".cehouyi.activity.MainCHYActivity">
+        <activity android:name=".cehouyi.activity.BleListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".cehouyi.activity.MainCHYActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".cehouyi.activity.MainMenuOutActivity" />
         <activity android:name=".cehouyi.activity.ValueActivity" />
     </application>

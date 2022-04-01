@@ -98,7 +98,12 @@
         <activity android:name=".main.activity.CheckPassWordActivity" />
         <activity android:name=".yingduji.activity.MainYDJActivity" />
         <activity android:name=".main.activity.PermissionActivity" />
-        <activity android:name=".main.activity.WelcomeActivity" />
+        <activity android:name=".main.activity.WelcomeActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".chifen.magnetic.activity.SendSelectActivity" />
         <activity android:name=".main.activity.CaptureActivity" />
         <activity android:name=".main.activity.DefinedActivity" />
@@ -127,10 +132,7 @@
             android:screenOrientation="landscape" />
         <activity android:name=".cehouyi.activity.MainOutCHYActivity" />
         <activity android:name=".cehouyi.activity.BleListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".cehouyi.activity.MainCHYActivity"

@@ -26,6 +26,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.chifen.magnetic.view.TBSWebView;
 import com.example.luke_imagevideo_send.http.base.BaseActivity;
 import com.example.luke_imagevideo_send.http.base.Constant;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.example.luke_imagevideo_send.http.views.Header;
 
 import butterknife.BindView;
@@ -197,7 +198,9 @@ public class MainBroadcastActivity extends BaseActivity {
 //            config.url = "rtmp://221.2.36.238:2012/live/live1";p
 //            engine.enablePublishDirectToCDN(true, config);
             engine.startPublishingStream(publishStreamID);
-            engine.addPublishCdnUrl(publishStreamID, "rtmp://221.2.36.238:2012/live/live1", new IZegoPublisherUpdateCdnUrlCallback() {
+            SharePreferencesUtils sharePreferencesUtils = new SharePreferencesUtils();
+            String cid = sharePreferencesUtils.getString(this, "cid", "");
+            engine.addPublishCdnUrl(publishStreamID, "rtmp://221.2.36.238:2012/live/live1/"+cid, new IZegoPublisherUpdateCdnUrlCallback() {
                 @Override
                 public void onPublisherUpdateCdnUrlResult(int errorCode) {
                     if (errorCode == 0){

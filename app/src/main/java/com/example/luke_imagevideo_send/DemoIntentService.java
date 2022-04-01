@@ -16,6 +16,7 @@ import com.example.luke_imagevideo_send.chifen.magnetic.activity.MainBroadcastAc
 import com.example.luke_imagevideo_send.chifen.magnetic.util.SSHExcuteCommandHelper;
 import com.example.luke_imagevideo_send.chifen.magnetic.util.getIp;
 import com.example.luke_imagevideo_send.http.base.SSHCallBack;
+import com.example.luke_imagevideo_send.http.utils.SharePreferencesUtils;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.message.GTCmdMessage;
@@ -66,6 +67,8 @@ public class DemoIntentService extends GTIntentService {
     @Override
     public void onReceiveClientId(Context context, String clientid) {
         Log.e("PUSH_LOG", "onReceiveClientId -> " + "clientid = " + clientid);
+        SharePreferencesUtils sharePreferencesUtils = new SharePreferencesUtils();
+        sharePreferencesUtils.setString(context, "cid", clientid);
     }
 
     // cid 离线上线通知

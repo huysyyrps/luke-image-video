@@ -15,7 +15,7 @@ MobSDK {
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\Administrator\\Desktop\\androidkeystore.jks')
+            storeFile file('C:\\Users\\221355\\Desktop\\androidkeystore.jks')
             storePassword 'android'
             keyAlias 'luke'
             keyPassword 'android'
@@ -32,17 +32,14 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-frtti -fexceptions"
+                cppFlags '-std=c++11'
             }
         }
-        ndk {
-            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
-        }
-
+//        ndk {
+//            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+//        }
         multiDexEnabled true
         manifestPlaceholders = [
-                //从 3.1.2.0 版本开始，APPID 占位符从 GETUI_APP_ID 切换为 GETUI_APPID
-                //后续所有产品的 APPID 均统一配置为 GETUI_APPID 占位符
                 GETUI_APPID       : "zvIKfKdtcF68V5cKaC2cz3",
         ]
     }
@@ -69,6 +66,7 @@ android {
             exclude module: 'commons-logging'
         }
     }
+    ndkVersion '21.4.7075529'
 }
 
 dependencies {
@@ -82,7 +80,6 @@ dependencies {
     implementation files('libs\\modbus4Android-1.2.jar')
     implementation 'com.google.android.material:material:1.4.0'
     implementation files('libs\\poi-3.9-20121203.jar')
-//    implementation project(path: ':picture_library')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

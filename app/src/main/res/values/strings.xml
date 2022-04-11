@@ -87,4 +87,16 @@
     <string name="f_bot">阀值下限</string>
     <string name="rtc_success">转推成功</string>
     <string name="rtc_faile">转推失败</string>
+
+
+
+    <string-array name="model_array">
+        <item>211223</item>
+        <item>5s</item>
+    </string-array>
+
+    <string-array name="cpugpu_array">
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
 </resources>
